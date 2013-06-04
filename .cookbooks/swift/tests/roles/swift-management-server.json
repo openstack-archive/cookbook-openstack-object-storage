@@ -1,0 +1,10 @@
+{
+  "name": "swift-management-server",
+  "json_class": "Chef::Role",
+  "run_list": [
+    "recipe[apt]",
+    "recipe[swift::management-server]"
+  ],
+  "description": "A storage server management role.",
+  "chef_type": "role"
+}

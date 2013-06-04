@@ -1,0 +1,18 @@
+{
+  "id":       "storage3",
+  "name":     "storage3",
+  "json_class": "Chef::Node",
+  "run_list": [
+      "recipe[apt]",
+      "role[swift-account-server]",
+      "role[swift-object-server]",
+      "role[swift-container-server]",
+      "role[swift-proxy-server]"
+  ],
+  "chef_environment": "development",
+  "normal": {
+    "swift": {
+      "zone": "3"
+    }
+  }
+}

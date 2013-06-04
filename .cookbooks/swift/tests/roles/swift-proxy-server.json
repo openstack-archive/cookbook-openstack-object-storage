@@ -1,0 +1,10 @@
+{
+  "name": "swift-proxy-server",
+  "json_class": "Chef::Role",
+  "run_list": [
+    "recipe[apt]",
+    "recipe[swift::proxy-server]"
+  ],
+  "description": "A proxy server role.",
+  "chef_type": "role"
+}

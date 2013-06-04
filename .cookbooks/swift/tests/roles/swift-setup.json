@@ -1,0 +1,10 @@
+{
+  "name": "swift-setup",
+  "json_class": "Chef::Role",
+  "run_list": [
+    "recipe[apt]",
+    "recipe[swift::setup]"
+  ],
+  "description": "A swift setup role.",
+  "chef_type": "role"
+}

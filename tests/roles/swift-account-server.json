@@ -1,0 +1,10 @@
+{
+  "name": "swift-account-server",
+  "json_class": "Chef::Role",
+  "run_list": [
+    "recipe[apt]",
+    "recipe[swift::account-server]"
+  ],
+  "description": "A account server role.",
+  "chef_type": "role"
+}
