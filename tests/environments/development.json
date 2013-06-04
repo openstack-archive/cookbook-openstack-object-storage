@@ -1,0 +1,21 @@
+{
+  "default_attributes": {
+    "swift": {
+      "swift_hash": "107c0568ea84",
+      "authmode": "swauth",
+      "authkey": "test",
+      "auto_rebuild_rings": false,
+      "git_builder_ip": "10.0.0.10",
+      "swift_url": "http://10.0.0.10:8080/v1/",
+      "auth_url": "http://10.0.0.10:8080/auth/v1.0",
+      "dispersion": {
+        "auth_user": "test:test",
+        "auth_key": "test"
+      }
+    }
+  },
+  "description": "",
+  "name": "development",
+  "chef_type": "environment",
+  "json_class": "Chef::Environment"
+

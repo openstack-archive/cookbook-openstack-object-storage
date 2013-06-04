@@ -1,0 +1,20 @@
+{
+  "id":       "storage1",
+  "name":     "storage1",
+  "json_class": "Chef::Node",
+  "run_list": [
+      "recipe[apt]",
+      "role[swift-setup]",
+      "role[swift-management-server]",
+      "role[swift-account-server]",
+      "role[swift-object-server]",
+      "role[swift-container-server]",
+      "role[swift-proxy-server]"
+  ],
+  "chef_environment": "development",
+  "normal": {
+    "swift": { 
+      "zone": "1"
+    }
+  }
+}
