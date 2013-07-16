@@ -104,7 +104,7 @@ default['sysctl']['params']['net']['ipv4']['tcp_syncookies'] = 0
 # Each predicate is evaluated in turn, and a false from the predicate
 # will result in the disk not being considered as a candidate for
 # formatting.
-default["swift"]["disk_test_filter"] = [ "candidate =~ /sd[^a]/ or candidate =~ /hd[^a]/ or candidate =~ /vd[^a]/ or candidate =~ /xvd[^a]/",
+default["swift"]["disk_test_filter"] = [ "candidate =~ /sd[^a]/ or candidate =~ /sda[a-z]/ or candidate =~ /hd[^a]/ or candidate =~ /vd[^a]/ or candidate =~ /xvd[^a]/",
                                          "File.exist?('/dev/' + candidate)",
                                          "not system('/sbin/parted /dev/' + candidate + ' -s print | grep linux-swap')",
                                          "not info.has_key?('removable') or info['removable'] == 0.to_s" ]
