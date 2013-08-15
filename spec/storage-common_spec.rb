@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'swift::storage-common' do
+describe 'openstack-object-storage::storage-common' do
 
   #-------------------
   # UBUNTU
@@ -14,7 +14,7 @@ describe 'swift::storage-common' do
       @node = @chef_run.node
       @node.set['lsb']['code'] = 'precise'
       @node.set['swift']['authmode'] = 'swauth'
-      @chef_run.converge "swift::storage-common"
+      @chef_run.converge "openstack-object-storage::storage-common"
     end
 
     describe "/var/cache/swift" do

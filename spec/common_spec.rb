@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'swift::common' do
+describe 'openstack-object-storage::common' do
 
   #-------------------
   # UBUNTU
@@ -21,7 +21,7 @@ describe 'swift::common' do
       # TODO: this does not work
       # ::Chef::Log.should_receive(:info).with("chefspec: precise-updates/folsom")
 
-      @chef_run.converge "swift::common"
+      @chef_run.converge "openstack-object-storage::common"
     end
 
 

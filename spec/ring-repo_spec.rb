@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'swift::ring-repo' do
+describe 'openstack-object-storage::ring-repo' do
 
   #-------------------
   # UBUNTU
@@ -17,7 +17,7 @@ describe 'swift::ring-repo' do
       @node.set['swift']['release'] = "folsom"
       @node.set['swift']['authmode'] = 'swauth'
       @node.set['swift']['git_builder_ip'] = '10.0.0.10'
-      @chef_run.converge "swift::ring-repo"
+      @chef_run.converge "openstack-object-storage::ring-repo"
     end
 
     it 'installs git package for ring management' do

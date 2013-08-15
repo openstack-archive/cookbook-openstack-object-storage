@@ -20,7 +20,7 @@
   Ensure that a disk's partition table matches expectations.
   Sample use:
 
-  swift_disk "/dev/sdb" do
+  openstack_object_storage_disk "/dev/sdb" do
     part(
        {[:type => "xfs", :size =>swift_disk::ONE_GIG*4 ],
         [:type => "xfs", :size =>swift_disk::remaining})

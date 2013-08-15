@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'swift::proxy-server' do
+describe 'openstack-object-storage::proxy-server' do
 
   #--------------
   # UBUNTU
@@ -16,7 +16,7 @@ describe 'swift::proxy-server' do
       @node.set['swift']['authmode'] = 'swauth'
       @node.set['swift']['network']['proxy-bind-ip'] = '10.0.0.1'
       @node.set['swift']['network']['proxy-bind-port'] = '8080'
-      @chef_run.converge "swift::proxy-server"
+      @chef_run.converge "openstack-object-storage::proxy-server"
     end
 
     it "installs memcache python packages" do

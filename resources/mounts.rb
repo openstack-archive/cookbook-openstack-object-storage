@@ -28,7 +28,7 @@
 
   Sample use:
 
-  swift_mounts "/srv/node" do
+  openstack_object_storage_mounts "/srv/node" do
      devices [ "sdb1", "sdc1" ]
      action :ensure_exists
      ip "10.1.1.1"
