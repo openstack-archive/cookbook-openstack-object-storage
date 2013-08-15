@@ -17,9 +17,9 @@
 # limitations under the License.
 #
 
-include_recipe "swift::common"
-include_recipe "swift::storage-common"
-include_recipe "swift::disks"
+include_recipe "openstack-object-storage::common"
+include_recipe "openstack-object-storage::storage-common"
+include_recipe "openstack-object-storage::disks"
 
 platform_options = node["swift"]["platform"]
 

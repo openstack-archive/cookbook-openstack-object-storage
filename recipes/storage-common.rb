@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-include_recipe "swift::rsync"
+include_recipe "openstack-object-storage::rsync"
 
 template "/etc/swift/drive-audit.conf" do
   source "drive-audit.conf.erb"

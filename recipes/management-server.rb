@@ -17,11 +17,11 @@
 # limitations under the License.
 #
 
-include_recipe "swift::common"
+include_recipe "openstack-object-storage::common"
 
 # FIXME: This should probably be a role (ring-builder?), so you don't end up
 # with multiple repos!
-include_recipe "swift::ring-repo"
+include_recipe "openstack-object-storage::ring-repo"
 
 platform_options = node["swift"]["platform"]
 

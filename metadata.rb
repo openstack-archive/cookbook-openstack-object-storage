@@ -1,4 +1,4 @@
-name              "swift"
+name              "openstack-object-storage"
 maintainer        "ATT, Inc."
 license           "Apache 2.0"
 description       "Installs and configures Openstack Swift"
