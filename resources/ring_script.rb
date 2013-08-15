@@ -20,7 +20,7 @@
   Build a proposed ring-building script
   Sample use:
 
-  swift_ring_script "/tmp/build-rings.sh" do
+  openstack_object_storage_ring_script "/tmp/build-rings.sh" do
      owner "root"
      group "swift"
      mode "0700"

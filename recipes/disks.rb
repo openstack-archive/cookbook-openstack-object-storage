@@ -43,7 +43,7 @@ disk_test_filter = node["swift"]["disk_test_filter"]
 disks = locate_disks(disk_enum_expr, disk_test_filter)
 
 disks.each do |disk|
-  swift_disk "/dev/#{disk}" do
+  openstack_object_storage_disk "/dev/#{disk}" do
     part [{:type => platform_options["disk_format"] , :size => :remaining}]
     action :ensure_exists
   end
@@ -56,7 +56,7 @@ end
 # for all object/container/account services are on the same net
 disk_ip = locate_ip_in_cidr(node["swift"]["network"]["object-cidr"], node)
 
-swift_mounts "/srv/node" do
+openstack_object_storage_mounts "/srv/node" do
   action :ensure_exists
   publish_attributes "swift/state/devs"
   devices disks.collect { |x| "#{x}1" }

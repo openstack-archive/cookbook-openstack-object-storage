@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'swift::disks' do
+describe 'openstack-object-storage::disks' do
 
   #-------------------
   # UBUNTU
@@ -26,7 +26,7 @@ describe 'swift::disks' do
       # mock out an interface on the storage node
       @node.set["network"] = MOCK_NODE_NETWORK_DATA['network']
 
-      @chef_run.converge "swift::disks"
+      @chef_run.converge "openstack-object-storage::disks"
     end
 
     it 'installs xfs progs package' do
