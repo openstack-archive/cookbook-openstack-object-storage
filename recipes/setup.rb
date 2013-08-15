@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include_recipe "swift::common"
+include_recipe "openstack-object-storage::common"
 
 # make sure we die if there are multiple swift-setups
 if Chef::Config[:solo]

@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include_recipe "swift::common"
-include_recipe "swift::memcached"
+include_recipe "openstack-object-storage::common"
+include_recipe "openstack-object-storage::memcached"
 
 class Chef::Recipe
   include IPUtils
