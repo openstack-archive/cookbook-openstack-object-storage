@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'swift::management-server' do
+describe 'openstack-object-storage::management-server' do
 
   #-------------------
   # UBUNTU
@@ -15,7 +15,7 @@ describe 'swift::management-server' do
       @node.set['lsb']['code'] = 'precise'
       @node.set['swift']['authmode'] = 'swauth'
 
-      @chef_run.converge "swift::management-server"
+      @chef_run.converge "openstack-object-storage::management-server"
     end
 
     it "installs swift swauth package" do

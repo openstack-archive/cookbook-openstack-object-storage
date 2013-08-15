@@ -1,0 +1,44 @@
+{
+  "sources": {
+    "swift": {
+      "path": "."
+    },
+    "apt": {
+      "locked_version": "2.1.0",
+      "git": "git://github.com/opscode-cookbooks/apt.git",
+      "ref": "3d047bd4f5a42a5521d20bcc16daaa5b94730d9e"
+    },
+    "statsd": {
+      "locked_version": "0.1.3",
+      "git": "git://github.com/att-cloud/cookbook-statsd.git",
+      "ref": "f759cd013c0a836f2acb219b3e006ff0a1308878"
+    },
+    "memcached": {
+      "locked_version": "1.4.0"
+    },
+    "sysctl": {
+      "locked_version": "0.3.3"
+    },
+    "build-essential": {
+      "locked_version": "1.4.0"
+    },
+    "git": {
+      "locked_version": "2.5.2"
+    },
+    "dmg": {
+      "locked_version": "1.1.0"
+    },
+    "yum": {
+      "locked_version": "2.3.0"
+    },
+    "windows": {
+      "locked_version": "1.10.0"
+    },
+    "chef_handler": {
+      "locked_version": "1.1.4"
+    },
+    "runit": {
+      "locked_version": "1.1.6"
+    }
+  }
+}

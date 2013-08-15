@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'swift::object-server' do
+describe 'openstack-object-storage::object-server' do
 
   #-------------------
   # UBUNTU
@@ -25,7 +25,7 @@ describe 'swift::object-server' do
       # mock out an interface on the storage node
       @node.set["network"] = MOCK_NODE_NETWORK_DATA['network']
 
-      @chef_run.converge "swift::object-server"
+      @chef_run.converge "openstack-object-storage::object-server"
     end
 
     it "installs swift packages" do

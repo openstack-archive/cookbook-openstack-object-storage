@@ -172,7 +172,7 @@ bash "rebuild-rings" do
   EOF
 end
 
-swift_ring_script "/etc/swift/ring-workspace/generate-rings.sh" do
+openstack_object_storage_ring_script "/etc/swift/ring-workspace/generate-rings.sh" do
   owner "swift"
   group "swift"
   mode "0700"
