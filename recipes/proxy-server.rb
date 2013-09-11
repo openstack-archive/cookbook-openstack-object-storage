@@ -23,14 +23,14 @@ class Chef::Recipe
   include IPUtils
 end
 
-if node.run_list.expand(node.chef_environment).recipes.include?("swift::setup")
-  Chef::Log.info("I ran the swift::setup so I will use my own swift passwords")
+if node.run_list.expand(node.chef_environment).recipes.include?("openstack-object-storage::setup")
+  Chef::Log.info("I ran the openstack-object-storage::setup so I will use my own swift passwords")
 else
   setup = search(:node, "chef_environment:#{node.chef_environment} AND roles:swift-setup")
   if setup.length == 0
-    Chef::Application.fatal! "You must have run the swift::setup recipe (on this or another node) before running the swift::proxy recipe on this node"
+    Chef::Application.fatal! "You must have run the openstack-object-storage::setup recipe (on this or another node) before running the swift::proxy recipe on this node"
   elsif setup.length == 1
-    Chef::Log.info "Found swift::setup node: #{setup[0].name}"
+    Chef::Log.info "Found openstack-object-storage::setup node: #{setup[0].name}"
     node.set["swift"]["service_pass"] = setup[0]["swift"]["service_pass"]
   elsif setup.length >1
     Chef::Application.fatal! "You have multiple nodes in your environment that have run swift-setup, and that is not allowed"
