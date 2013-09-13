@@ -21,7 +21,7 @@ include Chef::Mixin::ShellOut
 
 def load_current_resource
   dev_name = @new_resource.name
-  @current = Chef::Resource::SwiftDisk.new(dev_name)
+  @current = Chef::Resource::OpenstackObjectStorageDisk.new(dev_name)
 
   parted_partition_parse  dev_name
   parts = @current.part()
