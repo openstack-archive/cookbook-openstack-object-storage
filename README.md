@@ -248,7 +248,7 @@ License and Author
 
 |                      |                                                    |
 |:---------------------|:---------------------------------------------------|
-| **Authors**          |  Alan Meadows (<am240k@att.com>)                   |
+| **Authors**          |  Alan Meadows (<alan.meadows@gmail.com>)           |
 |                      |  Oisin Feely (<of3434@att.com>)                    |
 |                      |  Ron Pedde (<ron.pedde@rackspace.com>)             |
 |                      |  Will Kelly (<will.kelly@rackspace.com>)           |
