@@ -23,10 +23,38 @@ end
 
 include_recipe 'sysctl::default'
 
+
+#-------------
+# stats
+#-------------
+
 # optionally statsd daemon for stats collection
-if node["swift"]["enable_statistics"]
+if node["swift"]["statistics"]["enabled"]
+  node.set['statsd']['relay_server'] = true
   include_recipe 'statsd::server'
 end
+
+# find graphing server address
+if Chef::Config[:solo]
+  Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
+  graphite_servers = []
+else
+  graphite_servers = search(:node, "roles:#{node['swift']['statistics']['graphing_role']} AND chef_environment:#{node.chef_environment}")
+end
+graphite_host = "127.0.0.1"
+if ! graphite_servers.empty?
+  graphite_host = graphite_servers[0]['network']["ipaddress_#{node['swift']['statistics']['graphing_interface']}"]
+end
+
+if not node['swift']['statistics']['graphing_ip'].nil?
+  node.set['statsd']['graphite_host'] = node['swift']['statistics']['graphing_ip']
+else
+  node.set['statsd']['graphite_host'] = graphite_host
+end
+
+#--------------
+# swift common
+#--------------
 
 platform_options = node["swift"]["platform"]
 
