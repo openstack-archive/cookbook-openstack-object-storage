@@ -186,6 +186,8 @@ end
 def parse_ring_output(ring_data)
   output = { :state => {} }
 
+  #              0     1     1  192.168.129.11  6000 1a7bccd28de94d9d876db4eb41790f38 2861587.00      13107   1.67
+
   ring_data.each do |line|
     if line =~ /build version ([0-9]+)/
       output[:state][:build_version] = $1
@@ -197,22 +199,22 @@ def parse_ring_output(ring_data)
       output[:hosts] ||= {}
       output[:hosts][$3] ||= {}
 
-      output[:hosts][$3][$5] = {}
+      output[:hosts][$3][$6] ||= {}
 
-      output[:hosts][$3][$5][:id] = $1
-      output[:hosts][$3][$5][:region] = $2
-      output[:hosts][$3][$5][:zone] = $3
-      output[:hosts][$3][$5][:ip] = $4
-      output[:hosts][$3][$5][:port] = $5
-      output[:hosts][$3][$5][:device] = $6
-      output[:hosts][$3][$5][:weight] = $7
-      output[:hosts][$3][$5][:partitions] = $8
-      output[:hosts][$3][$5][:balance] = $9
+      output[:hosts][$3][$6][:id] = $1
+      output[:hosts][$3][$6][:region] = $2
+      output[:hosts][$3][$6][:zone] = $3
+      output[:hosts][$3][$6][:ip] = $4
+      output[:hosts][$3][$6][:port] = $5
+      output[:hosts][$3][$6][:device] = $6
+      output[:hosts][$3][$6][:weight] = $7
+      output[:hosts][$3][$6][:partitions] = $8
+      output[:hosts][$3][$6][:balance] = $9
     elsif line =~ /^\s+(\d+)\s+(\d+)\s+(\d+\.\d+\.\d+\.\d+)\s+(\d+)\s+(\S+)\s+([0-9.]+)\s+(\d+)\s+([-0-9.]+)\s*$/
       output[:hosts] ||= {}
       output[:hosts][$3] ||= {}
 
-      output[:hosts][$3][$5] = {}
+      output[:hosts][$3][$5] ||= {}
 
       output[:hosts][$3][$5][:id] = $1
       output[:hosts][$3][$5][:zone] = $2
