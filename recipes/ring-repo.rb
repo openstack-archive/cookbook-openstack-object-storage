@@ -136,7 +136,7 @@ end
     command "swift-ring-builder #{ring_type}.builder create #{part_power} #{replicas} #{min_part_hours}"
     user "swift"
     creates "/etc/swift/ring-workspace/rings/#{ring_type}.builder"
-    notifies :run, "execute[add #{ring_type}.builder]", :immediate
+    notifies :run, "execute[add #{ring_type}.builder]", :immediately
   end
 end
 
@@ -178,6 +178,6 @@ openstack_object_storage_ring_script "/etc/swift/ring-workspace/generate-rings.s
   mode "0700"
   ring_path "/etc/swift/ring-workspace/rings"
   action :ensure_exists
-  notifies :run, "bash[rebuild-rings]", :immediate
+  notifies :run, "bash[rebuild-rings]", :immediately
 end
 
