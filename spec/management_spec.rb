@@ -14,6 +14,8 @@ describe 'openstack-object-storage::management-server' do
       @node = @chef_run.node
       @node.set['lsb']['code'] = 'precise'
       @node.set['swift']['authmode'] = 'swauth'
+      @node.set['swift']['swauth-source'] = 'package'
+      @node.set['swift']['platform']['swauth_packages'] = 'swauth'
 
       @chef_run.converge "openstack-object-storage::management-server"
     end
