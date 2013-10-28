@@ -180,9 +180,19 @@ default["swift"]["container-server"]["container-sync"]["interval"] = 300
 default["swift"]["container-server"]["container-sync"]["container_time"] = 60
 
 #------------------
+# swauth source
+# -----------------
+# Versions of swauth in Ubuntu Cloud Archive PPA can be outdated. This
+# allows us to chose to install directly from a tagged branch of
+# gholt's repository.
+# values:  package, git
+default["swift"]["swauth_source"] = "package"
+default["swift"]["swauth_repository"] = "https://github.com/gholt/swauth.git"
+default["swift"]["swauth_version"] = "1.0.8"
+
+#------------------
 # packages
 #------------------
-
 
 # Leveling between distros
 case platform
