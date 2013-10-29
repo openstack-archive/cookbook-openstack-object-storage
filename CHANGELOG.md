@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of cookbook-openstack-object-storage.
 
+## 7.0.4:
+* Allow roles used in searches to be defined by cookbook user
+
 ## 7.0.3:
 * Bugfix the swift-ring-builder output scanner
 

@@ -16,7 +16,7 @@ end
 #
 # Cluster info:
 #   Auth mode: <%= node[:swift][:authmode] %>
-#   Management server: <%= node[:roles].include?("swift-management-server") %>
+#   Management server: <%= node[:roles].include?(node[:swift][:management_server_chef_role]) %>
 #   Account management enabled: <%= account_management %>
 #   Auth pipeline: <%= pipeline %>
 

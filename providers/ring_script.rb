@@ -62,7 +62,8 @@ def generate_script
 
     # figure out what's present in the cluster
     disk_data[which] = {}
-    disk_state,_,_ = Chef::Search::Query.new.search(:node,"chef_environment:#{node.chef_environment} AND roles:swift-#{which}-server")
+    role = node["swift"]["#{which}_server_chef_role"]
+    disk_state,_,_ = Chef::Search::Query.new.search(:node,"chef_environment:#{node.chef_environment} AND roles:#{role}")
 
     # for a running track of available disks
     disk_data[:available] ||= {}
