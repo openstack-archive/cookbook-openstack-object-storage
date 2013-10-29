@@ -22,7 +22,8 @@ include_recipe "openstack-object-storage::common"
 if Chef::Config[:solo]
   Chef::Application.fatal! "This recipe uses search. Chef Solo does not support search."
 else
-  setup_role_count = search(:node, "chef_environment:#{node.chef_environment} AND roles:swift-setup").length
+  setup_role = node["swift"]["setup_chef_role"]
+  setup_role_count = search(:node, "chef_environment:#{node.chef_environment} AND roles:#{setup_role}").length
   if setup_role_count > 1
     Chef::Application.fatal! "You can only have one node with the swift-setup role"
   end

@@ -26,6 +26,17 @@ default["swift"]["release"] = "folsom"
 default["swift"]["swift_secret_databag_name"] = nil
 
 #--------------------
+# roles
+#--------------------
+
+default["swift"]["setup_chef_role"]             = "swift-setup"
+default["swift"]["management_server_chef_role"] = "swift-management-server"
+default["swift"]["proxy_server_chef_role"]      = "swift-proxy-server"
+default["swift"]["object_server_chef_role"]     = "swift-object-server"
+default["swift"]["account_server_chef_role"]    = "swift-account-server"
+default["swift"]["container_server_chef_role"]  = "swift-container-server"
+
+#--------------------
 # authentication
 #--------------------
 
