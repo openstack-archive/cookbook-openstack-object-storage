@@ -183,6 +183,14 @@ default["swift"]["container-server"]["container-sync"]["container_time"] = 60
 # packages
 #------------------
 
+#-------------------
+# template overrides
+#-------------------
+
+# proxy-server
+
+# override in a wrapper to enable tempurl with swauth
+default["swift"]["tempurl"] = false
 
 # Leveling between distros
 case platform
