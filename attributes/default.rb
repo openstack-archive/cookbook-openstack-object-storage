@@ -124,6 +124,14 @@ default["swift"]["disk_test_filter"] = [ "candidate =~ /(sd|hd|xvd|vd)(?!a$)[a-z
 # packages
 #------------------
 
+#-------------------
+# template overrides
+#-------------------
+
+# proxy-server
+
+# override in a wrapper to enable tempurl with swauth
+default["swift"]["tempurl"] = false
 
 # Leveling between distros
 case platform

@@ -11,6 +11,14 @@ account_management=false
 if node[:roles].include?("swift-management-server") and node[:swift][:authmode] == "swauth" then
   account_management="true"
 end
+
+# need to both: 1) add tempurl before auth middleware, 2) set allow_overrides=true
+tempurl_toggle=false
+if node[:roles].include?("swift-management-server") and node[:swift][:authmode] == "swauth" and node[:swift][:tempurl] == "true" then
+  tempurl_toggle="true"
+  pipeline = "tempurl swauth"
+end
+
 -%>
 # This file is managed by chef.  Do not edit it.
 #
@@ -105,6 +113,9 @@ super_admin_key = <%= @authkey %>
 default_swift_cluster = local#<%= node[:swift][:swift_url] %>#<%= node[:swift][:swauth_url] %>
 <% else %>
 default_swift_cluster = local#<%= node[:swift][:swift_url] %>
+<% end %>
+<% if tempurl_toggle -%>
+  allow_overrides=true
 <% end %>
 <% end %>
 
