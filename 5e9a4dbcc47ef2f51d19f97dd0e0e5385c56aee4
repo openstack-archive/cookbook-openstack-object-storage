@@ -1,0 +1,8 @@
+Verified+2: Jenkins
+Approved+1: Jay Pipes <jaypipes@gmail.com>
+Code-Review+2: Jay Pipes <jaypipes@gmail.com>
+Submitted-by: Jenkins
+Submitted-at: Wed, 30 Oct 2013 18:43:27 +0000
+Reviewed-on: https://review.openstack.org/54456
+Project: stackforge/cookbook-openstack-object-storage
+Branch: refs/heads/master
