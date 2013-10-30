@@ -44,6 +44,19 @@ else
   auth_key = swift_secrets['dispersion_auth_key']
 end
 
+if node['swift']['statistics']['enabled']
+  template platform_options["swift_statsd_publish"] do
+    source "swift-statsd-publish.py.erb"
+    owner "root"
+    group "root"
+    mode "0755"
+  end
+  cron "cron_swift_statsd_publish" do
+    command "#{platform_options['swift_statsd_publish']} > /dev/null 2>&1"
+    minute "*/#{node["swift"]["statistics"]["report_frequency"]}"
+  end
+end
+
 template "/etc/swift/dispersion.conf" do
   source "dispersion.conf.erb"
   owner "swift"

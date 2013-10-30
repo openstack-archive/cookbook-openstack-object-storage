@@ -64,7 +64,40 @@ default["swift"]["ring"]["replicas"] = 3
 #------------------
 # statistics
 #------------------
-default["swift"]["enable_statistics"] = true
+default["swift"]["statistics"]["enabled"] = true
+default["swift"]["statistics"]["sample_rate"] = 1
+
+# there are two ways to discover your graphite server ip for
+# statsd to periodically publish to.  You can directly set
+# the ip below, or leave it set to nil and supply chef with
+# the role name of your graphite server and the interface
+# name to retrieve the appropriate internal ip address from
+#
+# if no servers with the role below can be found then
+# 127.0.0.1 will be used
+default["swift"]["statistics"]["graphing_ip"]  = nil
+default["swift"]["statistics"]["graphing_role"] = 'graphite-role'
+default["swift"]["statistics"]["graphing_interface"] = 'eth0'
+
+# how frequently to run chef instantiated /usr/local/bin/swift_statsd_publish.py
+# which publishes dispersion and recon statistics (in minutes)
+default["swift"]["statistics"]["report_frequency"] = 15
+
+# enable or disable specific portions of generated report
+default["swift"]["statistics"]["enable_dispersion_report"] = true
+default["swift"]["statistics"]["enable_recon_report"] = true
+default["swift"]["statistics"]["enable_disk_report"] = true
+
+# settings for statsd which should be configured to use the local
+# statsd daemon that chef will install if statistics are enabled
+default["swift"]["statistics"]["statsd_host"] = "127.0.0.1"
+default["swift"]["statistics"]["statsd_port"] = "8125"
+default["swift"]["statistics"]["statsd_prefix"] = "openstack.swift"
+
+# paths to the recon cache files
+default["swift"]["statistics"]["recon_account_cache"] = "/var/cache/swift/account.recon"
+default["swift"]["statistics"]["recon_container_cache"] = "/var/cache/swift/container.recon"
+default["swift"]["statistics"]["recon_object_cache"] = "/var/cache/swift/object.recon"
 
 #------------------
 # network settings
@@ -143,7 +176,8 @@ when "redhat"
     "git_dir" => "/var/lib/git",
     "git_service" => "git",
     "service_provider" => Chef::Provider::Service::Redhat,
-    "override_options" => ""
+    "override_options" => "",
+    "swift_statsd_publish" => "/usr/bin/swift-statsd-publish.py"
   }
 #
 # python-iso8601 is a missing dependency for swift.
@@ -164,7 +198,8 @@ when "centos"
     "git_dir" => "/var/lib/git",
     "git_service" => "git",
     "service_provider" => Chef::Provider::Service::Redhat,
-    "override_options" => ""
+    "override_options" => "",
+    "swift_statsd_publish" => "/usr/bin/swift-statsd-publish.py"
   }
 when "fedora"
   default["swift"]["platform"] = {
@@ -182,7 +217,8 @@ when "fedora"
     "git_dir" => "/var/lib/git",
     "git_service" => "git",
     "service_provider" => Chef::Provider::Service::Systemd,
-    "override_options" => ""
+    "override_options" => "",
+    "swift_statsd_publish" => "/usr/bin/swift-statsd-publish.py"
   }
 when "ubuntu"
   default["swift"]["platform"] = {
@@ -200,6 +236,7 @@ when "ubuntu"
     "git_dir" => "/var/cache/git",
     "git_service" => "git-daemon",
     "service_provider" => Chef::Provider::Service::Upstart,
-    "override_options" => "-o Dpkg::Options:='--force-confold' -o Dpkg::Option:='--force-confdef'"
+    "override_options" => "-o Dpkg::Options:='--force-confold' -o Dpkg::Option:='--force-confdef'",
+    "swift_statsd_publish" => "/usr/local/bin/swift-statsd-publish.py"
   }
 end
