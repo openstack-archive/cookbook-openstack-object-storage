@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of cookbook-openstack-object-storage.
 
+## 7.0.7:
+* Add flexibility to middleware pipeline
+
 ## 7.0.6:
 * Add choice of install python-swauth from git or package
 
