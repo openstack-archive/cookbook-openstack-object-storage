@@ -153,6 +153,32 @@ default["swift"]["disk_test_filter"] = [ "candidate =~ /(sd|hd|xvd|vd)(?!a$)[a-z
                                          "not system('/sbin/parted /dev/' + candidate + ' -s print | grep linux-swap')",
                                          "not info.has_key?('removable') or info['removable'] == 0.to_s" ]
 
+#-------------------
+# template overrides
+#-------------------
+
+# container-server
+
+# Override this with an allowed list of your various swift clusters if you wish
+# to enable container sync for your end-users between clusters.  This should
+# be an array of fqdn hostnames for the cluster end-points that your end-users
+# would access in the format of ['host1', 'host2', 'host3']
+default["swift"]["container-server"]["allowed_sync_hosts"] = []
+
+# container-sync logging settings
+default["swift"]["container-server"]["container-sync"]["log_name"] = 'container-sync'
+default["swift"]["container-server"]["container-sync"]["log_facility"] = 'LOG_LOCAL0'
+default["swift"]["container-server"]["container-sync"]["log_level"] = 'INFO'
+
+# If you need to use an HTTP Proxy, set it here; defaults to no proxy.
+default["swift"]["container-server"]["container-sync"]["sync_proxy"] = nil
+
+# Will sync, at most, each container once per interval (in seconds)
+default["swift"]["container-server"]["container-sync"]["interval"] = 300
+
+# Maximum amount of time to spend syncing each container per pass (in seconds)
+default["swift"]["container-server"]["container-sync"]["container_time"] = 60
+
 #------------------
 # packages
 #------------------
