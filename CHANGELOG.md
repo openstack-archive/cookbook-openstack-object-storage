@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of cookbook-openstack-object-storage.
 
+## 7.0.10:
+* Do not role restrict super_admin_key in proxy config and
+  case correct swauth_version attribute in proxy recipe
+
 ## 7.0.9:
 * Bugfix tempurl role restriction
 

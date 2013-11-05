@@ -48,7 +48,7 @@ platform_options["proxy_packages"].each do |pkg|
   end
 end
 
-case node["swift"]["swauth-source"]
+case node["swift"]["swauth_source"]
 when "package"
   package platform_options["swauth_packages"] do
     action :install
