@@ -14,7 +14,7 @@ end
 
 # need to both: 1) add tempurl before auth middleware, 2) set allow_overrides=true
 tempurl_toggle=false
-if node.run_list.expand(node.chef_environment).roles.include?(node[:swift][:management_server_chef_role]) and node[:swift][:authmode] == "swauth" and node[:swift][:tempurl][:enabled] == true then
+if node[:swift][:authmode] == "swauth" and node[:swift][:tempurl][:enabled] == true then
   tempurl_toggle = true
   pipeline = "tempurl swauth"
 end

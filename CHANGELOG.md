@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of cookbook-openstack-object-storage.
 
+## 7.0.9:
+* Bugfix tempurl role restriction
+
 ## 7.0.8:
 * Bugfix allow_override spacing in proxy server template
 
