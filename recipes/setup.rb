@@ -43,29 +43,31 @@ platform_options["proxy_packages"].each do |pkg|
   end
 end
 
-case node["swift"]["swauth-source"]
-when "package"
-  package platform_options["swauth_packages"] do
-    action :upgrade
-    only_if { node["swift"]["authmode"] == "swauth" }
-  end
-when "git"
-  git "#{Chef::Config[:file_cache_path]}/swauth" do
-    repository node["swift"]["swauth_repository"]
-    revision node["swift"]["swauth_version"]
-    action :sync
-    only_if { node["swift"]["authmode"] == "swauth" }
-  end
+if node["swift"]["authmode"] == "swauth"
+  case node["swift"]["swauth_source"]
+  when "package"
+    platform_options["swauth_packages"].each do |pkg|
+      package pkg do
+        action :upgrade
+        options platform_options["override_options"]
+      end
+    end
+  when "git"
+    git "#{Chef::Config[:file_cache_path]}/swauth" do
+      repository node["swift"]["swauth_repository"]
+      revision node["swift"]["swauth_version"]
+      action :sync
+    end
 
-  bash "install_swauth" do
-    cwd "#{Chef::Config[:file_cache_path]}/swauth"
-    user "root"
-    group "root"
-    code <<-EOH
-      python setup.py install
-    EOH
-    environment 'PREFIX' => "/usr/local"
-    only_if { node["swift"]["authmode"] == "swauth" }
+    bash "install_swauth" do
+      cwd "#{Chef::Config[:file_cache_path]}/swauth"
+      user "root"
+      group "root"
+      code <<-EOH
+        python setup.py install
+      EOH
+      environment 'PREFIX' => "/usr/local"
+    end
   end
 end
 

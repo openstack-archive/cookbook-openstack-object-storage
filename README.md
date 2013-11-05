@@ -65,7 +65,7 @@ Attributes
 
  * ```default[:swift][:tempurl]``` - "true" or "false". Adds tempurl to the pipeline and sets allow_overrides to true when using swauth
 
- * ```default[:swift][:swauth-source]``` - "git" or "package"(default). Selects between installing python-swauth from git or system package
+ * ```default[:swift][:swauth_source]``` - "git" or "package"(default). Selects between installing python-swauth from git or system package
 
  * ```default[:swift][:swauth_repository]``` - Specifies git repo. Default "https://github.com/gholt/swauth.git"
 
