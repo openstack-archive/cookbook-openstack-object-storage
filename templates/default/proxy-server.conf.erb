@@ -8,7 +8,7 @@ when "swauth"
 end
 
 account_management=false
-if node.run_list.expand(node.chef_environment).roles.include?(node[:swift][:management_server_chef_role]) and node[:swift][:authmode] == "swauth" then
+if node[:swift][:authmode] == "swauth" then
   account_management="true"
 end
 
@@ -90,13 +90,7 @@ use = egg:swift#proxy
 # If set to 'true' authorized accounts that do not yet exist within the Swift
 # cluster will be automatically created.
 # account_autocreate = false
-######
-#
-# N.B. ideally allow_account_management would only be set on the
-# management server, but swauth will delete using the cluster url
-# and not the local url
-# allow_account_managemnet = <%= account_management %>
-allow_account_management = true
+allow_account_management = <%= account_management %>
 
 <% if @authmode == "keystone" -%>
 account_autocreate = true

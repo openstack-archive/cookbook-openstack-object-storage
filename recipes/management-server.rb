@@ -26,12 +26,14 @@ include_recipe "openstack-object-storage::ring-repo"
 platform_options = node["swift"]["platform"]
 
 if node["swift"]["authmode"] == "swauth"
-  case node["swift"]["swauth-source"]
+  case node["swift"]["swauth_source"]
   when "package"
-    package platform_options["swauth_packages"] do
-      action :install
-      only_if { node["swift"]["authmode"] == "swauth" }
-      options platform_options["override_options"] # retain configs
+    platform_options["swauth_packages"].each do |pkg|
+      package pkg do
+        action :install
+        only_if { node["swift"]["authmode"] == "swauth" }
+        options platform_options["override_options"]
+      end
     end
   when "git"
     git "#{Chef::Config[:file_cache_path]}/swauth" do
