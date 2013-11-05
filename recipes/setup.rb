@@ -45,9 +45,11 @@ end
 
 case node["swift"]["swauth-source"]
 when "package"
-  package platform_options["swauth_packages"] do
-    action :upgrade
-    only_if { node["swift"]["authmode"] == "swauth" }
+  platform_options["swauth_packages"].each do |pkg|
+    package pkg do
+      action :upgrade
+      only_if { node["swift"]["authmode"] == "swauth" }
+    end
   end
 when "git"
   git "#{Chef::Config[:file_cache_path]}/swauth" do
