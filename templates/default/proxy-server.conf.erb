@@ -111,6 +111,9 @@ default_swift_cluster = local#<%= node[:swift][:swift_url] %>
 <% if tempurl_toggle -%>
 allow_overrides = true
 <% end %>
+<% if node["swift"]["container-server"]["allowed_sync_hosts"] -%>
+allowed_sync_hosts = <%= node["swift"]["container-server"]["allowed_sync_hosts"].join(",") %>
+<% end %>
 <% end %>
 
 [filter:healthcheck]

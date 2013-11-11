@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of cookbook-openstack-object-storage.
 
+## 7.0.11:
+* Add missing swift-container-sync upstart service which is
+  not setup by default in ubuntu 12.04 packages
+
 ## 7.0.10:
 * Do not role restrict super_admin_key in proxy config
 * Case correct swauth_version attribute in proxy recipe

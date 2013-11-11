@@ -35,7 +35,7 @@ describe 'openstack-object-storage::container-server' do
     end
 
     it "starts swift container services on boot" do
-      %w{swift-container swift-container-auditor swift-container-replicator swift-container-updater}.each do |svc|
+      %w{swift-container swift-container-auditor swift-container-replicator swift-container-updater swift-container-sync}.each do |svc|
         expect(@chef_run).to set_service_to_start_on_boot svc
       end
     end
@@ -59,6 +59,14 @@ describe 'openstack-object-storage::container-server' do
           "allowed_sync_hosts = host1,host2,host3"
       end
 
+    end
+
+    it "should create container sync upstart conf for ubuntu" do
+      expect(@chef_run).to create_cookbook_file "/etc/init/swift-container-sync.conf"
+    end
+
+    it "should create container sync init script for ubuntu" do
+      expect(@chef_run).to create_link "/etc/init.d/swift-container-sync"
     end
 
     describe "/etc/swift/container-server.conf" do
