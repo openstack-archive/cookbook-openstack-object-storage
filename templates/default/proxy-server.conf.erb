@@ -112,6 +112,9 @@ default_swift_cluster = local#<%= node[:swift][:swift_url] %>
 allow_overrides = true
 <% end %>
 <% end %>
+<% if node["swift"]["container-server"]["allowed_sync_hosts"] -%>
+allowed_sync_hosts = <%= node["swift"]["container-server"]["allowed_sync_hosts"].join(",") %>
+<% end %>
 
 [filter:healthcheck]
 use = egg:swift#healthcheck
