@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of cookbook-openstack-object-storage.
 
+## 7.1.0:
+* Update apt sources to grizzly to prepare for grizzly
+  and havana branches
+
 ## 7.0.11:
 * Add missing swift-container-sync upstart service which is
   not setup by default in ubuntu 12.04 packages

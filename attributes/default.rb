@@ -11,7 +11,7 @@ default["swift"]["git_builder_ip"] = "127.0.0.1"
 
 # the release only has any effect on ubuntu, and must be
 # a valid release on http://ubuntu-cloud.archive.canonical.com/ubuntu
-default["swift"]["release"] = "folsom"
+default["swift"]["release"] = "grizzly"
 
 # we support an optional secret databag where we will retrieve the
 # following attributes overriding any default attributes here
