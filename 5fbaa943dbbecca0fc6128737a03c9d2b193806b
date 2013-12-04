@@ -1,0 +1,11 @@
+Verified+2: Jenkins
+Approved+1: Matt Ray <matthewhray@gmail.com>
+Code-Review+2: Matt Ray <matthewhray@gmail.com>
+Code-Review+2: Ionut Artarisi <iartarisi@suse.cz>
+Code-Review+1: David Geng <gengjh@cn.ibm.com>
+Code-Review+1: Oisin C. Feeley <oisin.feeley@gmail.com>
+Submitted-by: Jenkins
+Submitted-at: Wed, 04 Dec 2013 18:09:33 +0000
+Reviewed-on: https://review.openstack.org/59791
+Project: stackforge/cookbook-openstack-object-storage
+Branch: refs/heads/master
