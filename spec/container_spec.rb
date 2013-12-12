@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative 'spec_helper'
 
 describe 'openstack-object-storage::container-server' do
 
@@ -10,7 +10,7 @@ describe 'openstack-object-storage::container-server' do
 
     before do
       swift_stubs
-      @chef_run = ::ChefSpec::ChefRunner.new ::UBUNTU_OPTS
+      @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
       @node.set['lsb']['code'] = 'precise'
       @node.set['swift']['authmode'] = 'swauth'
@@ -36,7 +36,7 @@ describe 'openstack-object-storage::container-server' do
 
     it "starts swift container services on boot" do
       %w{swift-container swift-container-auditor swift-container-replicator swift-container-updater swift-container-sync}.each do |svc|
-        expect(@chef_run).to set_service_to_start_on_boot svc
+        expect(@chef_run).to enable_service(svc)
       end
     end
 
@@ -47,7 +47,8 @@ describe 'openstack-object-storage::container-server' do
       end
 
       it "has proper owner" do
-        expect(@file).to be_owned_by "swift", "swift"
+        expect(@file.owner).to eq("swift")
+        expect(@file.group).to eq("swift")
       end
 
       it "has proper modes" do
@@ -55,8 +56,7 @@ describe 'openstack-object-storage::container-server' do
       end
 
       it "has allowed sync hosts" do
-        expect(@chef_run).to create_file_with_content @file.name,
-          "allowed_sync_hosts = host1,host2,host3"
+        expect(@chef_run).to render_file(@file.name).with_content("allowed_sync_hosts = host1,host2,host3")
       end
 
     end
@@ -79,8 +79,7 @@ describe 'openstack-object-storage::container-server' do
       end
 
       it "has no allowed_sync_hosts on empty lists" do
-        expect(@chef_run).not_to create_file_with_content @file.name,
-          /^allowed_sync_hots =/
+        expect(@chef_run).not_to render_file(@file.name).with_content(/^allowed_sync_hots =/)
       end
     end
   end

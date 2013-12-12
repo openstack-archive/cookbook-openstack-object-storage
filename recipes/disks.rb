@@ -21,6 +21,7 @@
 
 class Chef::Recipe
   include IPUtils
+  include DriveUtils
 end
 
 

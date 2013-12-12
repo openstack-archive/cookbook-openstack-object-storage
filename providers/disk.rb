@@ -58,7 +58,7 @@ sample output
 /dev/sdb: 261 cylinders, 255 heads, 63 sectors/track
 =end
 def sfdisk_get_size(dev_name)
-  out = %x{sfdisk #{dev_name} -s}
+  out = Mixlib::ShellOut.new("sfdisk #{dev_name} -s").run_command.stdout
   Chef::Log.info("updating geo using sfdisk: #{out}")
 
   # sfdisk sees the world as 1k blocks
@@ -123,6 +123,7 @@ end
 
 action :list do
   Chef::Log.info("at some point there'll be a list")
+  new_resource.updated_by_last_action(update)
 end
 
 ####
@@ -247,12 +248,12 @@ action :ensure_exists do
 
       case params[:type]
       when "xfs"
-        if not system("xfs_admin -l #{device}")
+        if not Mixlib::ShellOut.new("xfs_admin -l #{device}").run_command.status
           Mixlib::ShellOut.new("mkfs.xfs -f -i size=512 #{device}").run_command
           update = true
         end
       when "ext4"
-        if not system("tune2fs -l #{device} | grep \"Filesystem volume name:\" | awk \'{print $4}\' | grep -v \"<none>\"")
+        if not Mixlib::ShellOut.new("tune2fs -l #{device} | grep \"Filesystem volume name:\" | awk \'{print $4}\' | grep -v \"<none>\"").run_command.status
           Mixlib::ShellOut.new("mkfs.ext4 #{device}").run_command
           update = true
         end

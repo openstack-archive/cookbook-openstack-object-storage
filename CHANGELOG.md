@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of cookbook-openstack-object-storage.
 
+## 8.0.0
+### New version
+* Upgrade to upstream Havana release
+
 ## 7.1.0:
 * Update apt sources to grizzly to prepare for grizzly
   and havana branches
