@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative 'spec_helper'
 
 describe 'openstack-object-storage::management-server' do
 
@@ -10,7 +10,7 @@ describe 'openstack-object-storage::management-server' do
 
     before do
       swift_stubs
-      @chef_run = ::ChefSpec::ChefRunner.new ::UBUNTU_OPTS
+      @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
       @node.set['lsb']['code'] = 'precise'
       @node.set['swift']['authmode'] = 'swauth'
@@ -32,7 +32,8 @@ describe 'openstack-object-storage::management-server' do
       end
 
       it "has proper owner" do
-        expect(@file).to be_owned_by "swift", "swift"
+        expect(@file.owner).to eq("swift")
+        expect(@file.group).to eq("swift")
       end
 
       it "has proper modes" do
@@ -52,7 +53,8 @@ describe 'openstack-object-storage::management-server' do
       end
 
       it "has proper owner" do
-        expect(@file).to be_owned_by "root", "root"
+        expect(@file.owner).to eq("root")
+        expect(@file.group).to eq("root")
       end
 
       it "has proper modes" do
@@ -60,8 +62,7 @@ describe 'openstack-object-storage::management-server' do
       end
 
       it "has expected statsd host" do
-        expect(@chef_run).to create_file_with_content @file.name,
-          "self.statsd_host              = '127.0.0.1'"
+        expect(@chef_run).to render_file(@file.name).with_content("self.statsd_host              = '127.0.0.1'")
       end
 
     end

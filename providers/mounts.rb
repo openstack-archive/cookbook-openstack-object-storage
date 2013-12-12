@@ -38,10 +38,10 @@ action :ensure_exists do
     info["device"] = device
     info["ip"] = @new_resource.ip
     info["format"] = @new_resource.format
-    info["uuid"] = `blkid /dev/#{device} -s UUID -o value`.strip
+    info["uuid"] = Mixlib::ShellOut.new("blkid /dev/#{device} -s UUID -o value").run_command.stdout.strip
     info["mountpoint"] = info["uuid"].split("-").join("")
-    info["mounted"] = system("mount | grep '#{path}/#{info["mountpoint"]}\'")
-    info["size"] = `sfdisk -s /dev/#{device}`.to_i / 1024
+    info["mounted"] = Mixlib::ShellOut.new("mount | grep '#{path}/#{info["mountpoint"]}\'").run_command.status
+    info["size"] = Mixlib::ShellOut.new("sfdisk -s /dev/#{device}").run_command.stdout.to_i / 1024
 
     next if (info["uuid"] == '')
 
@@ -79,7 +79,7 @@ action :ensure_exists do
   # mounts in /srv/node that shouldn't be there
   (mounts.keys.select{|x| x and x[/^#{path}/]} - valid_mounts).each do |dev|
     Chef::Log.info("Unmounting #{dev}")
-    system("umount #{dev}") if system("mount | grep '#{dev}'")
+    Mixlib::ShellOut.new("umount #{dev}").run_command if Mixlib::ShellOut.new("mount | grep '#{dev}'").run_command.status
     new_resource.updated_by_last_action(true)
   end
 
@@ -148,7 +148,7 @@ action :ensure_exists do
   end
 
   dev_info.reject { |k,v| v["mounted"] }.keys.each do |uuid|
-    dev_info[uuid]["mounted"] = system("mount | grep '#{path}/#{dev_info[uuid]["mountpoint"]}\'")
+    dev_info[uuid]["mounted"] = Mixlib::ShellOut.new("mount | grep '#{path}/#{dev_info[uuid]["mountpoint"]}\'").run_command.status
   end
 
   if @new_resource.publish_attributes and dev_info != {}

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative 'spec_helper'
 
 describe 'openstack-object-storage::ring-repo' do
 
@@ -10,11 +10,11 @@ describe 'openstack-object-storage::ring-repo' do
 
     before do
       swift_stubs
-      @chef_run = ::ChefSpec::ChefRunner.new ::UBUNTU_OPTS
+      @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
       @node.set['platform_family'] = "debian"
       @node.set['lsb']['codename'] = "precise"
-      @node.set['swift']['release'] = "grizzly"
+      @node.set['swift']['release'] = "havana"
       @node.set['swift']['authmode'] = 'swauth'
       @node.set['swift']['git_builder_ip'] = '10.0.0.10'
       @chef_run.converge "openstack-object-storage::ring-repo"
@@ -24,9 +24,9 @@ describe 'openstack-object-storage::ring-repo' do
       expect(@chef_run).to install_package "git-daemon-sysvinit"
     end
 
-    it "starts xinetd services on boot" do
+    it "should not start xinetd services on boot" do
       %w{xinetd}.each do |svc|
-        expect(@chef_run).to set_service_to_start_on_boot svc
+        expect(@chef_run).not_to enable_service(svc)
       end
     end
 
