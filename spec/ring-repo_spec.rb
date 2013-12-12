@@ -10,7 +10,7 @@ describe 'openstack-object-storage::ring-repo' do
 
     before do
       swift_stubs
-      @chef_run = ::ChefSpec::ChefRunner.new ::UBUNTU_OPTS
+      @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
       @node.set['platform_family'] = "debian"
       @node.set['lsb']['codename'] = "precise"
