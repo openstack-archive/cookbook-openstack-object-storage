@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative 'spec_helper'
 
 describe 'openstack-object-storage::rsync' do
 
@@ -10,7 +10,7 @@ describe 'openstack-object-storage::rsync' do
 
     before do
       swift_stubs
-      @chef_run = ::ChefSpec::ChefRunner.new ::UBUNTU_OPTS
+      @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
       @node.set['platform_family'] = "debian"
       @node.set['lsb']['codename'] = "precise"
@@ -26,7 +26,7 @@ describe 'openstack-object-storage::rsync' do
 
     it "starts rsync service on boot" do
       %w{rsync}.each do |svc|
-        expect(@chef_run).to set_service_to_start_on_boot svc
+        expect(@chef_run).to enable_service(svc)
       end
     end
 

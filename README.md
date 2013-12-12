@@ -256,13 +256,15 @@ License and Author
 
 |                      |                                                    |
 |:---------------------|:---------------------------------------------------|
-| **Authors**          |  Alan Meadows (<alan.meadows@gmail.com>)           |
-|                      |  Oisin Feeley (<of3434@att.com>)                    |
-|                      |  Ron Pedde (<ron.pedde@rackspace.com>)             |
-|                      |  Will Kelly (<will.kelly@rackspace.com>)           |
+| **Author**           |  Alan Meadows (<alan.meadows@gmail.com>)           |
+| **Author**           |  Oisin Feeley (<of3434@att.com>)                   |
+| **Author**           |  Ron Pedde (<ron.pedde@rackspace.com>)             |
+| **Author**           |  Will Kelly (<will.kelly@rackspace.com>)           |
+| **Author**           |  Chen Zhiwei (<zhiwchen@cn.ibm.com>)               |
 |                      |                                                    |
 | **Copyright**        |  Copyright (c) 2013, AT&T, Inc.                    |
-|                      |  Copyright (c) 2012, Rackspace US, Inc.            |
+| **Copyright**        |  Copyright (c) 2012, Rackspace US, Inc.            |
+| **Copyright**        |  Copyright (c) 2013, IBM, Corp.                    |
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

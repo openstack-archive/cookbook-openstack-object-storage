@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative 'spec_helper'
 
 describe 'openstack-object-storage::storage-common' do
 
@@ -10,7 +10,7 @@ describe 'openstack-object-storage::storage-common' do
 
     before do
       swift_stubs
-      @chef_run = ::ChefSpec::ChefRunner.new ::UBUNTU_OPTS
+      @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
       @node.set['lsb']['code'] = 'precise'
       @node.set['swift']['authmode'] = 'swauth'
@@ -24,7 +24,8 @@ describe 'openstack-object-storage::storage-common' do
       end
 
       it "has proper owner" do
-        expect(@file).to be_owned_by "swift", "swift"
+        expect(@file.owner).to eq("swift")
+        expect(@file.group).to eq("swift")
       end
 
       it "has proper modes" do
@@ -40,7 +41,8 @@ describe 'openstack-object-storage::storage-common' do
       end
 
       it "has proper owner" do
-        expect(@file).to be_owned_by "swift", "swift"
+        expect(@file.owner).to eq("swift")
+        expect(@file.group).to eq("swift")
       end
 
       it "has proper modes" do
