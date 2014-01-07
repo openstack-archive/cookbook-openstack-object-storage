@@ -1,0 +1,9 @@
+Verified+2: Jenkins
+Approved+1: John Dewey <john@dewey.ws>
+Code-Review+2: John Dewey <john@dewey.ws>
+Code-Review+2: Ionut Artarisi <iartarisi@suse.cz>
+Submitted-by: Jenkins
+Submitted-at: Tue, 07 Jan 2014 21:19:52 +0000
+Reviewed-on: https://review.openstack.org/65207
+Project: stackforge/cookbook-openstack-object-storage
+Branch: refs/heads/master
