@@ -194,6 +194,23 @@ def parse_ring_output(ring_data)
       next
     elsif line =~ /^Devices:\s+id\s+zone\s+/
       next
+    elsif line =~ /^\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\.\d+\.\d+\.\d+)\s+(\d+)\s+(\d+\.\d+\.\d+\.\d+)\s+(\d+)\s+(\S+)\s+([0-9.]+)\s+(\d+)\s+([-0-9.]+)\s*$/
+      output[:hosts] ||= {}
+      output[:hosts][$4] ||= {}
+
+      output[:hosts][$4][$8] ||= {}
+
+      output[:hosts][$4][$8][:id] = $1
+      output[:hosts][$4][$8][:region] = $2
+      output[:hosts][$4][$8][:zone] = $3
+      output[:hosts][$4][$8][:ip] = $4
+      output[:hosts][$4][$8][:port] = $5
+      output[:hosts][$4][$8][:replication_ip] = $6
+      output[:hosts][$4][$8][:replication_port] = $7
+      output[:hosts][$4][$8][:device] = $8
+      output[:hosts][$4][$8][:weight] = $9
+      output[:hosts][$4][$8][:partitions] = $10
+      output[:hosts][$4][$8][:balance] = $11
     elsif line =~ /^\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\.\d+\.\d+\.\d+)\s+(\d+)\s+(\S+)\s+([0-9.]+)\s+(\d+)\s+([-0-9.]+)\s*$/
       output[:hosts] ||= {}
       output[:hosts][$4] ||= {}
