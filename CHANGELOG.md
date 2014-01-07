@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of cookbook-openstack-object-storage.
 
+## 7.1.1:
+* Update ring_script.rb to handle more recent versions
+  of swift-ring-builder that may contain replication
+  ip addresses and ports (LP#1266922)
+
 ## 7.1.0:
 * Update apt sources to grizzly to prepare for grizzly
   and havana branches
