@@ -237,19 +237,7 @@ Standalone Proxy Server
 Testing
 =======
 
-This cookbook is using [ChefSpec](https://github.com/acrmp/chefspec) for testing. Run the following before commiting. It will run your tests, and check for lint errors.
-
-    $ ./run_tests.bash
-
-There is also a Vagrant test environment that you can launch in order to integration
-test this cookbook. See the <a href="tests/README.md" target="_blank">tests/README.md</a> file for more information on launching the environment.
-
-Testing
-=======
-
-    $ bundle install
-    $ bundle exec berks install
-    $ bundle exec strainer test
+Please refer to the [TESTING.md](TESTING.md) for instructions for testing the cookbook.
 
 License and Author
 ==================
