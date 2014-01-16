@@ -2,6 +2,6 @@
 LineLength:
   Enabled: false
 
-# %w or %W have not generally been used in attribute files
+# Allow small arrays before forcing  %w or %W
 WordArray:
-  Enabled: false
+  MinSize: 3
