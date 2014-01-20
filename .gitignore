@@ -6,3 +6,4 @@ cookbooks/
 .cookbooks
 .vagrant
 *.swp
+Berksfile.lock
