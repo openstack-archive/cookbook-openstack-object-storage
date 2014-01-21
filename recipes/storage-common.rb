@@ -1,3 +1,4 @@
+# encoding: UTF-8
 #
 # Cookbook Name:: swift
 # Recipe:: storage-common
@@ -17,24 +18,24 @@
 # limitations under the License.
 #
 
-include_recipe "openstack-object-storage::rsync"
+include_recipe 'openstack-object-storage::rsync'
 
-template "/etc/swift/drive-audit.conf" do
-  source "drive-audit.conf.erb"
-  owner "swift"
-  group "swift"
-  mode "0600"
+template '/etc/swift/drive-audit.conf' do
+  source 'drive-audit.conf.erb'
+  owner 'swift'
+  group 'swift'
+  mode '0600'
 end
 
-cron "drive-audit" do
-  hour node["swift"]["audit_hour"]
-  minute "10"
-  command "swift-drive-audit /etc/swift/drive-audit.conf"
+cron 'drive-audit' do
+  hour node['swift']['audit_hour']
+  minute '10'
+  command 'swift-drive-audit /etc/swift/drive-audit.conf'
 end
 
-directory "/var/cache/swift" do
-  group "swift"
-  owner "swift"
+directory '/var/cache/swift' do
+  group 'swift'
+  owner 'swift'
   recursive true
   action :create
   mode 00700

@@ -1,3 +1,4 @@
+# encoding: UTF-8
 #
 # Cookbook Name:: swift
 # Recipe:: memcached
@@ -17,4 +18,4 @@
 # limitations under the License.
 #
 
-include_recipe "memcached"
+include_recipe 'memcached'

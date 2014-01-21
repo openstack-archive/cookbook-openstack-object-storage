@@ -1,3 +1,4 @@
+# encoding: UTF-8
 #
 # Cookbook Name:: swift
 # Recipe:: rsync
@@ -17,69 +18,70 @@
 # limitations under the License.
 #
 
-platform_options = node["swift"]["platform"]
+platform_options = node['swift']['platform']
 
-platform_options["rsync_packages"].each do |pkg|
+platform_options['rsync_packages'].each do |pkg|
   package pkg do
     action :install
-    options platform_options["override_options"]
+    options platform_options['override_options']
   end
 end
 
 # epel/f-17 broken: https://bugzilla.redhat.com/show_bug.cgi?id=737710
-cookbook_file "/etc/systemd/system/rsync.service" do
-  owner "root"
-  group "root"
-  mode "0644"
-  source "rsync.service"
+cookbook_file '/etc/systemd/system/rsync.service' do
+  owner 'root'
+  group 'root'
+  mode '0644'
+  source 'rsync.service'
   action :create
-  only_if { platform?(%w{fedora}) }
+  only_if { platform?('fedora') }
 end
 
 # rhel based systems install rsync and run it with rsync.  We don't want to do that
-cookbook_file "/etc/init.d/rsyncd" do
-  owner "root"
-  group "root"
-  mode "0755"
-  source "rsync.init"
+cookbook_file '/etc/init.d/rsyncd' do
+  owner 'root'
+  group 'root'
+  mode '0755'
+  source 'rsync.init'
   action :create
-  only_if { platform?(%w{centos redhat scientific}) }
+  only_if { platform?('centos', 'redhat', 'scientific') }
 end
 
 # FIXME: chicken and egg
-case node["platform"]
-when "centos","redhat","fedora"
+case node['platform']
+when 'centos', 'redhat', 'fedora'
   # enable rsyncd
-  rsync_servicename = "rsyncd"
-  service "rsyncd" do
-    supports :status => false, :restart => true, :start => true, :stop => true
-    action [ :enable, :start ]
-    only_if "[ -f /etc/rsyncd.conf ]"
+  rsync_servicename = 'rsyncd'
+  service 'rsyncd' do
+    supports status: false, restart: true, start: true, stop: true
+    action [:enable, :start]
+    only_if '[ -f /etc/rsyncd.conf ]'
   end
   # disable rsync (the one via xinetd)
-  service "rsync" do
-    supports :status => false, :restart => false, :start => false, :stop => false
-    action [ :disable ]
+  service 'rsync' do
+    supports status: false, restart: false, start: false, stop: false
+    action [:disable]
   end
-when "ubuntu","debian"
-  rsync_servicename = "rsync"
-  service "rsync" do
-    supports :status => false, :restart => true
-    action [ :enable, :start ]
-    only_if "[ -f /etc/rsyncd.conf ]"
+when 'ubuntu', 'debian'
+  rsync_servicename = 'rsync'
+  service 'rsync' do
+    supports status: false, restart: true
+    action [:enable, :start]
+    only_if '[ -f /etc/rsyncd.conf ]'
   end
 end
 
-template "/etc/rsyncd.conf" do
-  source "rsyncd.conf.erb"
-  mode "0644"
+template '/etc/rsyncd.conf' do
+  source 'rsyncd.conf.erb'
+  mode '0644'
   notifies :restart, "service[#{rsync_servicename}]", :immediately
 end
 
-execute "enable rsync" do
+execute 'enable rsync' do
   command "sed -i 's/RSYNC_ENABLE=false/RSYNC_ENABLE=true/' /etc/default/rsync"
   only_if "grep -q 'RSYNC_ENABLE=false' /etc/default/rsync"
-  notifies :restart, "service[rsync]", :immediately
+  notifies :restart, 'service[rsync]', :immediately
   action :run
-  not_if { platform?(%w{fedora centos redhat scientific}) }
+  # TODO(chrislaco) Convert these to platform_family?
+  not_if { platform?('fedora', 'centos', 'redhat', 'scientific') }
 end
