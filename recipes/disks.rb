@@ -1,3 +1,4 @@
+# encoding: UTF-8
 #
 # Cookbook Name:: swift
 # Recipe:: disks
@@ -24,10 +25,9 @@ class Chef::Recipe
   include DriveUtils
 end
 
+platform_options = node['swift']['platform']
 
-platform_options = node["swift"]["platform"]
-
-package "xfsprogs" do
+package 'xfsprogs' do
   action :install
   only_if { platform?(%w{ubuntu debian fedora centos}) }
 end
@@ -38,14 +38,14 @@ end
   end
 end
 
-disk_enum_expr = node["swift"]["disk_enum_expr"]
-disk_test_filter = node["swift"]["disk_test_filter"]
+disk_enum_expr = node['swift']['disk_enum_expr']
+disk_test_filter = node['swift']['disk_test_filter']
 
 disks = locate_disks(disk_enum_expr, disk_test_filter)
 
 disks.each do |disk|
   openstack_object_storage_disk "/dev/#{disk}" do
-    part [{:type => platform_options["disk_format"] , :size => :remaining}]
+    part [{ type: platform_options['disk_format'] , size: :remaining }]
     action :ensure_exists
   end
 end
@@ -55,13 +55,12 @@ end
 #
 # additionally, there is an implicit assumption that bind ports
 # for all object/container/account services are on the same net
-disk_ip = locate_ip_in_cidr(node["swift"]["network"]["object-cidr"], node)
+disk_ip = locate_ip_in_cidr(node['swift']['network']['object-cidr'], node)
 
-openstack_object_storage_mounts "/srv/node" do
+openstack_object_storage_mounts '/srv/node' do
   action :ensure_exists
-  publish_attributes "swift/state/devs"
-  devices disks.collect { |x| "#{x}1" }
+  publish_attributes 'swift/state/devs'
+  devices disks.map { |x| "#{x}1" }
   ip disk_ip
-  format platform_options["disk_format"]
+  format platform_options['disk_format']
 end
-

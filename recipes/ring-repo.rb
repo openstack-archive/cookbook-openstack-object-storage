@@ -1,3 +1,4 @@
+# encoding: UTF-8
 #
 # Cookbook Name:: swift
 # Recipe:: ring-repo
@@ -21,129 +22,130 @@
 # for purposes of ring synchronization
 #
 
-platform_options = node["swift"]["platform"]
-ring_options = node["swift"]["ring"]
+platform_options = node['swift']['platform']
+ring_options = node['swift']['ring']
 
-platform_options["git_packages"].each do |pkg|
+platform_options['git_packages'].each do |pkg|
   package pkg do
     action :install
   end
 end
 
-service "xinetd" do
-  supports :status => false, :restart => true
-  action [ :enable, :start ]
-  only_if { platform?(%w{centos redhat fedora}) }
+service 'xinetd' do
+  supports status: false, restart: true
+  action [:enable, :start]
+  only_if { platform?('cento', 'redhat', 'fedora') }
 end
 
-execute "create empty git repo" do
-  cwd "/tmp"
+execute 'create empty git repo' do
+  cwd '/tmp'
   umask 022
   command "mkdir $$; cd $$; git init; echo \"backups\" \> .gitignore; git add .gitignore; git commit -m 'initial commit' --author='chef <chef@openstack>'; git push file:///#{platform_options["git_dir"]}/rings master"
-  user "swift"
+  user 'swift'
   action :nothing
 end
 
-directory "git-directory" do
+directory 'git-directory' do
   path "#{platform_options["git_dir"]}/rings"
-  owner "swift"
-  group "swift"
-  mode "0755"
+  owner 'swift'
+  group 'swift'
+  mode '0755'
   recursive true
   action :create
 end
 
-execute "initialize git repo" do
+execute 'initialize git repo' do
   cwd "#{platform_options["git_dir"]}/rings"
   umask 022
-  user "swift"
-  command "git init --bare && touch git-daemon-export-ok"
+  user 'swift'
+  command 'git init --bare && touch git-daemon-export-ok'
   creates "#{platform_options["git_dir"]}/rings/config"
   action :run
-  notifies :run, "execute[create empty git repo]", :immediately
+  notifies :run, 'execute[create empty git repo]', :immediately
 end
 
 # epel/f-17 missing systemd-ified inits
 # https://bugzilla.redhat.com/show_bug.cgi?id=737183
-template "/etc/systemd/system/git.service" do
-  owner "root"
-  group "root"
-  mode "0644"
-  source "simple-systemd-config.erb"
-  variables({ :description => "Git daemon service",
-              :user => "nobody",
-              :exec => "/usr/libexec/git-core/git-daemon " +
-              "--base-path=/var/lib/git --export-all --user-path=public_git" +
-              "--syslog --verbose"
-            })
-  only_if { platform?(%w{fedora}) }
+template '/etc/systemd/system/git.service' do
+  owner 'root'
+  group 'root'
+  mode '0644'
+  source 'simple-systemd-config.erb'
+  variables(
+    description: 'Git daemon service',
+    user: 'nobody',
+    exec: '/usr/libexec/git-core/git-daemon ' +
+             '--base-path=/var/lib/git --export-all --user-path=public_git' +
+             '--syslog --verbose'
+  )
+  only_if { platform?('fedora') }
 end
 
-case node["platform"]
-when "centos","redhat","fedora"
-  service "git-daemon" do
-    service_name platform_options["git_service"]
-    action [ :enable ]
+case node['platform']
+when 'centos', 'redhat', 'fedora'
+  service 'git-daemon' do
+    service_name platform_options['git_service']
+    action [:enable]
   end
-when "ubuntu","debian"
-  service "git-daemon" do
-    service_name platform_options["git_service"]
-    action [ :enable, :start ]
+when 'ubuntu', 'debian'
+  service 'git-daemon' do
+    service_name platform_options['git_service']
+    action [:enable, :start]
   end
 end
 
-cookbook_file "/etc/default/git-daemon" do
-  owner "root"
-  group "root"
-  mode "644"
-  source "git-daemon.default"
+cookbook_file '/etc/default/git-daemon' do
+  owner 'root'
+  group 'root'
+  mode '644'
+  source 'git-daemon.default'
   action :create
-  notifies :restart, "service[git-daemon]", :immediately
-  not_if { platform?(%w{fedora centos redhat}) }
+  notifies :restart, 'service[git-daemon]', :immediately
+  not_if { platform?('fedora', 'cento', 'redhat') }
 end
 
-directory "/etc/swift/ring-workspace" do
-  owner "swift"
-  group "swift"
-  mode "0755"
+directory '/etc/swift/ring-workspace' do
+  owner 'swift'
+  group 'swift'
+  mode '0755'
   action :create
 end
 
-execute "checkout-rings" do
-  cwd "/etc/swift/ring-workspace"
+execute 'checkout-rings' do
+  cwd '/etc/swift/ring-workspace'
   command "git clone file://#{platform_options["git_dir"]}/rings"
-  user "swift"
-  creates "/etc/swift/ring-workspace/rings"
+  user 'swift'
+  creates '/etc/swift/ring-workspace/rings'
 end
 
-[ "account", "container", "object" ].each do |ring_type|
+['account', 'container', 'object'].each do |ring_type|
 
-  part_power = ring_options["part_power"]
-  min_part_hours = ring_options["min_part_hours"]
-  replicas = ring_options["replicas"]
+  part_power = ring_options['part_power']
+  min_part_hours = ring_options['min_part_hours']
+  replicas = ring_options['replicas']
 
   Chef::Log.info("Building initial ring #{ring_type} using part_power=#{part_power}, " +
                  "min_part_hours=#{min_part_hours}, replicas=#{replicas}")
   execute "add #{ring_type}.builder" do
-    cwd "/etc/swift/ring-workspace/rings"
+    cwd '/etc/swift/ring-workspace/rings'
     command "git add #{ring_type}.builder && git commit -m 'initial ring builders' --author='chef <chef@openstack>'"
-    user "swift"
+    user 'swift'
     action :nothing
   end
 
   execute "create #{ring_type} builder" do
-    cwd "/etc/swift/ring-workspace/rings"
+    cwd '/etc/swift/ring-workspace/rings'
     command "swift-ring-builder #{ring_type}.builder create #{part_power} #{replicas} #{min_part_hours}"
-    user "swift"
+    user 'swift'
     creates "/etc/swift/ring-workspace/rings/#{ring_type}.builder"
     notifies :run, "execute[add #{ring_type}.builder]", :immediate
   end
 end
 
-bash "rebuild-rings" do
+bash 'rebuild-rings' do
   action :nothing
-  cwd "/etc/swift/ring-workspace/rings"
-  user "swift"
+  cwd '/etc/swift/ring-workspace/rings'
+  user 'swift'
   code <<-EOF
     set -x
 
@@ -172,12 +174,11 @@ bash "rebuild-rings" do
   EOF
 end
 
-openstack_object_storage_ring_script "/etc/swift/ring-workspace/generate-rings.sh" do
-  owner "swift"
-  group "swift"
-  mode "0700"
-  ring_path "/etc/swift/ring-workspace/rings"
+openstack_object_storage_ring_script '/etc/swift/ring-workspace/generate-rings.sh' do
+  owner 'swift'
+  group 'swift'
+  mode '0700'
+  ring_path '/etc/swift/ring-workspace/rings'
   action :ensure_exists
-  notifies :run, "bash[rebuild-rings]", :immediate
+  notifies :run, 'bash[rebuild-rings]', :immediate
 end
-
