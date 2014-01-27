@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: swift
+# Cookbook Name:: openstack-object-storage
 # Library:: drive_utils
 #
 # Copyright 2012, Rackspace US, Inc.

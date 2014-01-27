@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #
-# Cookbook Name:: swift
+# Cookbook Name:: openstack-object-storage
 # Recipe:: swift-common
 #
 # Copyright 2012, Rackspace US, Inc.

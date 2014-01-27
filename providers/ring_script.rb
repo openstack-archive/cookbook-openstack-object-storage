@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: swift
+# Cookbook Name:: openstack-object-storage
 # Resource:: ring_script
 #
 # Copyright 2012, Rackspace US, Inc.

@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: swift
+# Cookbook Name:: openstack-object-storage
 # Library:: ip_utils
 #
 # Copyright 2013, ATT Inc.
