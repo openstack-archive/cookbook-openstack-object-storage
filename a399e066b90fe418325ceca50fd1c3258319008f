@@ -1,0 +1,11 @@
+Verified+2: Jenkins
+Approved+1: John Dewey <john@dewey.ws>
+Code-Review+2: John Dewey <john@dewey.ws>
+Code-Review+2: Justin Shepherd <jshepher@rackspace.com>
+Code-Review+1: Andy McCrae <andy.mccrae@googlemail.com>
+Code-Review+1: Alan Meadows <alan.meadows@gmail.com>
+Submitted-by: Jenkins
+Submitted-at: Fri, 31 Jan 2014 06:00:32 +0000
+Reviewed-on: https://review.openstack.org/69741
+Project: stackforge/cookbook-openstack-object-storage
+Branch: refs/heads/master
