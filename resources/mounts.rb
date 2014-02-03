@@ -19,43 +19,40 @@
 # Author: Ron Pedde <ron.pedde@rackspace.com>
 #
 
-=begin
-  Ensure that swift mounts are strongly enforced.  This
-  will ensure specified drives are mounted, and unspecified
-  drives are not mounted.  In addition, if there is a stale
-  mountpoint (from disk failure, maybe?), then that mountpoint
-  will try to be unmounted
+# Ensure that swift mounts are strongly enforced.  This
+# will ensure specified drives are mounted, and unspecified
+# drives are not mounted.  In addition, if there is a stale
+# mountpoint (from disk failure, maybe?), then that mountpoint
+# will try to be unmounted
+#
+# Sample use:
+#
+# openstack_object_storage_mounts '/srv/node' do
+#   devices [ 'sdb1', 'sdc1' ]
+#   action :ensure_exists
+#   ip '10.1.1.1'
+# end
 
-  Sample use:
+# It will force mounts based on fs uuid (mangled to remove
+# dashes) and return a structure that describes the disks
+# mounted.
 
-  openstack_object_storage_mounts "/srv/node" do
-     devices [ "sdb1", "sdc1" ]
-     action :ensure_exists
-     ip "10.1.1.1"
-  end
+# As this is expected to be consumed for the purposes of
+# swift, the ip address should be the address that gets
+# embedded into the ring (i.e. the listen port of the storage server)
 
-  It will force mounts based on fs uuid (mangled to remove
-  dashes) and return a structure that describes the disks
-  mounted.
+# Example return structure:
 
-  As this is expected to be consumed for the purposes of
-  swift, the ip address should be the address that gets
-  embedded into the ring (i.e. the listen port of the storage server)
-
-  Example return structure:
-
-  { "2a9452c5-d929-43d9-9631-4340ace45279": {
-      "device": "sdb1",
-      "ip": "10.1.1.1",
-      "mounted": "true",
-      "mountpoint": "2a9452c5d92943d996314340ace45279",
-      "size": 1022 (in 1k increments)
-      "uuid": "2a9452c5-d929-43d9-9631-4340ace45279"
-    },
-    ...
-  }
-
-=end
+# { '2a9452c5-d929-43d9-9631-4340ace45279': {
+#     'device': 'sdb1',
+#     'ip': '10.1.1.1',
+#     'mounted': 'true',
+#     'mountpoint': '2a9452c5d92943d996314340ace45279',
+#     'size': 1022 (in 1k increments)
+#     'uuid': '2a9452c5-d929-43d9-9631-4340ace45279'
+#   },
+#   ...
+# }
 
 actions :ensure_exists
 
@@ -64,8 +61,8 @@ def initialize(*args)
   @action = :ensure_exists
 end
 
-attribute :name,               :kind_of => String
-attribute :devices,            :kind_of => Array
-attribute :ip,                 :kind_of => String, :default => "127.0.0.1"
-attribute :publish_attributes, :kind_of => String, :default => nil
-attribute :format,             :kind_of => String, :default => "xfs"
+attribute :name,               kind_of: String
+attribute :devices,            kind_of: Array
+attribute :ip,                 kind_of: String, default: '127.0.0.1'
+attribute :publish_attributes, kind_of: String, default: nil
+attribute :format,             kind_of: String, default: 'xfs'

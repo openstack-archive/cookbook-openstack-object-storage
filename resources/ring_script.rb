@@ -1,3 +1,4 @@
+# encoding: UTF-8
 #
 # Copyright 2012, Rackspace US, Inc.
 #
@@ -16,19 +17,16 @@
 # Author: Ron Pedde <ron.pedde@rackspace.com>
 #
 
-=begin
-  Build a proposed ring-building script
-  Sample use:
-
-  openstack_object_storage_ring_script "/tmp/build-rings.sh" do
-     owner "root"
-     group "swift"
-     mode "0700"
-     ring_path "/etc/swift/ring-workspace"
-     action :ensure_exists
-  end
-
-=end
+# Build a proposed ring-building script
+# Sample use:
+#
+# openstack_object_storage_ring_script '/tmp/build-rings.sh' do
+#  owner 'root'
+#  group 'swift'
+#  mode '0700'
+#  ring_path '/etc/swift/ring-workspace'
+#  action :ensure_exists
+# end
 
 actions :ensure_exists
 
@@ -37,8 +35,8 @@ def initialize(*args)
   @action = :ensure_exists
 end
 
-attribute :name,                   :kind_of => String
-attribute :owner,                  :kind_of => String, :default => "root"
-attribute :group,                  :kind_of => String, :default => "root"
-attribute :mode,                   :kind_of => String, :default => "0600"
-attribute :ring_path,              :kind_of => String, :default => "/etc/swift"
+attribute :name,      kind_of: String
+attribute :owner,     kind_of: String, default: 'root'
+attribute :group,     kind_of: String, default: 'root'
+attribute :mode,      kind_of: String, default: '0600'
+attribute :ring_path, kind_of: String, default: '/etc/swift'

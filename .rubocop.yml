@@ -5,9 +5,9 @@ AllCops:
     - attributes/**
     - providers/**
     - recipes/**
+    - resources/**
   Excludes:
     - libraries/**
-    - resources/**
     - spec/**
 
 Encoding:
