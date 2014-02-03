@@ -74,8 +74,8 @@ template '/etc/systemd/system/git.service' do
   variables(
     description: 'Git daemon service',
     user: 'nobody',
-    exec: '/usr/libexec/git-core/git-daemon ' +
-             '--base-path=/var/lib/git --export-all --user-path=public_git' +
+    exec: '/usr/libexec/git-core/git-daemon ' \
+             '--base-path=/var/lib/git --export-all --user-path=public_git' \
              '--syslog --verbose'
   )
   only_if { platform?('fedora') }
