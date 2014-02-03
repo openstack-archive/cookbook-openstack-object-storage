@@ -1,3 +1,4 @@
+# encoding: UTF-8
 #
 # Copyright 2011, Dell
 #
@@ -16,18 +17,16 @@
 # Author: andi abes
 #
 
-=begin
-  Ensure that a disk's partition table matches expectations.
-  Sample use:
-
-  openstack_object_storage_disk "/dev/sdb" do
-    part(
-       {[:type => "xfs", :size =>swift_disk::ONE_GIG*4 ],
-        [:type => "xfs", :size =>swift_disk::remaining})
-     action :ensure_exists
-  end
-
-=end
+# Ensure that a disk's partition table matches expectations.
+# Sample use:
+#
+# openstack_object_storage_disk '/dev/sdb' do
+#   part([
+#     { type: "xfs", size: swift_disk::ONE_GIG*4 },
+#     { type: "xfs", size: swift_disk::remaining }
+#    ])
+#   action :ensure_exists
+# end
 
 actions :ensure_exists
 
@@ -36,9 +35,9 @@ def initialize(*args)
   @action = :ensure_exists
 end
 
-attribute :name,   :kind_of => String
-attribute :size,   :kind_of => Integer
-attribute :blocks, :kind_of => Integer
-attribute :device, :kind_of => String
-attribute :part,   :kind_of => Array
-attribute :status, :kind_of => Symbol
+attribute :name,   kind_of: String
+attribute :size,   kind_of: Integer
+attribute :blocks, kind_of: Integer
+attribute :device, kind_of: String
+attribute :part,   kind_of: Array
+attribute :status, kind_of: Symbol
