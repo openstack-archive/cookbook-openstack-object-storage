@@ -20,7 +20,7 @@
 # Author: Ron Pedde <ron.pedde@rackspace.com>
 # Inspired by: Andi Abes @ Dell
 
-class Chef::Recipe
+class Chef::Recipe # rubocop:disable Documentation
   include IPUtils
   include DriveUtils
 end
