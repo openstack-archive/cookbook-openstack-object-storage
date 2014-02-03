@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require_relative 'spec_helper'
 
 describe 'openstack-object-storage::common' do
@@ -6,90 +7,88 @@ describe 'openstack-object-storage::common' do
   # UBUNTU
   #-------------------
 
-  describe "ubuntu" do
+  describe 'ubuntu' do
 
     before do
       swift_stubs
       @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
-      @node.set['platform_family'] = "debian"
-      @node.set['lsb']['codename'] = "precise"
-      @node.set['swift']['release'] = "havana"
+      @node.set['platform_family'] = 'debian'
+      @node.set['lsb']['codename'] = 'precise'
+      @node.set['swift']['release'] = 'havana'
       @node.set['swift']['authmode'] = 'swauth'
       @node.set['swift']['git_builder_ip'] = '10.0.0.10'
 
       # TODO: this does not work
-      # ::Chef::Log.should_receive(:info).with("chefspec: precise-updates/havana")
+      # ::Chef::Log.should_receive(:info).with('chefspec: precise-updates/havana')
 
-      @chef_run.converge "openstack-object-storage::common"
+      @chef_run.converge 'openstack-object-storage::common'
     end
-
 
     it 'should set syctl paramaters' do
       # N.B. we could examine chef log
-      pending "TODO: right now theres no way to do lwrp and test for this"
+      pending 'TODO: right now theres no way to do lwrp and test for this'
     end
 
     it 'installs git package for ring management' do
-      expect(@chef_run).to install_package "git"
+      expect(@chef_run).to install_package 'git'
     end
 
-    describe "/etc/swift" do
+    describe '/etc/swift' do
 
       before do
-        @file = @chef_run.directory "/etc/swift"
+        @file = @chef_run.directory '/etc/swift'
       end
 
-      it "has proper owner" do
-        expect(@file.owner).to eq("swift")
-        expect(@file.group).to eq("swift")
+      it 'has proper owner' do
+        expect(@file.owner).to eq('swift')
+        expect(@file.group).to eq('swift')
       end
 
-      it "has proper modes" do
-        expect(sprintf("%o", @file.mode)).to eq "700"
-      end
-
-    end
-
-    describe "/etc/swift/swift.conf" do
-
-      before do
-        @file = @chef_run.file "/etc/swift/swift.conf"
-      end
-
-      it "has proper owner" do
-        expect(@file.owner).to eq("swift")
-        expect(@file.group).to eq("swift")
-      end
-
-      it "has proper modes" do
-        expect(sprintf("%o", @file.mode)).to eq "700"
+      it 'has proper modes' do
+        expect(sprintf('%o', @file.mode)).to eq '700'
       end
 
     end
 
-    describe "/etc/swift/pull-rings.sh" do
+    describe '/etc/swift/swift.conf' do
 
       before do
-        @file = @chef_run.template "/etc/swift/pull-rings.sh"
+        @file = @chef_run.file '/etc/swift/swift.conf'
       end
 
-      it "has proper owner" do
-        expect(@file.owner).to eq("swift")
-        expect(@file.group).to eq("swift")
+      it 'has proper owner' do
+        expect(@file.owner).to eq('swift')
+        expect(@file.group).to eq('swift')
       end
 
-      it "has proper modes" do
-        expect(sprintf("%o", @file.mode)).to eq "700"
+      it 'has proper modes' do
+        expect(sprintf('%o', @file.mode)).to eq '700'
       end
 
-      it "template contents" do
-        pending "TODO: implement"
+    end
+
+    describe '/etc/swift/pull-rings.sh' do
+
+      before do
+        @file = @chef_run.template '/etc/swift/pull-rings.sh'
+      end
+
+      it 'has proper owner' do
+        expect(@file.owner).to eq('swift')
+        expect(@file.group).to eq('swift')
+      end
+
+      it 'has proper modes' do
+        expect(sprintf('%o', @file.mode)).to eq '700'
+      end
+
+      it 'template contents' do
+        pending 'TODO: implement'
       end
 
     end
 
   end
-
 
 end
