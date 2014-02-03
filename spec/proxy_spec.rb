@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require_relative 'spec_helper'
 
 describe 'openstack-object-storage::proxy-server' do
@@ -6,7 +7,7 @@ describe 'openstack-object-storage::proxy-server' do
   # UBUNTU
   #--------------
 
-  describe "ubuntu" do
+  describe 'ubuntu' do
 
     before do
       swift_stubs
@@ -18,42 +19,42 @@ describe 'openstack-object-storage::proxy-server' do
       @node.set['swift']['swauth_source'] = 'package'
       @node.set['swift']['network']['proxy-bind-ip'] = '10.0.0.1'
       @node.set['swift']['network']['proxy-bind-port'] = '8080'
-      @chef_run.converge "openstack-object-storage::proxy-server"
+      @chef_run.converge 'openstack-object-storage::proxy-server'
     end
 
-    it "installs memcache python packages" do
-      expect(@chef_run).to install_package "python-memcache"
+    it 'installs memcache python packages' do
+      expect(@chef_run).to install_package 'python-memcache'
     end
 
-    it "installs swift packages" do
-      expect(@chef_run).to install_package "swift-proxy"
+    it 'installs swift packages' do
+      expect(@chef_run).to install_package 'swift-proxy'
     end
 
-    it "installs swauth package if swauth is selected" do
-      expect(@chef_run).to install_package "swauth"
+    it 'installs swauth package if swauth is selected' do
+      expect(@chef_run).to install_package 'swauth'
     end
 
-    it "starts swift-proxy on boot" do
-     expect(@chef_run).to enable_service("swift-proxy")
+    it 'starts swift-proxy on boot' do
+      expect(@chef_run).to enable_service('swift-proxy')
     end
 
-    describe "/etc/swift/proxy-server.conf" do
+    describe '/etc/swift/proxy-server.conf' do
 
       before do
-        @file = @chef_run.template "/etc/swift/proxy-server.conf"
+        @file = @chef_run.template '/etc/swift/proxy-server.conf'
       end
 
-      it "has proper owner" do
-        expect(@file.owner).to eq("swift")
-        expect(@file.group).to eq("swift")
+      it 'has proper owner' do
+        expect(@file.owner).to eq('swift')
+        expect(@file.group).to eq('swift')
       end
 
-      it "has proper modes" do
-        expect(sprintf("%o", @file.mode)).to eq "600"
+      it 'has proper modes' do
+        expect(sprintf('%o', @file.mode)).to eq '600'
       end
 
-      it "template contents" do
-        pending "TODO: implement"
+      it 'template contents' do
+        pending 'TODO: implement'
       end
 
     end
