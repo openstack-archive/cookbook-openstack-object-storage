@@ -1,3 +1,4 @@
+# encoding: UTF-8
 #
 # Cookbook Name:: openstack-object-storage
 # Library:: ip_utils
@@ -19,20 +20,20 @@
 # Author: Alan Meadows <alan.meadows@gmail.com>
 #
 
-require "ipaddr"
+require 'ipaddr'
 
+# IPAddress Related Utilities
 module IPUtils
-  def locate_ip_in_cidr(network, node)
+  # TODO(chrislaco) This needs yanked/refactored into common/libraries/network
+  def locate_ip_in_cidr(network, node) # rubocop:disable MethodLength
     Chef::Log.debug("Searching for ip within #{network} on node #{node.name}")
     net = IPAddr.new(network)
-    node["network"]["interfaces"].each do |interface|
-      if interface[1].has_key?("addresses") then
-        interface[1]["addresses"].each do |k,v|
-          if v["family"] == "inet6" or (v["family"] == "inet" and v["prefixlen"] != "32") then
-            addr=IPAddr.new(k)
-            if net.include?(addr) then
-              return k
-            end
+    node['network']['interfaces'].each do |interface|
+      if interface[1].key?('addresses')
+        interface[1]['addresses'].each do |k, v|
+          if v['family'] == 'inet6' || (v['family'] == 'inet' && v['prefixlen'] != '32')
+            addr = IPAddr.new(k)
+            return k if net.include?(addr)
           end
         end
       end
@@ -40,6 +41,6 @@ module IPUtils
 
     error = "Can't find address within network #{network} for node #{node.name}"
     Chef::Log.error(error)
-    raise error
+    fail error
   end
 end

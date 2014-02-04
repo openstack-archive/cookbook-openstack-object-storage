@@ -3,12 +3,11 @@ AllCops:
     - metadata.rb
     - Gemfile
     - attributes/**
+    - libraries/**
     - providers/**
     - recipes/**
     - resources/**
     - spec/**
-  Excludes:
-    - libraries/**
 
 Encoding:
     Exclude:
