@@ -13,6 +13,7 @@ describe 'openstack-object-storage::proxy-server' do
       swift_stubs
       @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
+      @node.set['cpu']['total'] = 6
       @node.set['lsb']['code'] = 'precise'
       @node.set['swift']['authmode'] = 'swauth'
       @node.set['swift']['platform']['swauth_packages'] = ['swauth']
@@ -53,12 +54,100 @@ describe 'openstack-object-storage::proxy-server' do
         expect(sprintf('%o', @file.mode)).to eq '600'
       end
 
-      it 'template contents' do
-        pending 'TODO: implement'
+      it 'has proper pipeline in template' do
+        array = [
+          /^pipeline = catch_errors healthcheck cache ratelimit swauth proxy-logging proxy-server$/,
+          /^workers = 5$/
+        ]
+        array.each do |content|
+          expect(@chef_run).to render_file(@file.name).with_content(content)
+        end
+      end
+    end
+
+    describe '/etc/swift/proxy-server.conf with domain_remap enabled' do
+
+      before do
+        @node = @chef_run.node
+        @node.set['swift']['domain_remap']['enabled'] = true
+        @chef_run.converge 'openstack-object-storage::proxy-server'
+        @file = @chef_run.template '/etc/swift/proxy-server.conf'
       end
 
+      it 'has proper pipeline in template' do
+        array = [
+          /^pipeline = catch_errors healthcheck cache ratelimit domain_remap swauth proxy-logging proxy-server$/,
+          /^storage_domain = example.com$/,
+          /^path_root = v1$/,
+          /^reseller_prefixes = AUTH$/
+        ]
+        array.each do |content|
+          expect(@chef_run).to render_file(@file.name).with_content(content)
+        end
+      end
+    end
+
+    describe '/etc/swift/proxy-server.conf with formpost enabled' do
+
+      before do
+        @node = @chef_run.node
+        @node.set['swift']['formpost']['enabled'] = true
+        @chef_run.converge 'openstack-object-storage::proxy-server'
+        @file = @chef_run.template '/etc/swift/proxy-server.conf'
+      end
+
+      it 'has proper pipeline in template' do
+        array = [
+          /^pipeline = catch_errors healthcheck cache ratelimit formpost swauth proxy-logging proxy-server$/
+        ]
+        array.each do |content|
+          expect(@chef_run).to render_file(@file.name).with_content(content)
+        end
+      end
+    end
+
+    describe '/etc/swift/proxy-server.conf with staticweb enabled' do
+
+      before do
+        @node = @chef_run.node
+        @node.set['swift']['staticweb']['enabled'] = true
+        @chef_run.converge 'openstack-object-storage::proxy-server'
+        @file = @chef_run.template '/etc/swift/proxy-server.conf'
+      end
+
+      it 'has proper pipeline in template' do
+        array = [
+          /^pipeline = catch_errors healthcheck cache ratelimit swauth staticweb proxy-logging proxy-server$/,
+          /^cache_timeout = 300$/
+        ]
+        array.each do |content|
+          expect(@chef_run).to render_file(@file.name).with_content(content)
+        end
+      end
+    end
+
+    describe '/etc/swift/proxy-server.conf with tempurl enabled' do
+
+      before do
+        @node = @chef_run.node
+        @node.set['swift']['tempurl']['enabled'] = true
+        @chef_run.converge 'openstack-object-storage::proxy-server'
+        @file = @chef_run.template '/etc/swift/proxy-server.conf'
+      end
+
+      it 'has proper pipeline in template' do
+        array = [
+          /^pipeline = catch_errors healthcheck cache ratelimit tempurl swauth proxy-logging proxy-server$/,
+          /^incoming_remove_headers = x-timestamp$/,
+          /^incoming_allow_headers = $/,
+          'outgoing_remove_headers = x-object-meta-*',
+          'outgoing_allow_headers = x-object-meta-public-*'
+        ]
+        array.each do |content|
+          expect(@chef_run).to render_file(@file.name).with_content(content)
+        end
+      end
     end
 
   end
-
 end
