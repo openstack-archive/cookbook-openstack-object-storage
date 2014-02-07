@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of cookbook-openstack-object-storage.
 
+## 8.2.0:
+* Add support for several swift modules:
+  domain_remap, formpost
+
 ## 8.1.0
 * Add client recipe
 
