@@ -160,8 +160,71 @@ default['swift']['disk_test_filter'] = ['candidate =~ /(sd|hd|xvd|vd)(?!a$)[a-z]
 
 # proxy-server
 
-# override in a wrapper to enable tempurl with swauth
+# enable or disable formpos
+default['swift']['formpost']['enabled'] = false
+
+# enable or disable tempurl
 default['swift']['tempurl']['enabled'] = false
+
+# The headers to remove from incoming requests. Simply a whitespace delimited
+# list of header names and names can optionally end with '*' to indicate a
+# prefix match. incoming_allow_headers is a list of exceptions to these
+# removals.
+default['swift']['tempurl']['incoming_remove_headers'] = 'x-timestamp'
+
+# The headers allowed as exceptions to incoming_remove_headers. Simply a
+# whitespace delimited list of header names and names can optionally end with
+# '*' to indicate a prefix match.
+default['swift']['tempurl']['incoming_allow_headers'] = ''
+
+# The headers to remove from outgoing responses. Simply a whitespace delimited
+# list of header names and names can optionally end with '*' to indicate a
+# prefix match. outgoing_allow_headers is a list of exceptions to these
+# removals.
+default['swift']['tempurl']['outgoing_remove_headers'] = 'x-object-meta-*'
+
+# The headers allowed as exceptions to outgoing_remove_headers. Simply a
+# whitespace delimited list of header names and names can optionally end with
+# '*' to indicate a prefix match.
+default['swift']['tempurl']['outgoing_allow_headers'] = 'x-object-meta-public-*'
+
+# enable or disable domain_remap
+default["swift"]["domain_remap"]["enabled"] = false
+
+# enable domain log name
+default["swift"]["domain_remap"]["log_name"] = "domain_remap"
+
+# domain remap log facilty
+default["swift"]["domain_remap"]["log_facility"] = "LOG_LOCAL0"
+
+# domain remap log level
+default["swift"]["domain_remap"]["log_level"] = "INFO"
+
+# domain remap log headers
+default["swift"]["domain_remap"]["log_headers"] = "False"
+
+# domain remap reseller domain
+default["swift"]["domain_remap"]["storage_domain"] = "example.com"
+
+# domain remap root path
+default["swift"]["domain_remap"]["path_root"] = "v1"
+
+# domain remap reseller prefixes
+default["swift"]["domain_remap"]["reseller_prefixes"] = "AUTH"
+
+# whether or not to enable staticweb in the swift proxy
+default["swift"]["staticweb"]["enabled"] = false
+
+# Seconds to cache container x-container-meta-web-* header values.
+default["swift"]["staticweb"]["cache_timeout"] = 300
+
+# staticweb logging options
+default["swift"]["staticweb"]["log_facility"] = "LOG_LOCAL0"
+default["swift"]["staticweb"]["log_level"] = "INFO"
+default["swift"]["staticweb"]["access_log_name"] = "staticweb"
+default["swift"]["staticweb"]["access_log_facility"] = "LOG_LOCAL0"
+default["swift"]["staticweb"]["access_log_level"] = "INFO"
+default["swift"]["staticweb"]["log_headers"] = "False"
 
 # container-server
 
