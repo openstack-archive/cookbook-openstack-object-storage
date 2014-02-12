@@ -57,6 +57,12 @@ In really really huge environments, it's possible that the storage
 node will be split into swift-{container,accout}-server nodes and
 swift-object-server nodes.
 
+Recipes
+=======
+
+client
+----
+- Install the swift client packages
 
 Attributes
 ==========
@@ -259,6 +265,7 @@ License and Author
 | **Author**           |  Ron Pedde (<ron.pedde@rackspace.com>)             |
 | **Author**           |  Will Kelly (<will.kelly@rackspace.com>)           |
 | **Author**           |  Chen Zhiwei (<zhiwchen@cn.ibm.com>)               |
+| **Author**           |  Mark Vanderwiel (<vanderwl@us.ibm.com>)           |
 |                      |                                                    |
 | **Copyright**        |  Copyright (c) 2013, AT&T, Inc.                    |
 | **Copyright**        |  Copyright (c) 2012, Rackspace US, Inc.            |
