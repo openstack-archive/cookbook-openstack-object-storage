@@ -22,7 +22,7 @@ include_recipe 'openstack-object-storage::common'
 include_recipe 'openstack-object-storage::storage-common'
 include_recipe 'openstack-object-storage::disks'
 
-platform_options = node['swift']['platform']
+platform_options = node['openstack']['object-storage']['platform']
 
 platform_options['object_packages'].each do |pkg|
   package pkg do
@@ -89,8 +89,8 @@ template '/etc/swift/object-server.conf' do
   group 'swift'
   mode '0600'
   variables(
-    'bind_ip' => node['swift']['network']['object-bind-ip'],
-    'bind_port' => node['swift']['network']['object-bind-port']
+    'bind_ip' => node['openstack']['object-storage']['network']['object-bind-ip'],
+    'bind_port' => node['openstack']['object-storage']['network']['object-bind-port']
   )
 
   notifies :restart, 'service[swift-object]', :immediately

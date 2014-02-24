@@ -25,7 +25,7 @@ class Chef::Recipe # rubocop:disable Documentation
   include DriveUtils
 end
 
-platform_options = node['swift']['platform']
+platform_options = node['openstack']['object-storage']['platform']
 
 package 'xfsprogs' do
   action :install
@@ -38,8 +38,8 @@ end
   end
 end
 
-disk_enum_expr = node['swift']['disk_enum_expr']
-disk_test_filter = node['swift']['disk_test_filter']
+disk_enum_expr = node['openstack']['object-storage']['disk_enum_expr']
+disk_test_filter = node['openstack']['object-storage']['disk_test_filter']
 
 disks = locate_disks(disk_enum_expr, disk_test_filter)
 
@@ -55,7 +55,7 @@ end
 #
 # additionally, there is an implicit assumption that bind ports
 # for all object/container/account services are on the same net
-disk_ip = locate_ip_in_cidr(node['swift']['network']['object-cidr'], node)
+disk_ip = locate_ip_in_cidr(node['openstack']['object-storage']['network']['object-cidr'], node)
 
 openstack_object_storage_mounts '/srv/node' do
   action :ensure_exists

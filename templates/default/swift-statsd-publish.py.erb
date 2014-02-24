@@ -41,27 +41,27 @@ class OpenStackSwiftStatisticsCollector(object):
     def __init__(self):
         '''Setup some initial values defined by chef'''
 
-        self.statsd_host              = '<%= node[:swift][:statistics][:statsd_host] %>'
-        self.statsd_port              = <%= node[:swift][:statistics][:statsd_port] %>
-        self.statsd_prefix            = '<%= node[:swift][:statistics][:statsd_prefix] %>'
-<% if node[:swift][:statistics][:enable_dispersion_report] -%>
+        self.statsd_host              = '<%= node['openstack']['object-storage']['statistics']['statsd_host'] %>'
+        self.statsd_port              = <%= node['openstack']['object-storage']['statistics']['statsd_port'] %>
+        self.statsd_prefix            = '<%= node['openstack']['object-storage']['statistics']['statsd_prefix'] %>'
+<% if node['openstack']['object-storage']['statistics']['enable_dispersion_report'] -%>
         self.enable_dispersion_report = True
 <% else %>
         self.enable_dispersion_report = False
 <% end %>
-<% if node[:swift][:statistics][:enable_recon_report] -%>
+<% if node['openstack']['object-storage']['statistics']['enable_recon_report'] -%>
         self.enable_recon_report      = True
 <% else %>
         self.enable_recon_report      = False
 <% end %>
-<% if node[:swift][:statistics][:enable_disk_report] -%>
+<% if node['openstack']['object-storage']['statistics']['enable_disk_report'] -%>
         self.enable_disk_report       = True
 <% else %>
         self.enable_disk_report       = False
 <% end %>
-        self.recon_account_cache      = '<%= node[:swift][:statistics][:recon_account_cache] %>'
-        self.recon_container_cache    = '<%= node[:swift][:statistics][:recon_container_cache] %>'
-        self.recon_object_cache       = '<%= node[:swift][:statistics][:recon_object_cache] %>'
+        self.recon_account_cache      = '<%= node['openstack']['object-storage']['statistics']['recon_account_cache'] %>'
+        self.recon_container_cache    = '<%= node['openstack']['object-storage']['statistics']['recon_container_cache'] %>'
+        self.recon_object_cache       = '<%= node['openstack']['object-storage']['statistics']['recon_object_cache'] %>'
 
     def _dispersion_report(self):
         """

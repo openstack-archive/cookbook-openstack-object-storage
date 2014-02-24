@@ -22,7 +22,7 @@ include_recipe 'openstack-object-storage::common'
 include_recipe 'openstack-object-storage::storage-common'
 include_recipe 'openstack-object-storage::disks'
 
-platform_options = node['swift']['platform']
+platform_options = node['openstack']['object-storage']['platform']
 
 platform_options['container_packages'].each do |pkg|
   package pkg do
@@ -86,8 +86,8 @@ template '/etc/swift/container-server.conf' do
   group 'swift'
   mode '0600'
   variables(
-    'bind_ip' => node['swift']['network']['container-bind-ip'],
-    'bind_port' => node['swift']['network']['container-bind-port']
+    'bind_ip' => node['openstack']['object-storage']['network']['container-bind-ip'],
+    'bind_port' => node['openstack']['object-storage']['network']['container-bind-port']
   )
 
   notifies :restart, 'service[swift-container]', :immediately
@@ -114,7 +114,7 @@ if platform?('ubuntu')
 end
 
 service_name = platform_options['service_prefix'] + 'swift-container-sync' + platform_options['service_suffix']
-unless node['swift']['container-server']['allowed_sync_hosts'] == []
+unless node['openstack']['object-storage']['container-server']['allowed_sync_hosts'] == []
   service 'swift-container-sync' do
     service_name service_name
     provider platform_options['service_provider']

@@ -14,11 +14,11 @@ describe 'openstack-object-storage::account-server' do
       @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
       @node.set['lsb']['code'] = 'precise'
-      @node.set['swift']['authmode'] = 'swauth'
-      @node.set['swift']['network']['account-bind-ip'] = '10.0.0.1'
-      @node.set['swift']['network']['account-bind-port'] = '8080'
-      @node.set['swift']['disk_enum_expr'] = "[{ 'sda' => {}}]"
-      @node.set['swift']['disk_test_filter'] = ['candidate =~ /sd[^a]/ or candidate =~ /hd[^a]/ or candidate =~ /vd[^a]/ or candidate =~ /xvd[^a]/',
+      @node.set['openstack']['object-storage']['authmode'] = 'swauth'
+      @node.set['openstack']['object-storage']['network']['account-bind-ip'] = '10.0.0.1'
+      @node.set['openstack']['object-storage']['network']['account-bind-port'] = '8080'
+      @node.set['openstack']['object-storage']['disk_enum_expr'] = "[{ 'sda' => {}}]"
+      @node.set['openstack']['object-storage']['disk_test_filter'] = ['candidate =~ /sd[^a]/ or candidate =~ /hd[^a]/ or candidate =~ /vd[^a]/ or candidate =~ /xvd[^a]/',
                                                 "File.exist?('/dev/' + candidate)",
                                                 "not system('/sbin/parted /dev/' + candidate + ' -s print | grep linux-swap')",
                                                 "not info.has_key?('removable') or info['removable'] == 0.to_s"]

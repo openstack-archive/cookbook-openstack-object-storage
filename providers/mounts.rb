@@ -155,7 +155,7 @@ action :ensure_exists do
 
   if @new_resource.publish_attributes && dev_info != {}
     dev_info.each do |k, v|
-      node.set['swift']['state']['devs'][k] = {
+      node.set['openstack']['object-storage']['state']['devs'][k] = {
         device: v['device'],
         size: v['size'],
         uuid: v['uuid'],

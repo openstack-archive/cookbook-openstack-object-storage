@@ -28,7 +28,7 @@ template '/etc/swift/drive-audit.conf' do
 end
 
 cron 'drive-audit' do
-  hour node['swift']['audit_hour']
+  hour node['openstack']['object-storage']['audit_hour']
   minute '10'
   command 'swift-drive-audit /etc/swift/drive-audit.conf'
 end
