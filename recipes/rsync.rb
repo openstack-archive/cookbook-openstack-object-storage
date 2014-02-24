@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-platform_options = node['swift']['platform']
+platform_options = node['openstack']['object-storage']['platform']
 
 platform_options['rsync_packages'].each do |pkg|
   package pkg do

@@ -42,7 +42,7 @@ def generate_script
         # Chef::Log.debug("#{ which.capitalize } Ring data: #{ring_data[:raw][which]}")
         ring_data[:parsed][which] = parse_ring_output(ring_data[:raw][which])
 
-        node.set['swift']['state']['ring'][which] = ring_data[:parsed][which]
+        node.set['openstack']['object-storage']['state']['ring'][which] = ring_data[:parsed][which]
       end
     else
       Chef::Log.info("#{which.capitalize} ring builder files do not exist!")
@@ -64,7 +64,7 @@ def generate_script
 
     # figure out what's present in the cluster
     disk_data[which] = {}
-    role = node['swift']["#{which}_server_chef_role"]
+    role = node['openstack']['object-storage']["#{which}_server_chef_role"]
     disk_state, _, _ = Chef::Search::Query.new.search(:node, "chef_environment:#{node.chef_environment} AND roles:#{role}")
 
     # for a running track of available disks
@@ -102,7 +102,7 @@ def generate_script
   s = "#!/bin/bash\n\n# This script is automatically generated.\n"
   s << "# Running it will likely blow up your system if you don't review it carefully.\n"
   s << "# You have been warned.\n\n"
-  unless node['swift']['auto_rebuild_rings']
+  unless node['openstack']['object-storage']['auto_rebuild_rings']
     s << "if [ \"$1\" != \"--force\" ]; then\n"
     s << "  echo \"Auto rebuild rings is disabled, so you must use --force to generate rings\"\n"
     s << "  exit 0\n"
@@ -175,8 +175,8 @@ def generate_script
     end
 
     # we'll only rebalance if we meet the minimums for new adds
-    if node['swift'].key?('wait_for')
-      if node['swift']['wait_for'] > new_servers.count
+    if node['openstack']['object-storage'].key?('wait_for')
+      if node['openstack']['object-storage']['wait_for'] > new_servers.count
         Chef::Log.debug('New servers, but not enough to force a rebalance')
         must_rebalance = false
       end

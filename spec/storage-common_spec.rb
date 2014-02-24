@@ -14,7 +14,7 @@ describe 'openstack-object-storage::storage-common' do
       @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
       @node.set['lsb']['code'] = 'precise'
-      @node.set['swift']['authmode'] = 'swauth'
+      @node.set['openstack']['object-storage']['authmode'] = 'swauth'
       @chef_run.converge 'openstack-object-storage::storage-common'
     end
 
