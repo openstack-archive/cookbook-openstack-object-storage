@@ -15,9 +15,9 @@ describe 'openstack-object-storage::common' do
       @node = @chef_run.node
       @node.set['platform_family'] = 'debian'
       @node.set['lsb']['codename'] = 'precise'
-      @node.set['swift']['release'] = 'havana'
-      @node.set['swift']['authmode'] = 'swauth'
-      @node.set['swift']['git_builder_ip'] = '10.0.0.10'
+      @node.set['openstack']['object-storage']['release'] = 'havana'
+      @node.set['openstack']['object-storage']['authmode'] = 'swauth'
+      @node.set['openstack']['object-storage']['git_builder_ip'] = '10.0.0.10'
 
       # TODO: this does not work
       # ::Chef::Log.should_receive(:info).with('chefspec: precise-updates/havana')

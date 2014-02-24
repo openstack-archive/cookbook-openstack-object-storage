@@ -29,7 +29,7 @@ include_recipe 'sysctl::default'
 #-------------
 
 # optionally statsd daemon for stats collection
-if node['swift']['statistics']['enabled']
+if node['openstack']['object-storage']['statistics']['enabled']
   node.set['statsd']['relay_server'] = true
   include_recipe 'statsd::server'
 end
@@ -39,34 +39,34 @@ if Chef::Config[:solo] && !node['recipes'].include?('chef-solo-search')
   Chef::Log.warn('This recipe uses search. Chef Solo does not support search.')
   graphite_servers = []
 else
-  graphite_servers = search(:node, "roles:#{node['swift']['statistics']['graphing_role']} AND chef_environment:#{node.chef_environment}")
+  graphite_servers = search(:node, "roles:#{node['openstack']['object-storage']['statistics']['graphing_role']} AND chef_environment:#{node.chef_environment}")
 end
 graphite_host = '127.0.0.1'
 unless graphite_servers.empty?
-  graphite_host = graphite_servers[0]['network']["ipaddress_#{node['swift']['statistics']['graphing_interface']}"]
+  graphite_host = graphite_servers[0]['network']["ipaddress_#{node['openstack']['object-storage']['statistics']['graphing_interface']}"]
 end
 
-if node['swift']['statistics']['graphing_ip'].nil?
+if node['openstack']['object-storage']['statistics']['graphing_ip'].nil?
   node.set['statsd']['graphite_host'] = graphite_host
 else
-  node.set['statsd']['graphite_host'] = node['swift']['statistics']['graphing_ip']
+  node.set['statsd']['graphite_host'] = node['openstack']['object-storage']['statistics']['graphing_ip']
 end
 
 #--------------
 # swift common
 #--------------
 
-platform_options = node['swift']['platform']
+platform_options = node['openstack']['object-storage']['platform']
 
 # update repository if requested with the ubuntu cloud
 case node['platform']
 when 'ubuntu'
 
   Chef::Log.info('Creating apt repository for http://ubuntu-cloud.archive.canonical.com/ubuntu')
-  Chef::Log.info("chefspec: #{node['lsb']['codename']}-updates/#{node['swift']['release']}")
+  Chef::Log.info("chefspec: #{node['lsb']['codename']}-updates/#{node['openstack']['object-storage']['release']}")
   apt_repository 'ubuntu_cloud' do
     uri 'http://ubuntu-cloud.archive.canonical.com/ubuntu'
-    distribution "#{node['lsb']['codename']}-updates/#{node['swift']['release']}"
+    distribution "#{node['lsb']['codename']}-updates/#{node['openstack']['object-storage']['release']}"
     components ['main']
     key '5EDB1B62EC4926EA'
     action :add
@@ -88,10 +88,10 @@ directory '/etc/swift' do
 end
 
 # determine hash
-if node['swift']['swift_secret_databag_name'].nil?
-  swifthash = node['swift']['swift_hash']
+if node['openstack']['object-storage']['swift_secret_databag_name'].nil?
+  swifthash = node['openstack']['object-storage']['swift_hash']
 else
-  swift_secrets = Chef::EncryptedDataBagItem.load 'secrets', node['swift']['swift_secret_databag_name']
+  swift_secrets = Chef::EncryptedDataBagItem.load 'secrets', node['openstack']['object-storage']['swift_secret_databag_name']
   swifthash = swift_secrets['swift_hash']
 end
 
@@ -117,7 +117,7 @@ end
 
 # drop a ring puller script
 # TODO: make this smarter
-git_builder_ip = node['swift']['git_builder_ip']
+git_builder_ip = node['openstack']['object-storage']['git_builder_ip']
 template '/etc/swift/pull-rings.sh' do
   source 'pull-rings.sh.erb'
   owner 'swift'

@@ -14,16 +14,17 @@ describe 'openstack-object-storage::container-server' do
       @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
       @node.set['lsb']['code'] = 'precise'
-      @node.set['swift']['authmode'] = 'swauth'
-      @node.set['swift']['network']['container-bind-ip'] = '10.0.0.1'
-      @node.set['swift']['network']['container-bind-port'] = '8080'
-      @node.set['swift']['container-server']['allowed_sync_hosts'] =  ['host1', 'host2', 'host3']
-      @node.set['swift']['container-bind-port'] = '8080'
-      @node.set['swift']['disk_enum_expr'] = "[{ 'sda' => {}}]"
-      @node.set['swift']['disk_test_filter'] = ['candidate =~ /sd[^a]/ or candidate =~ /hd[^a]/ or candidate =~ /vd[^a]/ or candidate =~ /xvd[^a]/',
-                                                "File.exist?('/dev/' + candidate)",
-                                                "not system('/sbin/parted /dev/' + candidate + ' -s print | grep linux-swap')",
-                                                "not info.has_key?('removable') or info['removable'] == 0.to_s"]
+      @node.set['openstack']['object-storage']['authmode'] = 'swauth'
+      @node.set['openstack']['object-storage']['network']['container-bind-ip'] = '10.0.0.1'
+      @node.set['openstack']['object-storage']['network']['container-bind-port'] = '8080'
+      @node.set['openstack']['object-storage']['container-server']['allowed_sync_hosts'] =  ['host1', 'host2', 'host3']
+      @node.set['openstack']['object-storage']['container-bind-port'] = '8080'
+      @node.set['openstack']['object-storage']['disk_enum_expr'] = "[{ 'sda' => {}}]"
+      @node.set['openstack']['object-storage']['disk_test_filter'] = [
+        'candidate =~ /sd[^a]/ or candidate =~ /hd[^a]/ or candidate =~ /vd[^a]/ or candidate =~ /xvd[^a]/',
+        "File.exist?('/dev/' + candidate)",
+        "not system('/sbin/parted /dev/' + candidate + ' -s print | grep linux-swap')",
+        "not info.has_key?('removable') or info['removable'] == 0.to_s"]
 
       # mock out an interface on the storage node
       @node.set['network'] = MOCK_NODE_NETWORK_DATA['network']
@@ -74,7 +75,7 @@ describe 'openstack-object-storage::container-server' do
 
       before do
         @node = @chef_run.node
-        @node.set['swift']['container-server']['allowed_sync_hosts'] = []
+        @node.set['openstack']['object-storage']['container-server']['allowed_sync_hosts'] = []
         @chef_run.converge 'openstack-object-storage::container-server'
         @file = @chef_run.template '/etc/swift/container-server.conf'
       end
