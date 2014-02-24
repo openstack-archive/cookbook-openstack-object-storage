@@ -24,10 +24,10 @@ include_recipe 'openstack-object-storage::common'
 # with multiple repos!
 include_recipe 'openstack-object-storage::ring-repo'
 
-platform_options = node['swift']['platform']
+platform_options = node['openstack']['object-storage']['platform']
 
-if node['swift']['authmode'] == 'swauth'
-  case node['swift']['swauth_source']
+if node['openstack']['object-storage']['authmode'] == 'swauth'
+  case node['openstack']['object-storage']['swauth_source']
   when 'package'
     platform_options['swauth_packages'].each do |pkg|
       package pkg do
@@ -37,8 +37,8 @@ if node['swift']['authmode'] == 'swauth'
     end
   when 'git'
     git "#{Chef::Config[:file_cache_path]}/swauth" do
-      repository node['swift']['swauth_repository']
-      revision   node['swift']['swauth_version']
+      repository node['openstack']['object-storage']['swauth_repository']
+      revision   node['openstack']['object-storage']['swauth_version']
       action :sync
     end
 
@@ -55,16 +55,16 @@ if node['swift']['authmode'] == 'swauth'
 end
 
 # determine where to find dispersion login information
-if node['swift']['swift_secret_databag_name'].nil?
-  auth_user = node['swift']['dispersion']['auth_user']
-  auth_key  = node['swift']['dispersion']['auth_key']
+if node['openstack']['object-storage']['swift_secret_databag_name'].nil?
+  auth_user = node['openstack']['object-storage']['dispersion']['auth_user']
+  auth_key  = node['openstack']['object-storage']['dispersion']['auth_key']
 else
-  swift_secrets = Chef::EncryptedDataBagItem.load 'secrets', node['swift']['swift_secret_databag_name']
+  swift_secrets = Chef::EncryptedDataBagItem.load 'secrets', node['openstack']['object-storage']['swift_secret_databag_name']
   auth_user = swift_secrets['dispersion_auth_user']
   auth_key = swift_secrets['dispersion_auth_key']
 end
 
-if node['swift']['statistics']['enabled']
+if node['openstack']['object-storage']['statistics']['enabled']
   template platform_options['swift_statsd_publish'] do
     source 'swift-statsd-publish.py.erb'
     owner 'root'
@@ -73,7 +73,7 @@ if node['swift']['statistics']['enabled']
   end
   cron 'cron_swift_statsd_publish' do
     command "#{platform_options['swift_statsd_publish']} > /dev/null 2>&1"
-    minute "*/#{node["swift"]["statistics"]["report_frequency"]}"
+    minute "*/#{node['openstack']['object-storage']['statistics']['report_frequency']}"
   end
 end
 
@@ -83,7 +83,7 @@ template '/etc/swift/dispersion.conf' do
   group 'swift'
   mode '0600'
   variables(
-    'auth_url' => node['swift']['auth_url'],
+    'auth_url' => node['openstack']['object-storage']['auth_url'],
     'auth_user' => auth_user,
     'auth_key' => auth_key
   )

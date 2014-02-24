@@ -15,9 +15,9 @@ describe 'openstack-object-storage::rsync' do
       @node = @chef_run.node
       @node.set['platform_family'] = 'debian'
       @node.set['lsb']['codename'] = 'precise'
-      @node.set['swift']['release'] = 'havana'
-      @node.set['swift']['authmode'] = 'swauth'
-      @node.set['swift']['git_builder_ip'] = '10.0.0.10'
+      @node.set['openstack']['object-storage']['release'] = 'havana'
+      @node.set['openstack']['object-storage']['authmode'] = 'swauth'
+      @node.set['openstack']['object-storage']['git_builder_ip'] = '10.0.0.10'
       @chef_run.converge 'openstack-object-storage::rsync'
     end
 

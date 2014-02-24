@@ -23,18 +23,18 @@ include_recipe 'openstack-object-storage::common'
 if Chef::Config[:solo]
   Chef::Application.fatal! 'This recipe uses search. Chef Solo does not support search.'
 else
-  setup_role = node['swift']['setup_chef_role']
+  setup_role = node['openstack']['object-storage']['setup_chef_role']
   setup_role_count = search(:node, "chef_environment:#{node.chef_environment} AND roles:#{setup_role}").length
   if setup_role_count > 1
     Chef::Application.fatal! 'You can only have one node with the swift-setup role'
   end
 end
 
-unless node['swift']['service_pass']
+unless node['openstack']['object-storage']['service_pass']
   Chef::Log.info('Running swift setup - setting swift passwords')
 end
 
-platform_options = node['swift']['platform']
+platform_options = node['openstack']['object-storage']['platform']
 
 # install platform-specific packages
 platform_options['proxy_packages'].each do |pkg|
@@ -44,8 +44,8 @@ platform_options['proxy_packages'].each do |pkg|
   end
 end
 
-if node['swift']['authmode'] == 'swauth'
-  case node['swift']['swauth_source']
+if node['openstack']['object-storage']['authmode'] == 'swauth'
+  case node['openstack']['object-storage']['swauth_source']
   when 'package'
     platform_options['swauth_packages'].each do |pkg|
       package pkg do
@@ -55,8 +55,8 @@ if node['swift']['authmode'] == 'swauth'
     end
   when 'git'
     git "#{Chef::Config[:file_cache_path]}/swauth" do
-      repository node['swift']['swauth_repository']
-      revision node['swift']['swauth_version']
+      repository node['openstack']['object-storage']['swauth_repository']
+      revision node['openstack']['object-storage']['swauth_version']
       action :sync
     end
 
@@ -74,10 +74,10 @@ end
 
 package 'python-swift-informant' do
   action :upgrade
-  only_if { node['swift']['use_informant'] }
+  only_if { node['openstack']['object-storage']['use_informant'] }
 end
 
 package 'python-keystone' do
   action :upgrade
-  only_if { node['swift']['authmode'] == 'keystone' }
+  only_if { node['openstack']['object-storage']['authmode'] == 'keystone' }
 end
