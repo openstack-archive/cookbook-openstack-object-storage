@@ -14,10 +14,10 @@ describe 'openstack-object-storage::management-server' do
       @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
       @node.set['lsb']['code'] = 'precise'
-      @node.set['swift']['authmode'] = 'swauth'
-      @node.set['swift']['statistics']['enabled'] = true
-      @node.set['swift']['swauth_source'] = 'package'
-      @node.set['swift']['platform']['swauth_packages'] = ['swauth']
+      @node.set['openstack']['object-storage']['authmode'] = 'swauth'
+      @node.set['openstack']['object-storage']['statistics']['enabled'] = true
+      @node.set['openstack']['object-storage']['swauth_source'] = 'package'
+      @node.set['openstack']['object-storage']['platform']['swauth_packages'] = ['swauth']
 
       @chef_run.converge 'openstack-object-storage::management-server'
     end

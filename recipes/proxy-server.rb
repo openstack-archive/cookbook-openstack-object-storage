@@ -27,19 +27,19 @@ end
 if node.run_list.expand(node.chef_environment).recipes.include?('openstack-object-storage::setup')
   Chef::Log.info('I ran the openstack-object-storage::setup so I will use my own swift passwords')
 else
-  setup_role = node['swift']['setup_chef_role']
+  setup_role = node['openstack']['object-storage']['setup_chef_role']
   setup = search(:node, "chef_environment:#{node.chef_environment} AND roles:#{setup_role}")
   if setup.length == 0
     Chef::Application.fatal! 'You must have run the openstack-object-storage::setup recipe (on this or another node) before running the swift::proxy recipe on this node'
   elsif setup.length == 1
     Chef::Log.info "Found openstack-object-storage::setup node: #{setup[0].name}"
-    node.set['swift']['service_pass'] = setup[0]['swift']['service_pass']
+    node.set['openstack']['object-storage']['service_pass'] = setup[0]['swift']['service_pass']
   elsif setup.length > 1
     Chef::Application.fatal! 'You have multiple nodes in your environment that have run swift-setup, and that is not allowed'
   end
 end
 
-platform_options = node['swift']['platform']
+platform_options = node['openstack']['object-storage']['platform']
 
 # install platform-specific packages
 platform_options['proxy_packages'].each do |pkg|
@@ -49,8 +49,8 @@ platform_options['proxy_packages'].each do |pkg|
   end
 end
 
-if node['swift']['authmode'] == 'swauth'
-  case node['swift']['swauth_source']
+if node['openstack']['object-storage']['authmode'] == 'swauth'
+  case node['openstack']['object-storage']['swauth_source']
   when 'package'
     platform_options['swauth_packages'].each do |pkg|
       package pkg do
@@ -60,8 +60,8 @@ if node['swift']['authmode'] == 'swauth'
     end
   when 'git'
     git "#{Chef::Config[:file_cache_path]}/swauth" do
-      repository node['swift']['swauth_repository']
-      revision   node['swift']['swauth_version']
+      repository node['openstack']['object-storage']['swauth_repository']
+      revision   node['openstack']['object-storage']['swauth_version']
       action :sync
     end
 
@@ -79,12 +79,12 @@ end
 
 package 'python-swift-informant' do
   action :install
-  only_if { node['swift']['use_informant'] }
+  only_if { node['openstack']['object-storage']['use_informant'] }
 end
 
 package 'python-keystone' do
   action :install
-  only_if { node['swift']['authmode'] == 'keystone' }
+  only_if { node['openstack']['object-storage']['authmode'] == 'keystone' }
 end
 
 directory '/var/cache/swift' do
@@ -109,10 +109,10 @@ if Chef::Config[:solo]
   memcache_servers = ['127.0.0.1:11211']
 else
   memcache_servers = []
-  proxy_role = node['swift']['proxy_server_chef_role']
+  proxy_role = node['openstack']['object-storage']['proxy_server_chef_role']
   proxy_nodes = search(:node, "chef_environment:#{node.chef_environment} AND roles:#{proxy_role}")
   proxy_nodes.each do |proxy|
-    proxy_ip = locate_ip_in_cidr(node['swift']['network']['proxy-cidr'], proxy)
+    proxy_ip = locate_ip_in_cidr(node['openstack']['object-storage']['network']['proxy-cidr'], proxy)
     next unless proxy_ip # skip nil ips so we dont break the config
     server_str = "#{proxy_ip}:11211"
     memcache_servers << server_str unless memcache_servers.include?(server_str)
@@ -120,10 +120,10 @@ else
 end
 
 # determine authkey to use
-if node['swift']['swift_secret_databag_name'].nil?
-  authkey = node['swift']['authkey']
+if node['openstack']['object-storage']['swift_secret_databag_name'].nil?
+  authkey = node['openstack']['object-storage']['authkey']
 else
-  swift_secrets = Chef::EncryptedDataBagItem.load 'secrets', node['swift']['swift_secret_databag_name']
+  swift_secrets = Chef::EncryptedDataBagItem.load 'secrets', node['openstack']['object-storage']['swift_secret_databag_name']
   authkey = swift_secrets['swift_authkey']
 end
 
@@ -134,9 +134,9 @@ template '/etc/swift/proxy-server.conf' do
   group 'swift'
   mode '0600'
   variables(
-    'authmode' => node['swift']['authmode'],
-    'bind_host' => node['swift']['network']['proxy-bind-ip'],
-    'bind_port' => node['swift']['network']['proxy-bind-port'],
+    'authmode' => node['openstack']['object-storage']['authmode'],
+    'bind_host' => node['openstack']['object-storage']['network']['proxy-bind-ip'],
+    'bind_port' => node['openstack']['object-storage']['network']['proxy-bind-port'],
     'authkey' => authkey,
     'memcache_servers' => memcache_servers
   )

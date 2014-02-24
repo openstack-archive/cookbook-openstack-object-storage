@@ -22,8 +22,8 @@
 # for purposes of ring synchronization
 #
 
-platform_options = node['swift']['platform']
-ring_options = node['swift']['ring']
+platform_options = node['openstack']['object-storage']['platform']
+ring_options = node['openstack']['object-storage']['ring']
 
 platform_options['git_packages'].each do |pkg|
   package pkg do
