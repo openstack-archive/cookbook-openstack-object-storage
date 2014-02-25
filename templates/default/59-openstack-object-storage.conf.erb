@@ -1,0 +1,5 @@
+# Managed by Chef
+
+<% node['openstack']['object-storage']['sysctl'].sort.each do |k,v| -%>
+<%= k %> = <%= v %>
+<% end -%>

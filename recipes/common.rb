@@ -1,7 +1,7 @@
 # encoding: UTF-8
 #
 # Cookbook Name:: openstack-object-storage
-# Recipe:: swift-common
+# Recipe:: common
 #
 # Copyright 2012, Rackspace US, Inc.
 #
@@ -22,7 +22,7 @@ class Chef::Recipe # rubocop:disable Documentation
   include DriveUtils
 end
 
-include_recipe 'sysctl::default'
+include_recipe 'openstack-object-storage::sysctl'
 
 #-------------
 # stats
