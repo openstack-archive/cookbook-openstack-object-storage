@@ -17,6 +17,6 @@ recipe            'openstack-object-storage::setup', 'Does initial setup of a sw
 end
 
 depends 'memcached'
-depends 'sysctl'
 depends 'statsd'
 depends 'apt'
+depends 'openstack-common', '~> 8.0'
