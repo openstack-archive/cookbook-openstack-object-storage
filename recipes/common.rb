@@ -22,7 +22,8 @@ class Chef::Recipe # rubocop:disable Documentation
   include DriveUtils
 end
 
-include_recipe 'sysctl::default'
+
+include_recipe 'openstack-common::sysctl'
 
 #-------------
 # stats
