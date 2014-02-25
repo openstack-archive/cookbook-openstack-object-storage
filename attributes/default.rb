@@ -133,9 +133,10 @@ default['openstack']['object-storage']['network']['object-cidr']              = 
 #------------------
 
 # set sysctl properties for time waits
-default['sysctl']['params']['net']['ipv4']['tcp_tw_recycle'] = 1
-default['sysctl']['params']['net']['ipv4']['tcp_tw_reuse'] = 1
-default['sysctl']['params']['net']['ipv4']['tcp_syncookies'] = 0
+default['openstack']['sysctl']['net.ipv4.tcp_tw_recycle'] = 1
+default['openstack']['sysctl']['net.ipv4.tcp_tw_reuse'] = 1
+default['openstack']['sysctl']['net.ipv4.tcp_syncookies'] = 0
+
 
 # N.B. conntrack_max may also need to be adjusted if
 # server is running a stateful firewall
