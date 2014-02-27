@@ -67,7 +67,7 @@ action :ensure_exists do
   mountpoints = Dir.new(path).reject { |x| x[/^\./] }.map { |d| "#{path}/#{d}" }
   inverted_mounts = dev_info.reduce({}) { |hsh, (k, v)| hsh.merge(v['mountpoint'] => v.merge('uuid' => k)) }
   fstabs = ::File.readlines('/etc/fstab').reduce({}) do |hash, line|
-    line = line.split('#')[1].split
+    line = line.split('#')[0].split
     Chef::Log.info("#{line[0]} ... #{line[1]}")
     hash.merge(line[1] => line[0])
   end
