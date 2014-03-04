@@ -24,6 +24,12 @@ describe 'openstack-object-storage::object-server' do
         "not system('/sbin/parted /dev/' + candidate + ' -s print | grep linux-swap')",
         "not info.has_key?('removable') or info['removable'] == 0.to_s"]
 
+      @node.set['openstack']['object-storage']['statistics']['sample_rate'] = 1
+      @node.set['openstack']['object-storage']['statistics']['statsd_host'] = '127.0.0.1'
+      @node.set['openstack']['object-storage']['statistics']['statsd_port'] = '8125'
+      @node.set['openstack']['object-storage']['statistics']['statsd_prefix'] = 'openstack.swift'
+      @node.set['openstack']['object-storage']['statistics']['enabled'] = true
+
       # mock out an interface on the storage node
       @node.set['network'] = MOCK_NODE_NETWORK_DATA['network']
 
@@ -63,8 +69,13 @@ describe 'openstack-object-storage::object-server' do
         expect(sprintf('%o', @file.mode)).to eq '600'
       end
 
-      it 'template contents' do
-        pending 'TODO: implement'
+      { 'bind_ip' => '10.0.0.1',
+        'bind_port' => '8080',
+        'log_statsd_default_sample_rate' => '1',
+        'log_statsd_metric_prefix' => 'openstack.swift.Fauxhai' }.each do |k, v|
+        it "sets the #{k}" do
+          expect(@chef_run).to render_file(@file.name).with_content("#{k} = #{v}")
+        end
       end
 
     end
