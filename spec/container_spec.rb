@@ -61,6 +61,15 @@ describe 'openstack-object-storage::container-server' do
         expect(@chef_run).to render_file(@file.name).with_content('allowed_sync_hosts = host1,host2,host3')
       end
 
+      { 'bind_ip' => '10.0.0.1',
+        'bind_port' => '8080',
+        'log_statsd_default_sample_rate' => '1',
+        'log_statsd_metric_prefix' => 'openstack.swift.Fauxhai' }.each do |k, v|
+        it "sets the #{k}" do
+          expect(@chef_run).to render_file(@file.name).with_content("#{k} = #{v}")
+        end
+      end
+
     end
 
     it 'should create container sync upstart conf for ubuntu' do
