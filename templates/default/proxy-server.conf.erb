@@ -40,7 +40,7 @@ end
 #
 # Cluster info:
 #   Auth mode: <%= node['openstack']['object-storage']['authmode'] %>
-#   Management server: <%= node[:roles].include?(node['openstack']['object-storage']['management_server_chef_role']) %>
+#   Management server: <%= node['roles'].include?(node['openstack']['object-storage']['management_server_chef_role']) %>
 #   Account management enabled: <%= account_management %>
 #   Auth pipeline: <%= pipeline %>
 
@@ -59,13 +59,13 @@ end
 # log_facility = LOG_LOCAL0
 # log_level = INFO
 ######
-workers = <%= [ node['cpu']['total'] - 1, 1 ].max %>
 bind_ip = <%= @bind_host %>
 bind_port = <%= @bind_port %>
+workers = <%= [ node['cpu']['total'] - 1, 1 ].max %>
 <% if node['openstack']['object-storage']['statistics']['enabled'] -%>
 log_statsd_host = localhost
 log_statsd_port = 8125
-log_statsd_default_sample_rate = <%= node['openstack']['object-storage']['statistics'][:sample_rate] %>
+log_statsd_default_sample_rate = <%= node['openstack']['object-storage']['statistics']['sample_rate'] %>
 log_statsd_metric_prefix = <%= node['openstack']['object-storage']['statistics']['statsd_prefix'] %>.<%= node['hostname'] %>
 <% end %>
 
