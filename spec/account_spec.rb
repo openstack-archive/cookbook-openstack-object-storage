@@ -50,8 +50,13 @@ describe 'openstack-object-storage::account-server' do
         expect(sprintf('%o', @file.mode)).to eq '600'
       end
 
-      it 'template contents' do
-        pending 'TODO: implement'
+      { 'bind_ip' => '0.0.0.0',
+        'bind_port' => '6002',
+        'log_statsd_default_sample_rate' => '1',
+        'log_statsd_metric_prefix' => 'openstack.swift.Fauxhai' }.each do |k, v|
+        it "sets the #{k}" do
+          expect(@chef_run).to render_file(@file.name).with_content(/^#{Regexp.quote("#{k} = #{v}")}$/)
+        end
       end
 
     end

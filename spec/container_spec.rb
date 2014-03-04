@@ -8,7 +8,6 @@ describe 'openstack-object-storage::container-server' do
       swift_stubs
       @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
-      @node.set['openstack']['object-storage']['network']['container-bind-ip'] = '10.0.0.1'
       @node.set['openstack']['object-storage']['container-server']['allowed_sync_hosts'] =  ['host1', 'host2', 'host3']
       @node.set['openstack']['object-storage']['disk_enum_expr'] = "[{ 'sda' => {}}]"
       @node.set['openstack']['object-storage']['disk_test_filter'] = [
@@ -50,6 +49,15 @@ describe 'openstack-object-storage::container-server' do
 
       it 'has allowed sync hosts' do
         expect(@chef_run).to render_file(@file.name).with_content('allowed_sync_hosts = host1,host2,host3')
+      end
+
+      { 'bind_ip' => '0.0.0.0',
+        'bind_port' => '6001',
+        'log_statsd_default_sample_rate' => '1',
+        'log_statsd_metric_prefix' => 'openstack.swift.Fauxhai' }.each do |k, v|
+        it "sets the #{k}" do
+          expect(@chef_run).to render_file(@file.name).with_content(/^#{Regexp.quote("#{k} = #{v}")}$/)
+        end
       end
 
     end
