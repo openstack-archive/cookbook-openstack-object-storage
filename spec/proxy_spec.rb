@@ -2,11 +2,6 @@
 require_relative 'spec_helper'
 
 describe 'openstack-object-storage::proxy-server' do
-
-  #--------------
-  # UBUNTU
-  #--------------
-
   describe 'ubuntu' do
 
     before do
@@ -14,12 +9,6 @@ describe 'openstack-object-storage::proxy-server' do
       @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
       @node.set['cpu']['total'] = 6
-      @node.set['lsb']['code'] = 'precise'
-      @node.set['openstack']['object-storage']['authmode'] = 'swauth'
-      @node.set['openstack']['object-storage']['platform']['swauth_packages'] = ['swauth']
-      @node.set['openstack']['object-storage']['swauth_source'] = 'package'
-      @node.set['openstack']['object-storage']['network']['proxy-bind-ip'] = '10.0.0.1'
-      @node.set['openstack']['object-storage']['network']['proxy-bind-port'] = '8080'
       @chef_run.converge 'openstack-object-storage::proxy-server'
     end
 

@@ -2,21 +2,12 @@
 require_relative 'spec_helper'
 
 describe 'openstack-object-storage::object-server' do
-
-  #-------------------
-  # UBUNTU
-  #-------------------
-
   describe 'ubuntu' do
 
     before do
       swift_stubs
       @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
-      @node.set['lsb']['code'] = 'precise'
-      @node.set['openstack']['object-storage']['authmode'] = 'swauth'
-      @node.set['openstack']['object-storage']['network']['object-bind-ip'] = '10.0.0.1'
-      @node.set['openstack']['object-storage']['network']['object-bind-port'] = '8080'
       @node.set['openstack']['object-storage']['disk_enum_expr'] = "[{ 'sda' => {}}]"
       @node.set['openstack']['object-storage']['disk_test_filter'] = [
         'candidate =~ /sd[^a]/ or candidate =~ /hd[^a]/ or candidate =~ /vd[^a]/ or candidate =~ /xvd[^a]/',
