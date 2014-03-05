@@ -1,0 +1,11 @@
+Verified+2: Jenkins
+Approved+1: John Dewey <john@dewey.ws>
+Code-Review+2: John Dewey <john@dewey.ws>
+Code-Review+2: Mark Vanderwiel <vanderwl@us.ibm.com>
+Verified+1: Wherenow.org Jenkins CI <jenkins@wherenow.org>
+Code-Review+1: Simon Ingelsson <simon.ingelsson@gmail.com>
+Submitted-by: Jenkins
+Submitted-at: Wed, 05 Mar 2014 19:49:09 +0000
+Reviewed-on: https://review.openstack.org/78192
+Project: stackforge/cookbook-openstack-object-storage
+Branch: refs/heads/master
