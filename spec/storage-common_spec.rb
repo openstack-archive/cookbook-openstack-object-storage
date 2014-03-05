@@ -2,19 +2,12 @@
 require_relative 'spec_helper'
 
 describe 'openstack-object-storage::storage-common' do
-
-  #-------------------
-  # UBUNTU
-  #-------------------
-
   describe 'ubuntu' do
 
     before do
       swift_stubs
       @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
-      @node.set['lsb']['code'] = 'precise'
-      @node.set['openstack']['object-storage']['authmode'] = 'swauth'
       @chef_run.converge 'openstack-object-storage::storage-common'
     end
 
