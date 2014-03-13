@@ -72,16 +72,16 @@ def generate_script
     disk_data[:available][which] ||= {}
 
     disk_state.each do |swiftnode|
-      if swiftnode[:swift][:state] && swiftnode[:swift][:state][:devs]
-        swiftnode[:swift][:state][:devs].each do |k, v|
+      if swiftnode['openstack']['object-storage']['state'] && swiftnode['openstack']['object-storage']['state']['devs']
+        swiftnode['openstack']['object-storage']['state']['devs'].each do |k, v|
           disk_data[which][v[:ip]] = disk_data[which][v[:ip]] || {}
           disk_data[which][v[:ip]][k] = {}
           v.keys.each { |x| disk_data[which][v[:ip]][k].store(x, v[x]) }
 
-          if swiftnode[:swift].key?("#{which}-zone")
-            disk_data[which][v[:ip]][k]['zone'] = swiftnode[:swift]["#{which}-zone"]
-          elsif swiftnode[:swift].key?('zone')
-            disk_data[which][v[:ip]][k]['zone'] = swiftnode[:swift]['zone']
+          if swiftnode['openstack']['object-storage'].key?("#{which}-zone")
+            disk_data[which][v[:ip]][k]['zone'] = swiftnode['openstack']['object-storage']["#{which}-zone"]
+          elsif swiftnode['openstack']['object-storage'].key?('zone')
+            disk_data[which][v[:ip]][k]['zone'] = swiftnode['openstack']['object-storage']['zone']
           else
             fail "Node #{swiftnode[:hostname]} has no zone assigned"
           end
