@@ -1,0 +1,9 @@
+Verified+2: Jenkins
+Approved+1: Justin Shepherd <jshepher@rackspace.com>
+Code-Review+2: Justin Shepherd <jshepher@rackspace.com>
+Code-Review+2: Mark Vanderwiel <vanderwl@us.ibm.com>
+Submitted-by: Jenkins
+Submitted-at: Fri, 14 Mar 2014 18:25:24 +0000
+Reviewed-on: https://review.openstack.org/80407
+Project: stackforge/cookbook-openstack-object-storage
+Branch: refs/heads/master
