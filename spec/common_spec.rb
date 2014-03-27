@@ -10,7 +10,7 @@ describe 'openstack-object-storage::common' do
       @node = @chef_run.node
 
       # TODO: this does not work
-      # ::Chef::Log.should_receive(:info).with('chefspec: precise-updates/havana')
+      # ::Chef::Log.should_receive(:info).with('chefspec: precise-updates/icehouse')
 
       @chef_run.converge 'openstack-object-storage::common'
     end
