@@ -2,6 +2,8 @@
 require 'chefspec'
 require 'chefspec/berkshelf'
 
+ChefSpec::Coverage.start! { add_filter 'openstack-compute' }
+
 ::LOG_LEVEL = :fatal
 ::REDHAT_OPTS = {
     platform: 'redhat',
@@ -61,9 +63,3 @@ def swift_stubs # rubocop:disable MethodLength
   }
   Chef::Recipe.any_instance.stub(:search).with(:node, 'chef_environment:_default AND roles:swift-setup').and_return([n])
 end
-
-# README(galstrom21): This will remove any coverage warnings from
-#   dependent cookbooks
-ChefSpec::Coverage.filters << '*/openstack-object-storage'
-
-at_exit { ChefSpec::Coverage.report! }

@@ -8,7 +8,7 @@ describe 'openstack-object-storage::proxy-server' do
       swift_stubs
       @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
       @node = @chef_run.node
-      @node.set['cpu']['total'] = 6
+      @node.automatic['cpu']['total'] = 6
       @chef_run.converge 'openstack-object-storage::proxy-server'
     end
 
