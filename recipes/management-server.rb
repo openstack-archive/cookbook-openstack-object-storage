@@ -69,7 +69,7 @@ if node['openstack']['object-storage']['statistics']['enabled']
     source 'swift-statsd-publish.py.erb'
     owner 'root'
     group 'root'
-    mode '0755'
+    mode 0755
   end
   cron 'cron_swift_statsd_publish' do
     command "#{platform_options['swift_statsd_publish']} > /dev/null 2>&1"
@@ -81,7 +81,7 @@ template '/etc/swift/dispersion.conf' do
   source 'dispersion.conf.erb'
   owner 'swift'
   group 'swift'
-  mode '0600'
+  mode 0600
   variables(
     'auth_url' => node['openstack']['object-storage']['auth_url'],
     'auth_user' => auth_user,

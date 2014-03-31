@@ -87,7 +87,7 @@ template '/etc/swift/object-server.conf' do
   source 'object-server.conf.erb'
   owner 'swift'
   group 'swift'
-  mode '0600'
+  mode 0600
   variables(
     'bind_ip' => node['openstack']['object-storage']['network']['object-bind-ip'],
     'bind_port' => node['openstack']['object-storage']['network']['object-bind-port']

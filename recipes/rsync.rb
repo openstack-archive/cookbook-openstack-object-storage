@@ -73,7 +73,7 @@ end
 
 template '/etc/rsyncd.conf' do
   source 'rsyncd.conf.erb'
-  mode '0644'
+  mode 0644
   notifies :restart, "service[#{rsync_servicename}]", :immediately
 end
 

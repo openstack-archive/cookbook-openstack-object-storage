@@ -84,7 +84,7 @@ template '/etc/swift/container-server.conf' do
   source 'container-server.conf.erb'
   owner 'swift'
   group 'swift'
-  mode '0600'
+  mode 0600
   variables(
     'bind_ip' => node['openstack']['object-storage']['network']['container-bind-ip'],
     'bind_port' => node['openstack']['object-storage']['network']['container-bind-port']
@@ -102,7 +102,7 @@ if platform?('ubuntu')
   cookbook_file '/etc/init/swift-container-sync.conf' do
     owner 'root'
     group 'root'
-    mode '0755'
+    mode 0755
     source 'swift-container-sync.conf.upstart'
     action :create
     not_if '[ -e /etc/init/swift-container-sync.conf ]'

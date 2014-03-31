@@ -83,7 +83,7 @@ directory '/etc/swift' do
   action :create
   owner 'swift'
   group 'swift'
-  mode '0700'
+  mode 0700
   only_if '/usr/bin/id swift'
 end
 
@@ -99,7 +99,7 @@ file '/etc/swift/swift.conf' do
   action :create
   owner 'swift'
   group 'swift'
-  mode '0700'
+  mode 0700
   content "[swift-hash]\nswift_hash_path_suffix=#{swifthash}\n"
   only_if '/usr/bin/id swift'
 end
@@ -122,7 +122,7 @@ template '/etc/swift/pull-rings.sh' do
   source 'pull-rings.sh.erb'
   owner 'swift'
   group 'swift'
-  mode '0700'
+  mode 0700
   variables(
     builder_ip: git_builder_ip,
     service_prefix: platform_options['service_prefix']

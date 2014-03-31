@@ -4,15 +4,15 @@ require 'chefspec/berkshelf'
 
 ChefSpec::Coverage.start! { add_filter 'openstack-compute' }
 
-::LOG_LEVEL = :fatal
-::REDHAT_OPTS = {
+LOG_LEVEL = :fatal
+REDHAT_OPTS = {
     platform: 'redhat',
-    log_level: ::LOG_LEVEL
+    log_level: LOG_LEVEL
 }
-::UBUNTU_OPTS = {
+UBUNTU_OPTS = {
     platform: 'ubuntu',
     version: '12.04',
-    log_level: ::LOG_LEVEL
+    log_level: LOG_LEVEL
 }
 
 MOCK_NODE_NETWORK_DATA =
@@ -40,26 +40,27 @@ MOCK_NODE_NETWORK_DATA =
     }
   }
 
-# TODO(chrislaco) Fixed in spec refactor
-def swift_stubs # rubocop:disable MethodLength
-  stub_command('/usr/bin/id swift').and_return(true)
-  stub_command('[ -x /etc/swift/pull-rings.sh ]').and_return(true)
-  stub_command('[ -f /etc/rsyncd.conf ]').and_return(true)
-  stub_command("grep -q 'RSYNC_ENABLE=false' /etc/default/rsync").and_return(true)
-  stub_command('[ -e /etc/swift/account-server.conf ] && [ -e /etc/swift/account.ring.gz ]').and_return(true)
-  stub_command('[ -e /etc/swift/container-server.conf ] && [ -e /etc/swift/container.ring.gz ]').and_return(true)
-  stub_command('[ -e /etc/init/swift-container-sync.conf ]').and_return(false)
-  stub_command('[ -e /etc/init.d/swift-container-sync ]').and_return(false)
-  stub_command('[ -e /etc/swift/object-server.conf ] && [ -e /etc/swift/object.ring.gz ]').and_return(true)
-  stub_command('[ -e /etc/swift/proxy-server.conf ] && [ -e /etc/swift/object.ring.gz ]').and_return(true)
+shared_context 'swift-stubs' do
+  before do
+    stub_command('/usr/bin/id swift').and_return(true)
+    stub_command('[ -x /etc/swift/pull-rings.sh ]').and_return(true)
+    stub_command('[ -f /etc/rsyncd.conf ]').and_return(true)
+    stub_command("grep -q 'RSYNC_ENABLE=false' /etc/default/rsync").and_return(true)
+    stub_command('[ -e /etc/swift/account-server.conf ] && [ -e /etc/swift/account.ring.gz ]').and_return(true)
+    stub_command('[ -e /etc/swift/container-server.conf ] && [ -e /etc/swift/container.ring.gz ]').and_return(true)
+    stub_command('[ -e /etc/init/swift-container-sync.conf ]').and_return(false)
+    stub_command('[ -e /etc/init.d/swift-container-sync ]').and_return(false)
+    stub_command('[ -e /etc/swift/object-server.conf ] && [ -e /etc/swift/object.ring.gz ]').and_return(true)
+    stub_command('[ -e /etc/swift/proxy-server.conf ] && [ -e /etc/swift/object.ring.gz ]').and_return(true)
 
-  # create mock cluster
-  n = Chef::Node.new
-  n.name('manager')
-  n.default_attrs = {
-    'swift' => {
-      'service_pass' => 'foobar'
+    # create mock cluster
+    n = Chef::Node.new
+    n.name('manager')
+    n.default_attrs = {
+      'swift' => {
+        'service_pass' => 'foobar'
+      }
     }
-  }
-  Chef::Recipe.any_instance.stub(:search).with(:node, 'chef_environment:_default AND roles:swift-setup').and_return([n])
+    Chef::Recipe.any_instance.stub(:search).with(:node, 'chef_environment:_default AND roles:swift-setup').and_return([n])
+  end
 end
