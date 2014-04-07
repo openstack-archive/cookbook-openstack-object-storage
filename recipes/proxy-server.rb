@@ -132,7 +132,7 @@ template '/etc/swift/proxy-server.conf' do
   source 'proxy-server.conf.erb'
   owner 'swift'
   group 'swift'
-  mode '0600'
+  mode 0600
   variables(
     'authmode' => node['openstack']['object-storage']['authmode'],
     'bind_host' => node['openstack']['object-storage']['network']['proxy-bind-ip'],

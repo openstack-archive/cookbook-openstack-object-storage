@@ -24,7 +24,7 @@ template '/etc/swift/drive-audit.conf' do
   source 'drive-audit.conf.erb'
   owner 'swift'
   group 'swift'
-  mode '0600'
+  mode 0600
 end
 
 cron 'drive-audit' do
