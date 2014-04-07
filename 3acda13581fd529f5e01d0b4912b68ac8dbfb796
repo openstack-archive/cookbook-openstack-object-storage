@@ -1,0 +1,8 @@
+Verified+2: Jenkins
+Approved+1: Matt Ray <matthewhray@gmail.com>
+Code-Review+2: Mark Vanderwiel <vanderwl@us.ibm.com>
+Submitted-by: Jenkins
+Submitted-at: Mon, 07 Apr 2014 16:41:40 +0000
+Reviewed-on: https://review.openstack.org/84266
+Project: stackforge/cookbook-openstack-object-storage
+Branch: refs/heads/master
