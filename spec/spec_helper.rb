@@ -64,3 +64,9 @@ shared_context 'swift-stubs' do
     Chef::Recipe.any_instance.stub(:search).with(:node, 'chef_environment:_default AND roles:swift-setup').and_return([n])
   end
 end
+
+shared_examples 'keystone-authmode' do
+  it 'does not upgrade keystoneclient package' do
+    expect(chef_run).not_to upgrade_package('python-keystoneclient')
+  end
+end
