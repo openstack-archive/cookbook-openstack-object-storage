@@ -77,7 +77,7 @@ package 'python-swift-informant' do
   only_if { node['openstack']['object-storage']['use_informant'] }
 end
 
-package 'python-keystone' do
+package 'python-keystoneclient' do
   action :upgrade
   only_if { node['openstack']['object-storage']['authmode'] == 'keystone' }
 end

@@ -1,6 +1,7 @@
 # encoding: UTF-8
 require 'chefspec'
 require 'chefspec/berkshelf'
+require 'chef/application'
 
 ChefSpec::Coverage.start! { add_filter 'openstack-compute' }
 
@@ -62,5 +63,21 @@ shared_context 'swift-stubs' do
       }
     }
     Chef::Recipe.any_instance.stub(:search).with(:node, 'chef_environment:_default AND roles:swift-setup').and_return([n])
+    Chef::Application.stub(:fatal!)
+  end
+end
+
+shared_examples 'keystone-authmode' do
+  describe 'authorization mode' do
+    # Default is to use authorization mode of swauth which does not require keystone client.
+    it 'does not upgrade keystoneclient package' do
+      expect(chef_run).not_to upgrade_package('python-keystoneclient')
+    end
+    describe 'keystone authorization mode' do
+      before { node.set['openstack']['object-storage']['authmode'] = 'keystone' }
+      it 'does not upgrade keystoneclient package' do
+        expect(chef_run).to upgrade_package('python-keystoneclient')
+      end
+    end
   end
 end
