@@ -1,6 +1,7 @@
 # encoding: UTF-8
 require 'chefspec'
 require 'chefspec/berkshelf'
+require 'chef/application'
 
 ChefSpec::Coverage.start! { add_filter 'openstack-compute' }
 
@@ -62,5 +63,12 @@ shared_context 'swift-stubs' do
       }
     }
     Chef::Recipe.any_instance.stub(:search).with(:node, 'chef_environment:_default AND roles:swift-setup').and_return([n])
+    Chef::Application.stub(:fatal!)
+  end
+end
+
+shared_examples 'keystone-authmode' do
+  it 'does not upgrade keystoneclient package' do
+    expect(chef_run).not_to upgrade_package('python-keystoneclient')
   end
 end
