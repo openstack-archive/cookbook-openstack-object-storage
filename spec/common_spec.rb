@@ -42,8 +42,8 @@ describe 'openstack-object-storage::common' do
       end
     end
 
-    it 'installs git package for ring management' do
-      expect(chef_run).to install_package('git')
+    it 'upgrades git package for ring management' do
+      expect(chef_run).to upgrade_package('git')
     end
 
     describe '/etc/swift' do

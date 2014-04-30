@@ -22,7 +22,7 @@ platform_options = node['openstack']['object-storage']['platform']
 
 platform_options['rsync_packages'].each do |pkg|
   package pkg do
-    action :install
+    action :upgrade
     options platform_options['override_options']
   end
 end

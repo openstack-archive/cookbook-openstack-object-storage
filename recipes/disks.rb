@@ -28,13 +28,13 @@ end
 platform_options = node['openstack']['object-storage']['platform']
 
 package 'xfsprogs' do
-  action :install
+  action :upgrade
   only_if { platform?(%w{ubuntu debian fedora centos}) }
 end
 
 %w(parted util-linux).each do |pkg|
   package pkg do
-    action :install
+    action :upgrade
   end
 end
 

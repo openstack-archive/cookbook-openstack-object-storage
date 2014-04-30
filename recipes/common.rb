@@ -75,7 +75,7 @@ end
 
 platform_options['swift_packages'].each do |pkg|
   package pkg do
-    action :install
+    action :upgrade
   end
 end
 
@@ -112,7 +112,7 @@ user 'swift' do
 end
 
 package 'git' do
-  action :install
+  action :upgrade
 end
 
 # drop a ring puller script

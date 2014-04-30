@@ -20,12 +20,12 @@ describe 'openstack-object-storage::account-server' do
 
     include_context 'swift-stubs'
 
-    it 'installs swift account packages' do
-      expect(chef_run).to install_package('swift-account')
+    it 'upgrades swift account packages' do
+      expect(chef_run).to upgrade_package('swift-account')
     end
 
-    it 'installs swiftclient package' do
-      expect(chef_run).to install_package('python-swiftclient')
+    it 'upgrades swiftclient package' do
+      expect(chef_run).to upgrade_package('python-swiftclient')
     end
 
     it 'starts swift account services on boot' do

@@ -31,7 +31,7 @@ if node['openstack']['object-storage']['authmode'] == 'swauth'
   when 'package'
     platform_options['swauth_packages'].each do |pkg|
       package pkg do
-        action :install
+        action :upgrade
         options platform_options['override_options']
       end
     end

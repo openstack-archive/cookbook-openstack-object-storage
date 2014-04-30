@@ -11,8 +11,8 @@ describe 'openstack-object-storage::management-server' do
 
     include_context 'swift-stubs'
 
-    it 'installs swift swauth package' do
-      expect(chef_run).to install_package 'swauth'
+    it 'upgrades swift swauth package' do
+      expect(chef_run).to upgrade_package 'swauth'
     end
 
     describe '/etc/swift/dispersion.conf' do
