@@ -20,12 +20,12 @@ describe 'openstack-object-storage::disks' do
 
     include_context 'swift-stubs'
 
-    it 'installs xfs progs package' do
-      expect(chef_run).to install_package('xfsprogs')
+    it 'upgrades xfs progs package' do
+      expect(chef_run).to upgrade_package('xfsprogs')
     end
 
-    it 'installs parted package' do
-      expect(chef_run).to install_package('parted')
+    it 'upgrades parted package' do
+      expect(chef_run).to upgrade_package('parted')
     end
 
   end
