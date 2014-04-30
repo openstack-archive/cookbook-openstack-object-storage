@@ -14,16 +14,16 @@ describe 'openstack-object-storage::proxy-server' do
     include_context 'swift-stubs'
     include_examples 'keystone-authmode'
 
-    it 'installs memcache python packages' do
-      expect(chef_run).to install_package('python-memcache')
+    it 'upgrades memcache python packages' do
+      expect(chef_run).to upgrade_package('python-memcache')
     end
 
-    it 'installs swift packages' do
-      expect(chef_run).to install_package('swift-proxy')
+    it 'upgrades swift packages' do
+      expect(chef_run).to upgrade_package('swift-proxy')
     end
 
-    it 'installs swauth package if swauth is selected' do
-      expect(chef_run).to install_package('swauth')
+    it 'upgrades swauth package if swauth is selected' do
+      expect(chef_run).to upgrade_package('swauth')
     end
 
     it 'starts swift-proxy on boot' do

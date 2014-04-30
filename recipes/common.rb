@@ -73,9 +73,11 @@ when 'ubuntu'
   end
 end
 
+platform_options = node['openstack']['object-storage']['platform']
 platform_options['swift_packages'].each do |pkg|
   package pkg do
-    action :install
+    options platform_options['package_overrides']
+    action :upgrade
   end
 end
 
@@ -112,7 +114,8 @@ user 'swift' do
 end
 
 package 'git' do
-  action :install
+  options platform_options['package_overrides']
+  action :upgrade
 end
 
 # drop a ring puller script

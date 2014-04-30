@@ -27,7 +27,8 @@ ring_options = node['openstack']['object-storage']['ring']
 
 platform_options['git_packages'].each do |pkg|
   package pkg do
-    action :install
+    options platform_options['package_overrides']
+    action :upgrade
   end
 end
 

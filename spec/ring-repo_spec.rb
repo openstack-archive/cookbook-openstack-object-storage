@@ -11,8 +11,8 @@ describe 'openstack-object-storage::ring-repo' do
 
     include_context 'swift-stubs'
 
-    it 'installs git package for ring management' do
-      expect(chef_run).to install_package('git-daemon-sysvinit')
+    it 'upgrades git package for ring management' do
+      expect(chef_run).to upgrade_package('git-daemon-sysvinit')
     end
 
     it 'should not start xinetd services on boot' do

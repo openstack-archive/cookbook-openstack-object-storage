@@ -20,8 +20,8 @@ describe 'openstack-object-storage::container-server' do
 
     include_context 'swift-stubs'
 
-    it 'installs swift container packages' do
-      expect(chef_run).to install_package('swift-container')
+    it 'upgrades swift container packages' do
+      expect(chef_run).to upgrade_package('swift-container')
     end
 
     it 'starts swift container services on boot' do

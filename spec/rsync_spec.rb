@@ -11,8 +11,8 @@ describe 'openstack-object-storage::rsync' do
 
     include_context 'swift-stubs'
 
-    it 'installs git package for ring management' do
-      expect(chef_run).to install_package('rsync')
+    it 'upgrades git package for ring management' do
+      expect(chef_run).to upgrade_package('rsync')
     end
 
     it 'starts rsync service on boot' do

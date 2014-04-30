@@ -41,10 +41,10 @@ end
 
 platform_options = node['openstack']['object-storage']['platform']
 
-# install platform-specific packages
+# upgrade platform-specific packages
 platform_options['proxy_packages'].each do |pkg|
   package pkg do
-    action :install
+    action :upgrade
     options platform_options['override_options']
   end
 end
@@ -54,7 +54,7 @@ if node['openstack']['object-storage']['authmode'] == 'swauth'
   when 'package'
     platform_options['swauth_packages'].each do |pkg|
       package pkg do
-        action :install
+        action :upgrade
         options platform_options['override_options']
       end
     end
@@ -78,7 +78,7 @@ if node['openstack']['object-storage']['authmode'] == 'swauth'
 end
 
 package 'python-swift-informant' do
-  action :install
+  action :upgrade
   only_if { node['openstack']['object-storage']['use_informant'] }
 end
 
