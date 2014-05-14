@@ -58,22 +58,6 @@ end
 
 platform_options = node['openstack']['object-storage']['platform']
 
-# update repository if requested with the ubuntu cloud
-case node['platform']
-when 'ubuntu'
-
-  Chef::Log.info('Creating apt repository for http://ubuntu-cloud.archive.canonical.com/ubuntu')
-  Chef::Log.info("chefspec: #{node['lsb']['codename']}-updates/#{node['openstack']['object-storage']['release']}")
-  apt_repository 'ubuntu_cloud' do
-    uri 'http://ubuntu-cloud.archive.canonical.com/ubuntu'
-    distribution "#{node['lsb']['codename']}-updates/#{node['openstack']['object-storage']['release']}"
-    components ['main']
-    key '5EDB1B62EC4926EA'
-    action :add
-  end
-end
-
-platform_options = node['openstack']['object-storage']['platform']
 platform_options['swift_packages'].each do |pkg|
   package pkg do
     options platform_options['package_overrides']
