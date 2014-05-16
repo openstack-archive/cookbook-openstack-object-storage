@@ -243,12 +243,12 @@ action :ensure_exists do
 
       case params[:type]
       when 'xfs'
-        unless Mixlib::ShellOut.new("xfs_admin -l #{device}").run_command.status
+        unless Mixlib::ShellOut.new("xfs_admin -l #{device}").run_command.exitstatus
           Mixlib::ShellOut.new("mkfs.xfs -f -i size=512 #{device}").run_command
           update = true
         end
       when 'ext4'
-        unless Mixlib::ShellOut.new("tune2fs -l #{device} | grep \"Filesystem volume name:\" | awk \'{print $4}\' | grep -v \"<none>\"").run_command.status
+        unless Mixlib::ShellOut.new("tune2fs -l #{device} | grep \"Filesystem volume name:\" | awk \'{print $4}\' | grep -v \"<none>\"").run_command.exitstatus
           Mixlib::ShellOut.new("mkfs.ext4 #{device}").run_command
           update = true
         end
