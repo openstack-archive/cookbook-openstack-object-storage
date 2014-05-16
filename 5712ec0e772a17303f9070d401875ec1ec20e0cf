@@ -1,0 +1,9 @@
+Verified+2: Jenkins
+Code-Review+2: Andy McCrae <andy.mccrae@googlemail.com>
+Workflow+1: Andy McCrae <andy.mccrae@googlemail.com>
+Code-Review+2: Mark Vanderwiel <vanderwl@us.ibm.com>
+Submitted-by: Jenkins
+Submitted-at: Fri, 16 May 2014 15:42:25 +0000
+Reviewed-on: https://review.openstack.org/93833
+Project: stackforge/cookbook-openstack-object-storage
+Branch: refs/heads/stable/havana
