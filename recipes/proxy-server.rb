@@ -106,7 +106,7 @@ end
 # use localhost  when using chef solo otherwise, include all memcache
 # servers from all known proxies
 if Chef::Config[:solo]
-   memcache_servers = [ "127.0.0.1:11211" ]
+   memcache_servers = [ "254.254.254.254:11211", "127.0.0.1:11211" ]
 else
    memcache_servers = []
    proxy_role = node["swift"]["proxy_server_chef_role"]
@@ -117,6 +117,7 @@ else
      server_str = "#{proxy_ip}:11211"
      memcache_servers << server_str unless memcache_servers.include?(server_str)
   end
+  memcache_servers.sort
 end
 
 # determine authkey to use
