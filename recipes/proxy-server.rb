@@ -117,6 +117,7 @@ else
      server_str = "#{proxy_ip}:11211"
      memcache_servers << server_str unless memcache_servers.include?(server_str)
   end
+  memcache_servers.sort
 end
 
 # determine authkey to use
