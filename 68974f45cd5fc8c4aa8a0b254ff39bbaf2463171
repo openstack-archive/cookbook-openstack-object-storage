@@ -1,0 +1,10 @@
+Verified+2: Jenkins
+Code-Review+2: Justin Shepherd <jshepher@rackspace.com>
+Workflow+1: Justin Shepherd <jshepher@rackspace.com>
+Code-Review+2: Salman Baset <sabaset@us.ibm.com>
+Verified+1: Wherenow.org Jenkins CI <jenkins@wherenow.org>
+Submitted-by: Jenkins
+Submitted-at: Sun, 20 Jul 2014 17:41:03 +0000
+Reviewed-on: https://review.openstack.org/108120
+Project: stackforge/cookbook-openstack-object-storage
+Branch: refs/heads/master
