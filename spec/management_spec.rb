@@ -27,7 +27,7 @@ describe 'openstack-object-storage::management-server' do
       end
 
       it 'template contents' do
-        pending 'TODO: implement'
+        skip 'TODO: implement'
       end
     end
 
