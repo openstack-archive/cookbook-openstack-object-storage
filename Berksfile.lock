@@ -1,0 +1,71 @@
+{
+  "sources": {
+    "openstack-object-storage": {
+      "path": "."
+    },
+    "statsd": {
+      "locked_version": "0.1.6",
+      "git": "git://github.com/att-cloud/cookbook-statsd.git",
+      "ref": "d3298ae4ec4a6d8cc2ca166f0688a92753ced338"
+    },
+    "openstack-common": {
+      "locked_version": "9.7.0",
+      "git": "git://github.com/stackforge/cookbook-openstack-common.git",
+      "ref": "50d11569ad4223a559acfc2d84cb62c19b10e4e9"
+    },
+    "memcached": {
+      "locked_version": "1.7.2"
+    },
+    "runit": {
+      "locked_version": "1.5.10"
+    },
+    "build-essential": {
+      "locked_version": "1.4.4"
+    },
+    "yum": {
+      "locked_version": "3.2.0"
+    },
+    "yum-epel": {
+      "locked_version": "0.3.6"
+    },
+    "apt": {
+      "locked_version": "2.3.8"
+    },
+    "git": {
+      "locked_version": "4.0.2"
+    },
+    "dmg": {
+      "locked_version": "2.2.0"
+    },
+    "windows": {
+      "locked_version": "1.30.2"
+    },
+    "chef_handler": {
+      "locked_version": "1.1.6"
+    },
+    "database": {
+      "locked_version": "2.2.0"
+    },
+    "mysql": {
+      "locked_version": "5.3.6"
+    },
+    "yum-mysql-community": {
+      "locked_version": "0.1.10"
+    },
+    "postgresql": {
+      "locked_version": "3.3.4"
+    },
+    "openssl": {
+      "locked_version": "1.1.0"
+    },
+    "aws": {
+      "locked_version": "2.1.1"
+    },
+    "xfs": {
+      "locked_version": "1.1.0"
+    },
+    "mysql-chef_gem": {
+      "locked_version": "0.0.2"
+    }
+  }
+}

@@ -26,7 +26,7 @@ describe 'openstack-object-storage::ring-repo' do
     #   the file contents.
     describe '/etc/swift/ring-workspace/generate-rings.sh' do
       it 'gets installed' do
-        pending 'TODO: determine some way to ensure this LWRP script gets created'
+        skip 'TODO: determine some way to ensure this LWRP script gets created'
       end
     end
   end

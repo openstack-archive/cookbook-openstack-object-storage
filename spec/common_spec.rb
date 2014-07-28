@@ -70,7 +70,7 @@ describe 'openstack-object-storage::common' do
       end
 
       it 'template contents' do
-        pending 'TODO: implement'
+        skip 'TODO: implement'
       end
     end
 
@@ -86,7 +86,7 @@ describe 'openstack-object-storage::common' do
       end
 
       it 'template contents' do
-        pending 'TODO: implement'
+        skip 'TODO: implement'
       end
     end
   end
