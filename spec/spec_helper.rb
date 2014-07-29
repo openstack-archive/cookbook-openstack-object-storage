@@ -68,8 +68,8 @@ shared_context 'swift-stubs' do
         'service_pass' => 'foobar'
       }
     }
-    Chef::Recipe.any_instance.stub(:search).with(:node, 'chef_environment:_default AND roles:swift-setup').and_return([n])
-    Chef::Application.stub(:fatal!)
+    allow_any_instance_of(Chef::Recipe).to receive(:search).with(:node, 'chef_environment:_default AND roles:swift-setup').and_return([n])
+    allow(Chef::Application).to receive(:fatal!)
   end
 end
 
