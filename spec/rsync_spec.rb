@@ -31,7 +31,7 @@ describe 'openstack-object-storage::rsync' do
       end
 
       it 'template contents' do
-        pending 'TODO: implement'
+        skip 'TODO: implement'
       end
     end
   end

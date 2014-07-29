@@ -32,7 +32,7 @@ describe 'openstack-object-storage::object-server' do
 
     describe '/var/spool/crontab/root' do
       it 'template contents' do
-        pending 'TODO: check for recon script'
+        skip 'TODO: check for recon script'
       end
     end
 
