@@ -17,7 +17,9 @@ echo "Using bundle path: $BUNDLE_PATH"
 echo "Using berkshelf path: $BERKSHELF_PATH"
 
 bundle install --path=${BUNDLE_PATH}
-bundle exec berks install --path=${BERKSHELF_PATH}
-bundle exec rspec ${BERKSHELF_PATH}/${COOKBOOK}
-bundle exec foodcritic -f any -t ~FC003 -t ~FC023 ${BERKSHELF_PATH}/${COOKBOOK}
+bundle exec berks vendor ${BERKSHELF_PATH}
 
+echo "Running tests..."
+bundle exec foodcritic -f any -t ~FC003 -t ~FC023 ${BERKSHELF_PATH}/${COOKBOOK}
+bundle exec rubocop ${BERKSHELF_PATH}/${COOKBOOK}
+bundle exec rspec --format documentation ${BERKSHELF_PATH}/${COOKBOOK}/spec
