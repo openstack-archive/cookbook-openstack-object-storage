@@ -6,6 +6,8 @@ This file is used to list changes made in each version of cookbook-openstack-obj
 * Upgrading to Juno
 * Upgrading berkshelf from 2.0.18 to 3.1.5
 
+* Bump Chef gem to 11.16
+
 ## 9.0.3
 * Bugfix run_command exitstatus
 * bump berkshelf to 2.0.18 to allow Supermarket support
