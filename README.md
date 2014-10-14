@@ -22,8 +22,10 @@ Chef
 Cookbooks
 ---------
 
+ * openstack-common
  * memcached
- * sysctl
+ * statsd
+ * apt
 
 Roles
 =====

@@ -1,5 +1,6 @@
 name              'openstack-object-storage'
-maintainer        'ATT, Inc.'
+maintainer       'openstack-chef'
+maintainer_email 'opscode-chef-openstack@googlegroups.com'
 license           'Apache 2.0'
 description       'Installs and configures Openstack Swift'
 long_description  IO.read(File.join(File.dirname(__FILE__), 'README.md'))
