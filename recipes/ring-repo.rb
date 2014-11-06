@@ -41,7 +41,7 @@ end
 execute 'create empty git repo' do
   cwd '/tmp'
   umask 022
-  command "mkdir $$; cd $$; git init; echo \"backups\" \> .gitignore; git add .gitignore; git commit -m 'initial commit' --author='chef <chef@openstack>'; git push file:///#{platform_options["git_dir"]}/rings master"
+  command "mkdir $$; cd $$; git init; echo \"backups\" \> .gitignore; git config --global user.email 'chef@openstack.org' ; git config --global user.name 'Chef'; git add .gitignore; git commit -m 'initial commit' --author='chef <chef@openstack>'; git push file:///#{platform_options["git_dir"]}/rings master"
   user 'swift'
   action :nothing
 end
