@@ -201,15 +201,15 @@ Example environment
 {
   "default_attributes": {
     "swift": {
-          "swift_hash": "107c0568ea84",
-          "authmode": "swauth",
-          "authkey": "test"
-      "auto_rebuild_rings": false
-      "git_builder_ip": "10.0.0.10"
-      "swauth": {
-        "url": "http://10.0.0.10:8080/v1/"
-        }
-      },
+        "swift_hash": "107c0568ea84",
+        "authmode": "swauth",
+        "authkey": "test",
+        "auto_rebuild_rings": false,
+        "git_builder_ip": "10.0.0.10",
+        "swauth": {
+            "url": "http://10.0.0.10:8080/v1/"
+      }
+    }
   },
   "name": "swift",
   "chef_type": "environment",
