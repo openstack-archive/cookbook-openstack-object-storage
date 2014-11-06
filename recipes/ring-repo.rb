@@ -41,7 +41,7 @@ end
 execute 'create empty git repo' do
   cwd '/tmp'
   umask 022
-  command "mkdir $$; cd $$; git init; echo \"backups\" \> .gitignore; git add .gitignore; git commit -m 'initial commit' --author='chef <chef@openstack>'; git push file:///#{platform_options["git_dir"]}/rings master"
+  command "mkdir $$; cd $$; git init; echo \"backups\" \> .gitignore; git config user.email 'chef@openstack.org' ; git config user.name 'Chef'; git add .gitignore; git commit -m 'initial commit' --author='chef <chef@openstack>'; git push file:///#{platform_options["git_dir"]}/rings master"
   user 'swift'
   action :nothing
 end
@@ -129,7 +129,7 @@ end
                  "min_part_hours=#{min_part_hours}, replicas=#{replicas}")
   execute "add #{ring_type}.builder" do
     cwd '/etc/swift/ring-workspace/rings'
-    command "git add #{ring_type}.builder && git commit -m 'initial ring builders' --author='chef <chef@openstack>'"
+    command "git add #{ring_type}.builder  &&  git config user.email 'chef@openstack.org' ; git config user.name 'Chef' && git commit -m 'initial ring builders' --author='chef <chef@openstack>'"
     user 'swift'
     action :nothing
   end
