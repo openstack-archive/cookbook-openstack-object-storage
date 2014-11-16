@@ -85,8 +85,26 @@ describe 'openstack-object-storage::common' do
         )
       end
 
-      it 'template contents' do
-        skip 'TODO: implement'
+      describe 'default attribute values' do
+        it 'uses default attribute value for platform service_prefix' do
+          expect(chef_run.node['openstack']['object-storage']['platform']['service_prefix']).to eq('')
+        end
+
+        it 'uses default attribute value for git_builder_ip' do
+          expect(chef_run.node['openstack']['object-storage']['git_builder_ip']).to eq('127.0.0.1')
+        end
+      end
+
+      describe 'template contents' do
+        it 'uses the builder_ip variable' do
+          node.set['openstack']['object-storage']['git_builder_ip'] = 'git_builder_ip_value'
+          expect(chef_run).to render_file(file.name).with_content(%r(git clone git://git_builder_ip_value/rings /etc/swift/rings))
+        end
+
+        it 'uses the service_prefix variable' do
+          node.set['openstack']['object-storage']['platform']['service_prefix'] = 'service_prefix_'
+          expect(chef_run).to render_file(file.name).with_content(/service service_prefix_swift-\$\{d\}-replicator restart$/)
+        end
       end
     end
   end

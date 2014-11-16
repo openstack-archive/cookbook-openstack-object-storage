@@ -87,3 +87,52 @@ shared_examples 'keystone-authmode' do
     end
   end
 end
+
+shared_examples 'a common swift server configurator' do |server_type|
+  %w(ip port).each do |attr|
+    it "sets the bind_#{attr} attr" do
+      node.set['openstack']['object-storage']['network']["#{server_type}-bind-#{attr}"] = "#{attr}_value"
+      expect(chef_run).to render_file(file.name).with_content(/^bind_#{attr} = #{attr}_value$/)
+    end
+  end
+
+  context 'statistics enabled' do
+    before do
+      node.set['openstack']['object-storage']['statistics']['enabled'] = true
+    end
+
+    it 'sets the log_statsd_default_sample_rate attribute' do
+      node.set['openstack']['object-storage']['statistics']['sample_rate'] = 'sample_rate_value'
+      expect(chef_run).to render_file(file.name).with_content(/^log_statsd_default_sample_rate = sample_rate_value$/)
+    end
+
+    it 'sets the log_statsd_metric_prefix attribute' do
+      node.set['openstack']['object-storage']['statistics']['statsd_prefix'] = 'statsd_prefix_value'
+      chef_run.node.automatic['hostname'] = 'myhostname'
+      expect(chef_run).to render_file(file.name).with_content(/^log_statsd_metric_prefix = statsd_prefix_value\.myhostname$/)
+    end
+  end
+
+  it 'does not show statistic related attributed when disabled' do
+    node.set['openstack']['object-storage']['statistics']['enabled'] = false
+    expect(chef_run).not_to render_file(file.name).with_content(/^log_statsd_host = localhost$/)
+  end
+end
+
+shared_examples 'a common swift server default attribute values checker' do |server_type|
+  it 'bind_ip' do
+    expect(chef_run.node['openstack']['object-storage']['network']["#{server_type}-bind-ip"]).to eq('0.0.0.0')
+  end
+
+  it 'log_statsd_default_sample_rate' do
+    expect(chef_run.node['openstack']['object-storage']['statistics']['sample_rate']).to eq(1)
+  end
+
+  it 'statsd_prefix' do
+    expect(chef_run.node['openstack']['object-storage']['statistics']['statsd_prefix']).to eq('openstack.swift')
+  end
+
+  it 'hostname' do
+    expect(chef_run.node['hostname']).to eq('Fauxhai')
+  end
+end

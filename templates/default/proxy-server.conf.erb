@@ -108,7 +108,7 @@ use = egg:swift#proxy
 # account_autocreate = false
 allow_account_management = <%= account_management %>
 
-<% if pipeline.include?("keystone") -%>
+<% if pipeline.include?("keystoneauth") -%>
 account_autocreate = true
 <% end %>
 
@@ -123,7 +123,7 @@ default_swift_cluster = local#<%= node['openstack']['object-storage']['swift_url
 <% if pipeline.include?("tempurl") -%>
 allow_overrides = true
 <% end %>
-<% if node['openstack']['object-storage']['container-server']['allowed_sync_hosts'] -%>
+<% if node['openstack']['object-storage']['container-server']['allowed_sync_hosts'].any? -%>
 allowed_sync_hosts = <%= node['openstack']['object-storage']['container-server']['allowed_sync_hosts'].join(",") %>
 <% end %>
 <% end %>

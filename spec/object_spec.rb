@@ -47,14 +47,15 @@ describe 'openstack-object-storage::object-server' do
         )
       end
 
-      { 'bind_ip' => '0.0.0.0',
-        'bind_port' => '6000',
-        'log_statsd_default_sample_rate' => '1',
-        'log_statsd_metric_prefix' => 'openstack.swift.Fauxhai' }.each do |k, v|
-        it "sets the #{k}" do
-          expect(chef_run).to render_file(file.name).with_content(/^#{Regexp.quote("#{k} = #{v}")}$/)
+      describe 'default attribute values' do
+        it_behaves_like 'a common swift server default attribute values checker', 'object'
+
+        it 'uses default attribute value for bind_port' do
+          expect(chef_run.node['openstack']['object-storage']['network']['object-bind-port']).to eq('6000')
         end
       end
+
+      it_behaves_like 'a common swift server configurator', 'object'
     end
   end
 end

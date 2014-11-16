@@ -6,7 +6,6 @@ describe 'openstack-object-storage::container-server' do
     let(:runner) { ChefSpec::Runner.new(UBUNTU_OPTS) }
     let(:node) { runner.node }
     let(:chef_run) do
-      node.set['openstack']['object-storage']['container-server']['allowed_sync_hosts'] =  ['host1', 'host2', 'host3']
       node.set['openstack']['object-storage']['disk_enum_expr'] = "[{ 'sda' => {}}]"
       node.set['openstack']['object-storage']['disk_test_filter'] = [
         'candidate =~ /sd[^a]/ or candidate =~ /hd[^a]/ or candidate =~ /vd[^a]/ or candidate =~ /xvd[^a]/',
@@ -25,33 +24,9 @@ describe 'openstack-object-storage::container-server' do
     end
 
     it 'starts swift container services on boot' do
+      node.set['openstack']['object-storage']['container-server']['allowed_sync_hosts'] = %w(host1 host2)
       %w{swift-container swift-container-auditor swift-container-replicator swift-container-updater swift-container-sync}.each do |svc|
         expect(chef_run).to enable_service(svc)
-      end
-    end
-
-    describe '/etc/swift/container-server.conf' do
-      let(:file) { chef_run.template('/etc/swift/container-server.conf') }
-
-      it 'creates account-server.conf' do
-        expect(chef_run).to create_template(file.name).with(
-          user: 'swift',
-          group: 'swift',
-          mode: 0600
-        )
-      end
-
-      it 'has allowed sync hosts' do
-        expect(chef_run).to render_file(file.name).with_content('allowed_sync_hosts = host1,host2,host3')
-      end
-
-      { 'bind_ip' => '0.0.0.0',
-        'bind_port' => '6001',
-        'log_statsd_default_sample_rate' => '1',
-        'log_statsd_metric_prefix' => 'openstack.swift.Fauxhai' }.each do |k, v|
-        it "sets the #{k}" do
-          expect(chef_run).to render_file(file.name).with_content(/^#{Regexp.quote("#{k} = #{v}")}$/)
-        end
       end
     end
 
@@ -75,12 +50,49 @@ describe 'openstack-object-storage::container-server' do
     describe '/etc/swift/container-server.conf' do
       let(:file) { chef_run.template('/etc/swift/container-server.conf') }
 
-      before do
-        node.set['openstack']['object-storage']['container-server']['allowed_sync_hosts'] = []
+      describe 'default attribute values' do
+        it_behaves_like 'a common swift server default attribute values checker', 'container'
+
+        it 'for bind_port' do
+          expect(chef_run.node['openstack']['object-storage']['network']['container-bind-port']).to eq('6001')
+        end
+
+        it 'for allowed_sync_hosts' do
+          expect(chef_run.node['openstack']['object-storage']['container-server']['allowed_sync_hosts']).to eq([])
+        end
       end
 
-      it 'has no allowed_sync_hosts on empty lists' do
-        expect(chef_run).not_to render_file(file.name).with_content(/^allowed_sync_hots =/)
+      describe 'template contents' do
+        it_behaves_like 'a common swift server configurator', 'container'
+
+        it 'sets allowed_sync_hosts when present' do
+          node.set['openstack']['object-storage']['container-server']['allowed_sync_hosts'] = %w(host1 host2)
+          expect(chef_run).to render_file(file.name).with_content(/^allowed_sync_hosts = host1,host2$/)
+        end
+
+        it 'does not set allowed_sync_hosts when not present' do
+          node.set['openstack']['object-storage']['container-server']['allowed_sync_hosts'] = false
+          expect(chef_run).not_to render_file(file.name).with_content(/^allowed_sync_hosts = $/)
+        end
+
+        context 'container-sync' do
+          it 'sets sync_proxy when present' do
+            node.set['openstack']['object-storage']['container-server']['container-sync']['sync_proxy'] = 'sync_proxy_value'
+            expect(chef_run).to render_file(file.name).with_content(/^sync_proxy = sync_proxy_value$/)
+          end
+
+          it 'does not set allowed_sync_hosts when not present' do
+            node.set['openstack']['object-storage']['container-server']['container-sync']['sync_proxy'] = false
+            expect(chef_run).not_to render_file(file.name).with_content(/^sync_proxy = $/)
+          end
+
+          %w(log_name log_facility log_level interval container_time).each do |attr|
+            it "sets the container-sync #{attr} attribute" do
+              node.set['openstack']['object-storage']['container-server']['container-sync'][attr] = "#{attr}_value"
+              expect(chef_run).to render_file(file.name).with_content(/^#{attr} = #{attr}_value$/)
+            end
+          end
+        end
       end
     end
   end
