@@ -33,6 +33,10 @@ describe 'openstack-object-storage::proxy-server' do
     describe '/etc/swift/proxy-server.conf' do
       let(:file) { chef_run.template('/etc/swift/proxy-server.conf') }
 
+      it_behaves_like 'custom template banner displayer' do
+        let(:file_name) { file.name }
+      end
+
       it 'creates proxy-server.conf' do
         expect(chef_run).to create_template(file.name).with(
           user: 'swift',
@@ -44,8 +48,24 @@ describe 'openstack-object-storage::proxy-server' do
       describe 'default attribute values' do
         it_behaves_like 'a common swift server default attribute values checker', 'proxy', nil, nil
 
+        it 'has default contents' do
+          array = [
+            /^pipeline = catch_errors healthcheck cache ratelimit swauth proxy-logging proxy-server$/,
+            /^workers = auto$/,
+            /^super_admin_key = swift_authkey-secret$/
+          ]
+          array.each do |content|
+            expect(chef_run).to render_file(file.name).with_content(content)
+          end
+        end
+
         it 'uses default attribute value for authmode' do
           expect(chef_run.node['openstack']['object-storage']['authmode']).to eq('swauth')
+        end
+
+        it 'has auth key override' do
+          node.set['openstack']['object-storage']['authkey'] = '1234'
+          expect(chef_run).to render_file(file.name).with_content(/^super_admin_key = 1234$/)
         end
 
         %w(tempurl formpost domain_remap staticweb).each do |attr|

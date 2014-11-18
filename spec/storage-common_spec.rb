@@ -26,6 +26,10 @@ describe 'openstack-object-storage::storage-common' do
     describe '/etc/swift/drive-audit.conf' do
       let(:file) { chef_run.template('/etc/swift/drive-audit.conf') }
 
+      it_behaves_like 'custom template banner displayer' do
+        let(:file_name) { file.name }
+      end
+
       it 'creates drive-audit.conf' do
         expect(chef_run).to create_template(file.name).with(
           user: 'swift',
