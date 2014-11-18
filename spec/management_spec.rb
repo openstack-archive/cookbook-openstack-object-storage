@@ -18,6 +18,10 @@ describe 'openstack-object-storage::management-server' do
     describe '/etc/swift/dispersion.conf' do
       let(:file) { chef_run.template('/etc/swift/dispersion.conf') }
 
+      it_behaves_like 'custom template banner displayer' do
+        let(:file_name) { file.name }
+      end
+
       it 'creates dispersion.conf' do
         expect(chef_run).to create_template(file.name).with(
           user: 'swift',
@@ -36,11 +40,11 @@ describe 'openstack-object-storage::management-server' do
         end
 
         it 'uses default attribute value for dispersion auth_user' do
-          expect(chef_run.node['openstack']['object-storage']['dispersion']['auth_user']).to eq('test:test')
+          expect(chef_run.node['openstack']['object-storage']['dispersion']['auth_user']).to eq(nil)
         end
 
         it 'uses default attribute value for dispersion auth_key' do
-          expect(chef_run.node['openstack']['object-storage']['dispersion']['auth_key']).to eq('test')
+          expect(chef_run.node['openstack']['object-storage']['dispersion']['auth_key']).to eq(nil)
         end
       end
 
@@ -50,7 +54,15 @@ describe 'openstack-object-storage::management-server' do
           expect(chef_run).to render_file(file.name).with_content(/^auth_url = auth_url_value$/)
         end
 
-        context 'with databag' do
+        context 'with user databag' do
+          %w(user key).each do |attr|
+            it "sets the auth_#{attr}" do
+              expect(chef_run).to render_file(file.name).with_content(/^auth_#{attr} = dispersion_auth_#{attr}-secret$/)
+            end
+          end
+        end
+
+        context 'with swift databag' do
           let(:swift_secrets) do
             { 'dispersion_auth_user' => 'dispersion_auth_user_value',
               'dispersion_auth_key' => 'dispersion_auth_key_value' }
@@ -70,7 +82,7 @@ describe 'openstack-object-storage::management-server' do
           end
         end
 
-        context 'without databag' do
+        context 'without swift databag' do
           before do
             node.set['openstack']['object-storage']['swift_secret_databag_name'] = nil
           end
@@ -80,6 +92,29 @@ describe 'openstack-object-storage::management-server' do
               node.set['openstack']['object-storage']['dispersion']["auth_#{attr}"] = "auth_#{attr}_value"
               expect(chef_run).to render_file(file.name).with_content(/^auth_#{attr} = auth_#{attr}_value$/)
             end
+          end
+        end
+
+        it 'template default contents' do
+          [
+            %r{^auth_url = http://127.0.0.1:8080/auth/v1.0$},
+            /^auth_user = dispersion_auth_user-secret$/,
+            /^auth_key = dispersion_auth_key-secret$/
+          ].each do |content|
+            expect(chef_run).to render_file(file.name).with_content(content)
+          end
+        end
+
+        it 'has template overrides' do
+          node.set['openstack']['object-storage']['auth_url'] = 'url'
+          node.set['openstack']['object-storage']['dispersion']['auth_user'] = 'user'
+          node.set['openstack']['object-storage']['dispersion']['auth_key'] = 'key'
+          [
+            /^auth_url = url$/,
+            /^auth_user = user$/,
+            /^auth_key = key$/
+          ].each do |content|
+            expect(chef_run).to render_file(file.name).with_content(content)
           end
         end
       end
