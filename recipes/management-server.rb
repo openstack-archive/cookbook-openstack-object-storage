@@ -57,8 +57,12 @@ end
 # determine where to find dispersion login information
 if node['openstack']['object-storage']['swift_secret_databag_name'].nil?
   auth_user = node['openstack']['object-storage']['dispersion']['auth_user']
+  auth_user = get_secret 'dispersion_auth_user' if auth_user.nil?
+
   auth_key  = node['openstack']['object-storage']['dispersion']['auth_key']
+  auth_key = get_secret 'dispersion_auth_key' if auth_key.nil?
 else
+  # Deprecated, else case to be removed.
   swift_secrets = Chef::EncryptedDataBagItem.load 'secrets', node['openstack']['object-storage']['swift_secret_databag_name']
   auth_user = swift_secrets['dispersion_auth_user']
   auth_key = swift_secrets['dispersion_auth_key']
