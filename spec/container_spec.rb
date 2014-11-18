@@ -30,6 +30,35 @@ describe 'openstack-object-storage::container-server' do
       end
     end
 
+    describe '/etc/swift/container-server.conf' do
+      let(:file) { chef_run.template('/etc/swift/container-server.conf') }
+
+      it_behaves_like 'custom template banner displayer' do
+        let(:file_name) { file.name }
+      end
+
+      it 'creates account-server.conf' do
+        expect(chef_run).to create_template(file.name).with(
+          user: 'swift',
+          group: 'swift',
+          mode: 0600
+        )
+      end
+
+      it 'has allowed sync hosts' do
+        expect(chef_run).to render_file(file.name).with_content('allowed_sync_hosts = host1,host2,host3')
+      end
+
+      { 'bind_ip' => '0.0.0.0',
+        'bind_port' => '6001',
+        'log_statsd_default_sample_rate' => '1',
+        'log_statsd_metric_prefix' => 'openstack.swift.Fauxhai' }.each do |k, v|
+        it "sets the #{k}" do
+          expect(chef_run).to render_file(file.name).with_content(/^#{Regexp.quote("#{k} = #{v}")}$/)
+        end
+      end
+    end
+
     describe 'container sync' do
       let(:file) { chef_run.cookbook_file('/etc/init/swift-container-sync.conf') }
       let(:link) { chef_run.link('/etc/init.d/swift-container-sync') }

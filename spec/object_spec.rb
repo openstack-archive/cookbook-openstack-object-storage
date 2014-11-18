@@ -39,6 +39,10 @@ describe 'openstack-object-storage::object-server' do
     describe '/etc/swift/object-server.conf' do
       let(:file) { chef_run.template('/etc/swift/object-server.conf') }
 
+      it_behaves_like 'custom template banner displayer' do
+        let(:file_name) { file.name }
+      end
+
       it 'creates object-server.conf' do
         expect(chef_run).to create_template(file.name).with(
           user: 'swift',
