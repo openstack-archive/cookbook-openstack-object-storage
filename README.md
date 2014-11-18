@@ -77,18 +77,6 @@ Attributes
 
  * ```default[:swift][:swauth_version]``` - Specifies git repo tagged branch. Default "1.0.8"
 
- * ```default[:swift][:swift_secret_databag_name]``` - this cookbook supports an optional secret databag where we will retrieve the following attributes overriding any default attributes below. (defaults to nil)
-
-```
-        {
-          "id": "swift_dal2",
-          "swift_hash": "1a7c0568fa84"
-          "swift_authkey": "keY4all"
-          "dispersion_auth_user": "ops:dispersion",
-          "dispersion_auth_key": "dispersionpass"
-        }
-```
-
  * ```default[:swift][:swift_hash]``` - swift_hash_path_suffix in /etc/swift/swift.conf (defaults to 107c0568ea84)
 
  * ```default[:swift][:audit_hour]``` - Hour to run swift_auditor on storage nodes (defaults to 5)
@@ -134,6 +122,17 @@ There are other attributes that must be set depending on authmode.
 For "swauth", the following attributes are used:
 
  * ```default[:swift][:authkey]``` - swauth super admin key if using swauth (defaults to test)
+
+The following secrets can be defined in the databag defined in Common ['openstack']['secret']['secrets_data_bag']
+
+```
+        {
+          "swift_hash": "1a7c0568fa84"
+          "swift_authkey": "keY4all"
+          "dispersion_auth_user": "ops:dispersion",
+          "dispersion_auth_key": "dispersionpass"
+        }
+```
 
 In addition, because swift is typically deployed as a cluster
 there are some attributes used to find interfaces and ip addresses

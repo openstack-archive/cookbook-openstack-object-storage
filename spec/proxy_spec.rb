@@ -33,6 +33,10 @@ describe 'openstack-object-storage::proxy-server' do
     describe '/etc/swift/proxy-server.conf' do
       let(:file) { chef_run.template('/etc/swift/proxy-server.conf') }
 
+      it_behaves_like 'custom template banner displayer' do
+        let(:file_name) { file.name }
+      end
+
       it 'creates proxy-server.conf' do
         expect(chef_run).to create_template(file.name).with(
           user: 'swift',
@@ -41,14 +45,20 @@ describe 'openstack-object-storage::proxy-server' do
         )
       end
 
-      it 'has proper pipeline in template' do
+      it 'has default contents' do
         array = [
           /^pipeline = catch_errors healthcheck cache ratelimit swauth proxy-logging proxy-server$/,
-          /^workers = 5$/
+          /^workers = 5$/,
+          /^super_admin_key = swift_authkey-secret$/
         ]
         array.each do |content|
           expect(chef_run).to render_file(file.name).with_content(content)
         end
+      end
+
+      it 'has auth key override' do
+        node.set['openstack']['object-storage']['authkey'] = '1234'
+        expect(chef_run).to render_file(file.name).with_content(/^super_admin_key = 1234$/)
       end
 
       context 'with domain_remap enabled' do

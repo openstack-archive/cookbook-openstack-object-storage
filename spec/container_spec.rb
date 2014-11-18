@@ -33,6 +33,10 @@ describe 'openstack-object-storage::container-server' do
     describe '/etc/swift/container-server.conf' do
       let(:file) { chef_run.template('/etc/swift/container-server.conf') }
 
+      it_behaves_like 'custom template banner displayer' do
+        let(:file_name) { file.name }
+      end
+
       it 'creates account-server.conf' do
         expect(chef_run).to create_template(file.name).with(
           user: 'swift',

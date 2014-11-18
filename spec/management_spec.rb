@@ -18,6 +18,10 @@ describe 'openstack-object-storage::management-server' do
     describe '/etc/swift/dispersion.conf' do
       let(:file) { chef_run.template('/etc/swift/dispersion.conf') }
 
+      it_behaves_like 'custom template banner displayer' do
+        let(:file_name) { file.name }
+      end
+
       it 'creates dispersion.conf' do
         expect(chef_run).to create_template(file.name).with(
           user: 'swift',
@@ -26,8 +30,27 @@ describe 'openstack-object-storage::management-server' do
         )
       end
 
-      it 'template contents' do
-        skip 'TODO: implement'
+      it 'template default contents' do
+        [
+          %r{^auth_url = http://127.0.0.1:8080/auth/v1.0$},
+          /^auth_user = dispersion_auth_user-secret$/,
+          /^auth_key = dispersion_auth_key-secret$/
+        ].each do |content|
+          expect(chef_run).to render_file(file.name).with_content(content)
+        end
+      end
+
+      it 'has template overrides' do
+        node.set['openstack']['object-storage']['auth_url'] = 'url'
+        node.set['openstack']['object-storage']['dispersion']['auth_user'] = 'user'
+        node.set['openstack']['object-storage']['dispersion']['auth_key'] = 'key'
+        [
+          /^auth_url = url$/,
+          /^auth_user = user$/,
+          /^auth_key = key$/
+        ].each do |content|
+          expect(chef_run).to render_file(file.name).with_content(content)
+        end
       end
     end
 
