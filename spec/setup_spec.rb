@@ -12,6 +12,10 @@ describe 'openstack-object-storage::setup' do
     include_context 'swift-stubs'
     include_examples 'keystone-authmode'
 
+    it 'includes the identity registration recipe' do
+      expect(chef_run).to include_recipe('openstack-object-storage::identity_registration')
+    end
+
     # TODO: flush out rest of this spec
   end
 end

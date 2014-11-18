@@ -70,6 +70,13 @@ shared_context 'swift-stubs' do
     }
     allow_any_instance_of(Chef::Recipe).to receive(:search).with(:node, 'chef_environment:_default AND roles:swift-setup').and_return([n])
     allow(Chef::Application).to receive(:fatal!)
+
+    allow_any_instance_of(Chef::Recipe).to receive(:get_secret)
+      .with('openstack_identity_bootstrap_token')
+      .and_return('bootstrap-token')
+    allow_any_instance_of(Chef::Recipe).to receive(:get_password)
+      .with('service', 'openstack-object-storage')
+      .and_return('swift-pass')
   end
 end
 
@@ -81,7 +88,8 @@ shared_examples 'keystone-authmode' do
     end
     describe 'keystone authorization mode' do
       before { node.set['openstack']['object-storage']['authmode'] = 'keystone' }
-      it 'does not upgrade keystoneclient package' do
+
+      it 'does upgrade keystoneclient package' do
         expect(chef_run).to upgrade_package('python-keystoneclient')
       end
     end
