@@ -14,6 +14,7 @@ describe 'openstack-object-storage::container-server' do
         "not info.has_key?('removable') or info['removable'] == 0.to_s"]
       # mock out an interface on the storage node
       node.set['network'] = MOCK_NODE_NETWORK_DATA['network']
+      node.set['openstack']['object-storage']['container-server']['allowed_sync_hosts'] = %w(host1 host2)
       runner.converge(described_recipe)
     end
 
@@ -24,9 +25,37 @@ describe 'openstack-object-storage::container-server' do
     end
 
     it 'starts swift container services on boot' do
-      node.set['openstack']['object-storage']['container-server']['allowed_sync_hosts'] = %w(host1 host2)
       %w{swift-container swift-container-auditor swift-container-replicator swift-container-updater swift-container-sync}.each do |svc|
         expect(chef_run).to enable_service(svc)
+      end
+    end
+
+    describe '/etc/swift/container-server.conf' do
+      let(:file) { chef_run.template('/etc/swift/container-server.conf') }
+
+      it_behaves_like 'custom template banner displayer' do
+        let(:file_name) { file.name }
+      end
+
+      it 'creates account-server.conf' do
+        expect(chef_run).to create_template(file.name).with(
+          user: 'swift',
+          group: 'swift',
+          mode: 0600
+        )
+      end
+
+      it 'has allowed sync hosts' do
+        expect(chef_run).to render_file(file.name).with_content('allowed_sync_hosts = host1,host2')
+      end
+
+      { 'bind_ip' => '0.0.0.0',
+        'bind_port' => '6001',
+        'log_statsd_default_sample_rate' => '1',
+        'log_statsd_metric_prefix' => 'openstack.swift.Fauxhai' }.each do |k, v|
+        it "sets the #{k}" do
+          expect(chef_run).to render_file(file.name).with_content(/^#{Regexp.quote("#{k} = #{v}")}$/)
+        end
       end
     end
 
