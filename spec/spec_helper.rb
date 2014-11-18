@@ -77,6 +77,21 @@ shared_context 'swift-stubs' do
     allow_any_instance_of(Chef::Recipe).to receive(:get_password)
       .with('service', 'openstack-object-storage')
       .and_return('swift-pass')
+    allow_any_instance_of(Chef::Recipe).to receive(:get_secret)
+      .with('swift_hash_path_prefix')
+      .and_return('swift_hash_path_prefix-secret')
+    allow_any_instance_of(Chef::Recipe).to receive(:get_secret)
+      .with('swift_hash_path_suffix')
+      .and_return('swift_hash_path_suffix-secret')
+    allow_any_instance_of(Chef::Recipe).to receive(:get_secret)
+      .with('swift_authkey')
+      .and_return('swift_authkey-secret')
+    allow_any_instance_of(Chef::Recipe).to receive(:get_secret)
+      .with('dispersion_auth_user')
+      .and_return('dispersion_auth_user-secret')
+    allow_any_instance_of(Chef::Recipe).to receive(:get_secret)
+      .with('dispersion_auth_key')
+      .and_return('dispersion_auth_key-secret')
   end
 end
 
@@ -142,5 +157,12 @@ shared_examples 'a common swift server default attribute values checker' do |ser
 
   it 'hostname' do
     expect(chef_run.node['hostname']).to eq('Fauxhai')
+  end
+end
+
+shared_examples 'custom template banner displayer' do
+  it 'shows the custom banner' do
+    node.set['openstack']['object-storage']['custom_template_banner'] = 'custom_template_banner_value'
+    expect(chef_run).to render_file(file_name).with_content(/^custom_template_banner_value$/)
   end
 end
