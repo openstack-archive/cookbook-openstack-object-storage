@@ -8,6 +8,7 @@ This file is used to list changes made in each version of cookbook-openstack-obj
 * Bump Chef gem to 11.16
 * Add keystone registration support
 * Use Common bind endpoint
+* Add swift.conf template
 
 ## 9.0.3
 * Bugfix run_command exitstatus
