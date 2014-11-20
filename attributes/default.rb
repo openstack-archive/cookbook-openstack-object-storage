@@ -110,23 +110,24 @@ default['openstack']['object-storage']['statistics']['recon_object_cache'] = '/v
 # resolve the appropriate addresses to use for internode
 # communication
 
+# Deprecated in Juno, use Common attributes instead
 # proxy servers
-default['openstack']['object-storage']['network']['proxy-bind-ip']	        = '0.0.0.0'
-default['openstack']['object-storage']['network']['proxy-bind-port'] 	        = '8080'
-default['openstack']['object-storage']['network']['proxy-cidr']               = '10.0.0.0/24'
+default['openstack']['object-storage']['network']['proxy-bind-ip']	          = nil
+default['openstack']['object-storage']['network']['proxy-bind-port'] 	        = nil
+default['openstack']['object-storage']['network']['proxy-cidr']               = '127.0.0.0/24'
 
 # account servers
 default['openstack']['object-storage']['network']['account-bind-ip']	        = '0.0.0.0'
 default['openstack']['object-storage']['network']['account-bind-port']        = '6002'
 
 # container servers
-default['openstack']['object-storage']['network']['container-bind-ip']	= '0.0.0.0'
+default['openstack']['object-storage']['network']['container-bind-ip']	      = '0.0.0.0'
 default['openstack']['object-storage']['network']['container-bind-port']      = '6001'
 
 # object servers
-default['openstack']['object-storage']['network']['object-bind-ip']	        = '0.0.0.0'
+default['openstack']['object-storage']['network']['object-bind-ip']	          = '0.0.0.0'
 default['openstack']['object-storage']['network']['object-bind-port']         = '6000'
-default['openstack']['object-storage']['network']['object-cidr']              = '10.0.0.0/24'
+default['openstack']['object-storage']['network']['object-cidr']              = '127.0.0.0/24'
 
 #------------------
 # sysctl
@@ -158,6 +159,16 @@ default['openstack']['object-storage']['disk_test_filter'] = [
 #-------------------
 # template overrides
 #-------------------
+
+# Use an integer to override the number of pre-forked processes that will
+# accept connections.  Should default to the number of effective cpu
+# cores in the system.  It's worth noting that individual workers will
+# use many eventlet co-routines to service multiple concurrent requests.
+default['openstack']['object-storage']['proxy-server']['workers'] = 'auto'
+default['openstack']['object-storage']['account-server']['workers'] = 'auto'
+default['openstack']['object-storage']['container-server']['workers'] = 'auto'
+default['openstack']['object-storage']['object-server']['workers'] = 'auto'
+
 
 # proxy-server
 
