@@ -44,7 +44,7 @@ describe 'openstack-object-storage::proxy-server' do
       it 'has proper pipeline in template' do
         array = [
           /^pipeline = catch_errors healthcheck cache ratelimit swauth proxy-logging proxy-server$/,
-          /^workers = 5$/
+          /^workers = auto$/
         ]
         array.each do |content|
           expect(chef_run).to render_file(file.name).with_content(content)

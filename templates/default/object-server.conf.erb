@@ -1,21 +1,7 @@
 [DEFAULT]
-# bind_ip = 0.0.0.0
-# bind_port = 6000
-# backlog = 4096
-# workers = 1
-# user = swift
-# swift_dir = /etc/swift
-# devices = /srv/node
-# mount_check = true
-# expiring_objects_container_divisor = 86400
-# You can specify default log routing here if you want:
-# log_name = swift
-# log_facility = LOG_LOCAL0
-# log_level = INFO
-#####
 bind_ip = <%= @bind_ip %>
 bind_port = <%= @bind_port %>
-workers = 10
+workers = <%= node['openstack']['object-storage']['object-server']['workers'] %>
 <% if node['openstack']['object-storage']['statistics']['enabled'] -%>
 log_statsd_host = localhost
 log_statsd_port = 8125
