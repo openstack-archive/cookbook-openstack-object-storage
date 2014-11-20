@@ -127,6 +127,13 @@ else
   authkey = swift_secrets['swift_authkey']
 end
 
+proxy_api_bind = endpoint 'object-storage-api-bind'
+
+proxy_api_bind_port = node['openstack']['object-storage']['network']['proxy-bind-port']
+proxy_api_bind_port = proxy_api_bind.port if proxy_api_bind_port.nil?
+proxy_api_bind_host = node['openstack']['object-storage']['network']['proxy-bind-ip']
+proxy_api_bind_host = proxy_api_bind.host if proxy_api_bind_host.nil?
+
 # create proxy config file
 template '/etc/swift/proxy-server.conf' do
   source 'proxy-server.conf.erb'
@@ -135,8 +142,8 @@ template '/etc/swift/proxy-server.conf' do
   mode 0600
   variables(
     'authmode' => node['openstack']['object-storage']['authmode'],
-    'bind_host' => node['openstack']['object-storage']['network']['proxy-bind-ip'],
-    'bind_port' => node['openstack']['object-storage']['network']['proxy-bind-port'],
+    'bind_host' => proxy_api_bind_host,
+    'bind_port' => proxy_api_bind_port,
     'authkey' => authkey,
     'memcache_servers' => memcache_servers
   )

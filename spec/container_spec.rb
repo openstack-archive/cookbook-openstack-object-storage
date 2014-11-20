@@ -50,12 +50,16 @@ describe 'openstack-object-storage::container-server' do
     describe '/etc/swift/container-server.conf' do
       let(:file) { chef_run.template('/etc/swift/container-server.conf') }
 
-      describe 'default attribute values' do
-        it_behaves_like 'a common swift server default attribute values checker', 'container'
+      it 'creates account-server.conf' do
+        expect(chef_run).to create_template(file.name).with(
+          user: 'swift',
+          group: 'swift',
+          mode: 0600
+        )
+      end
 
-        it 'for bind_port' do
-          expect(chef_run.node['openstack']['object-storage']['network']['container-bind-port']).to eq('6001')
-        end
+      describe 'default attribute values' do
+        it_behaves_like 'a common swift server default attribute values checker', 'container', '0.0.0.0', '6001'
 
         it 'for allowed_sync_hosts' do
           expect(chef_run.node['openstack']['object-storage']['container-server']['allowed_sync_hosts']).to eq([])
@@ -63,7 +67,7 @@ describe 'openstack-object-storage::container-server' do
       end
 
       describe 'template contents' do
-        it_behaves_like 'a common swift server configurator', 'container'
+        it_behaves_like 'a common swift server configurator', 'container', '0.0.0.0', '6001'
 
         it 'sets allowed_sync_hosts when present' do
           node.set['openstack']['object-storage']['container-server']['allowed_sync_hosts'] = %w(host1 host2)
