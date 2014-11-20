@@ -88,7 +88,17 @@ shared_examples 'keystone-authmode' do
   end
 end
 
-shared_examples 'a common swift server configurator' do |server_type|
+shared_examples 'a common swift server configurator' do |server_type, bind_port|
+  { 'bind_ip' => '0.0.0.0',
+    'bind_port' => "#{bind_port}",
+    'log_statsd_default_sample_rate' => '1',
+    'log_statsd_metric_prefix' => 'openstack.swift.Fauxhai',
+    'workers' => 'auto' }.each do |k, v|
+    it "sets the default for #{k}" do
+      expect(chef_run).to render_file(file.name).with_content(/^#{Regexp.quote("#{k} = #{v}")}$/)
+    end
+  end
+
   %w(ip port).each do |attr|
     it "sets the bind_#{attr} attr" do
       node.set['openstack']['object-storage']['network']["#{server_type}-bind-#{attr}"] = "#{attr}_value"
@@ -119,9 +129,13 @@ shared_examples 'a common swift server configurator' do |server_type|
   end
 end
 
-shared_examples 'a common swift server default attribute values checker' do |server_type|
+shared_examples 'a common swift server default attribute values checker' do |server_type, bind_port|
   it 'bind_ip' do
     expect(chef_run.node['openstack']['object-storage']['network']["#{server_type}-bind-ip"]).to eq('0.0.0.0')
+  end
+
+  it 'bind_port' do
+    expect(chef_run.node['openstack']['object-storage']['network']["#{server_type}-bind-port"]).to eq("#{bind_port}")
   end
 
   it 'log_statsd_default_sample_rate' do
@@ -134,5 +148,9 @@ shared_examples 'a common swift server default attribute values checker' do |ser
 
   it 'hostname' do
     expect(chef_run.node['hostname']).to eq('Fauxhai')
+  end
+
+  it 'workers' do
+    expect(chef_run.node['openstack']['object-storage']["#{server_type}-server"]['workers']).to eq('auto')
   end
 end

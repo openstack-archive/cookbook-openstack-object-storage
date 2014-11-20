@@ -42,11 +42,7 @@ describe 'openstack-object-storage::proxy-server' do
       end
 
       describe 'default attribute values' do
-        it_behaves_like 'a common swift server default attribute values checker', 'proxy'
-
-        it 'uses default attribute value for bind_port' do
-          expect(chef_run.node['openstack']['object-storage']['network']['proxy-bind-port']).to eq('8080')
-        end
+        it_behaves_like 'a common swift server default attribute values checker', 'proxy', '8080'
 
         it 'uses default attribute value for authmode' do
           expect(chef_run.node['openstack']['object-storage']['authmode']).to eq('swauth')
@@ -146,17 +142,11 @@ describe 'openstack-object-storage::proxy-server' do
       end
 
       describe 'template contents' do
-        it_behaves_like 'a common swift server configurator', 'proxy'
+        it_behaves_like 'a common swift server configurator', 'proxy', '8080'
 
         context 'workers' do
           it 'sets the number of workers' do
-            chef_run.node.automatic['cpu']['total'] = 8
-            expect(chef_run).to render_file(file.name).with_content(/^workers = 7$/)
-          end
-
-          it 'sets the minimum numnber of workers' do
-            chef_run.node.automatic['cpu']['total'] = 0
-            expect(chef_run).to render_file(file.name).with_content(/^workers = 1$/)
+            expect(chef_run).to render_file(file.name).with_content(/^workers = auto$/)
           end
         end
 

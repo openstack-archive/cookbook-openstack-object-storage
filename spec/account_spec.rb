@@ -46,14 +46,10 @@ describe 'openstack-object-storage::account-server' do
       end
 
       describe 'default attribute values' do
-        it_behaves_like 'a common swift server default attribute values checker', 'account'
-
-        it 'uses default attribute value for bind_port' do
-          expect(chef_run.node['openstack']['object-storage']['network']['account-bind-port']).to eq('6002')
-        end
+        it_behaves_like 'a common swift server default attribute values checker', 'account', '6002'
       end
 
-      it_behaves_like 'a common swift server configurator', 'account'
+      it_behaves_like 'a common swift server configurator', 'account', '6002'
     end
   end
 end

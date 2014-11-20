@@ -48,14 +48,10 @@ describe 'openstack-object-storage::object-server' do
       end
 
       describe 'default attribute values' do
-        it_behaves_like 'a common swift server default attribute values checker', 'object'
-
-        it 'uses default attribute value for bind_port' do
-          expect(chef_run.node['openstack']['object-storage']['network']['object-bind-port']).to eq('6000')
-        end
+        it_behaves_like 'a common swift server default attribute values checker', 'object', '6000'
       end
 
-      it_behaves_like 'a common swift server configurator', 'object'
+      it_behaves_like 'a common swift server configurator', 'object', '6000'
     end
   end
 end
