@@ -20,8 +20,8 @@
 
 include_recipe 'openstack-object-storage::rsync'
 
-template '/etc/swift/drive-audit.conf' do
-  source 'drive-audit.conf.erb'
+cookbook_file '/etc/swift/drive-audit.conf' do
+  source 'drive-audit.conf'
   owner 'swift'
   group 'swift'
   mode 0600

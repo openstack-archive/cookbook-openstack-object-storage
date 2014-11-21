@@ -24,18 +24,14 @@ describe 'openstack-object-storage::storage-common' do
     end
 
     describe '/etc/swift/drive-audit.conf' do
-      let(:file) { chef_run.template('/etc/swift/drive-audit.conf') }
+      let(:file) { chef_run.cookbook_file('/etc/swift/drive-audit.conf') }
 
       it 'creates drive-audit.conf' do
-        expect(chef_run).to create_template(file.name).with(
+        expect(chef_run).to create_cookbook_file(file.name).with(
           user: 'swift',
           group: 'swift',
           mode: 0600
         )
-      end
-
-      it 'template contents' do
-        skip 'TODO: implement'
       end
     end
   end
