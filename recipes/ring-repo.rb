@@ -24,6 +24,8 @@
 
 platform_options = node['openstack']['object-storage']['platform']
 ring_options = node['openstack']['object-storage']['ring']
+git_config_email = "git config user.email 'chef@openstack.org'"
+git_config_name = "git config user.name 'Chef'"
 
 platform_options['git_packages'].each do |pkg|
   package pkg do
@@ -41,7 +43,7 @@ end
 execute 'create empty git repo' do
   cwd '/tmp'
   umask 022
-  command "mkdir $$; cd $$; git init; echo \"backups\" \> .gitignore; git add .gitignore; git commit -m 'initial commit' --author='chef <chef@openstack>'; git push file:///#{platform_options["git_dir"]}/rings master"
+  command "mkdir $$; cd $$; git init; echo \"backups\" \> .gitignore; #{git_config_email} ; #{git_config_name} ; git add .gitignore; git commit -m 'initial commit' --author='chef <chef@openstack>'; git push file:///#{platform_options["git_dir"]}/rings master"
   user 'swift'
   action :nothing
 end
@@ -129,7 +131,7 @@ end
                  "min_part_hours=#{min_part_hours}, replicas=#{replicas}")
   execute "add #{ring_type}.builder" do
     cwd '/etc/swift/ring-workspace/rings'
-    command "git add #{ring_type}.builder && git commit -m 'initial ring builders' --author='chef <chef@openstack>'"
+    command "git add #{ring_type}.builder && #{git_config_email} ; #{git_config_name} && git commit -m 'initial ring builders' --author='chef <chef@openstack>'"
     user 'swift'
     action :nothing
   end
