@@ -44,7 +44,8 @@ platform_options['proxy_packages'].each do |pkg|
   end
 end
 
-if node['openstack']['object-storage']['authmode'] == 'swauth'
+case node['openstack']['object-storage']['authmode']
+when 'swauth'
   case node['openstack']['object-storage']['swauth_source']
   when 'package'
     platform_options['swauth_packages'].each do |pkg|
@@ -69,15 +70,19 @@ if node['openstack']['object-storage']['authmode'] == 'swauth'
       EOH
       environment 'PREFIX' => '/usr/local'
     end
+  else
+    Chef::Log.fatal("Object storage swauth source #{node['openstack']['object-storage']['swauth_source']} is not supported")
   end
+when 'keystone'
+  package 'python-keystoneclient' do
+    action :upgrade
+  end
+  include_recipe 'openstack-object-storage::identity_registration'
+else
+  Chef::Log.fatal("Object storage authmode #{node['openstack']['object-storage']['authmode']} is not supported")
 end
 
 package 'python-swift-informant' do
   action :upgrade
   only_if { node['openstack']['object-storage']['use_informant'] }
-end
-
-package 'python-keystoneclient' do
-  action :upgrade
-  only_if { node['openstack']['object-storage']['authmode'] == 'keystone' }
 end
