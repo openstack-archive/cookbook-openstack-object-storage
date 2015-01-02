@@ -24,6 +24,7 @@ require 'chef/util/file_edit'
 
 action :ensure_exists do
   proposed_devices = @new_resource.devices
+  fsck = @new_resource.pass
   path = @new_resource.name
   dev_info = {}
 
@@ -137,6 +138,7 @@ action :ensure_exists do
       dump 0
       fstype info['format']
       action :nothing
+      pass fsck
     end
 
     unless fstabs.key?(mount_path)
