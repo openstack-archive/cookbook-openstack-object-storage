@@ -9,6 +9,7 @@ This file is used to list changes made in each version of cookbook-openstack-obj
 * Add keystone registration support
 * Use Common bind endpoint
 * Add swift.conf template
+* Cleanup service templates
 
 ## 9.0.3
 * Bugfix run_command exitstatus

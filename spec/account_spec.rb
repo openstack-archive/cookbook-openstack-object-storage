@@ -54,6 +54,8 @@ describe 'openstack-object-storage::account-server' do
       end
 
       it_behaves_like 'a common swift server configurator', 'account', '0.0.0.0', '6002'
+
+      it_behaves_like 'some common swift server values'
     end
   end
 end

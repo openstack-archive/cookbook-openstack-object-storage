@@ -37,18 +37,12 @@ else
 end
 
 -%>
-# This file is managed by chef.  Do not edit it.
-#
-# Cluster info:
-#   Auth mode: <%= node['openstack']['object-storage']['authmode'] %>
-#   Management server: <%= node['roles'].include?(node['openstack']['object-storage']['management_server_chef_role']) %>
-#   Account management enabled: <%= account_management %>
-#   Auth pipeline: <%= pipeline %>
 
 [DEFAULT]
 bind_ip = <%= @bind_host %>
 bind_port = <%= @bind_port %>
 workers = <%= node['openstack']['object-storage']['proxy-server']['workers'] %>
+max_clients = <%= node['openstack']['object-storage']['proxy-server']['max_clients'] %>
 <% if node['openstack']['object-storage']['statistics']['enabled'] -%>
 log_statsd_host = localhost
 log_statsd_port = 8125
@@ -56,45 +50,13 @@ log_statsd_default_sample_rate = <%= node['openstack']['object-storage']['statis
 log_statsd_metric_prefix = <%= node['openstack']['object-storage']['statistics']['statsd_prefix'] %>.<%= node['hostname'] %>
 <% end %>
 
-
 [pipeline:main]
 pipeline = catch_errors healthcheck cache ratelimit <%= pipeline.join(" ") %> proxy-logging proxy-server
 
 [app:proxy-server]
 use = egg:swift#proxy
-# You can override the default log routing for this app here:
-# set log_name = proxy-server
-# set log_facility = LOG_LOCAL0
-# set log_level = INFO
-# set access_log_name = proxy-server
-# set access_log_facility = LOG_LOCAL0
-# set access_log_level = INFO
-# set log_headers = False
-# recheck_account_existence = 60
-# recheck_container_existence = 60
-# object_chunk_size = 8192
-# client_chunk_size = 8192
-# node_timeout = 10
-# client_timeout = 60
-# conn_timeout = 0.5
-# How long without an error before a node's error count is reset. This will
-# also be how long before a node is reenabled after suppression is triggered.
-# error_suppression_interval = 60
-# How many errors can accumulate before a node is temporarily ignored.
-# error_suppression_limit = 10
-# If set to 'true' any authorized user may create and delete accounts; if
-# 'false' no one, even authorized, can.
-# allow_account_management = false
-# Set object_post_as_copy = false to turn on fast posts where only the metadata
-# changes are stored anew and the original data file is kept in place. This
-# makes for quicker posts; but since the container metadata isn't updated in
-# this mode, features like container sync won't be able to sync posts.
-# object_post_as_copy = true
-# If set to 'true' authorized accounts that do not yet exist within the Swift
-# cluster will be automatically created.
-# account_autocreate = false
 allow_account_management = <%= account_management %>
-
+node_timeout = <%= node['openstack']['object-storage']['proxy-server']['node_timeout'] %>
 <% if pipeline.include?("keystoneauth") -%>
 account_autocreate = true
 <% end %>
@@ -102,9 +64,6 @@ account_autocreate = true
 <% if pipeline.include?("swauth") -%>
 [filter:swauth]
 use = egg:swauth#swauth
-# set log_name = swauth
-# super_admin_key = <secret_key>
-######
 super_admin_key = <%= @authkey %>
 default_swift_cluster = local#<%= node['openstack']['object-storage']['swift_url'] %>#<%= node['openstack']['object-storage']['swauth_url'] %>
 <% if pipeline.include?("tempurl") -%>
@@ -117,62 +76,16 @@ allowed_sync_hosts = <%= node['openstack']['object-storage']['container-server']
 
 [filter:healthcheck]
 use = egg:swift#healthcheck
-# You can override the default log routing for this filter here:
-# set log_name = healthcheck
-# set log_facility = LOG_LOCAL0
-# set log_level = INFO
-# set log_headers = False
 
 [filter:cache]
 use = egg:swift#memcache
-# You can override the default log routing for this filter here:
-# set log_name = cache
-# set log_facility = LOG_LOCAL0
-# set log_level = INFO
-# set log_headers = False
-# Default for memcache_servers is to try to read the property from
-# memcache.conf (see memcache.conf-sample) or lacking that file, it will
-# default to the value below. You can specify multiple servers separated with
-# commas, as in: 10.1.2.3:11211,10.1.2.4:11211
-# memcache_servers = 127.0.0.1:11211
-#####
 memcache_servers = <%= @memcache_servers.join(",") %>
 
 [filter:ratelimit]
 use = egg:swift#ratelimit
-# You can override the default log routing for this filter here:
-# set log_name = ratelimit
-# set log_facility = LOG_LOCAL0
-# set log_level = INFO
-# set log_headers = False
-# clock_accuracy should represent how accurate the proxy servers' system clocks
-# are with each other. 1000 means that all the proxies' clock are accurate to
-# each other within 1 millisecond.  No ratelimit should be higher than the
-# clock accuracy.
-# clock_accuracy = 1000
-# max_sleep_time_seconds = 60
-# log_sleep_time_seconds of 0 means disabled
-# log_sleep_time_seconds = 0
-# allows for slow rates (e.g. running up to 5 sec's behind) to catch up.
-# rate_buffer_seconds = 5
-# account_ratelimit of 0 means disabled
-# account_ratelimit = 0
-
-# these are comma separated lists of account names
-# account_whitelist = a,b
-# account_blacklist = c,d
-
-# with container_limit_x = r
-# for containers of size x limit requests per second to r.  The container
-# rate will be linearly interpolated from the values given. With the values
-# below, a container of size 5 will get a rate of 75.
-# container_ratelimit_0 = 100
-# container_ratelimit_10 = 50
-# container_ratelimit_50 = 20
 
 [filter:domain_remap]
 use = egg:swift#domain_remap
-# You can override the default log routing for this filter here:
 set log_name = <%= node['openstack']['object-storage']['domain_remap']['log_name'] %>
 set log_facility = <%= node['openstack']['object-storage']['domain_remap']['log_facility'] %>
 set log_level = <%= node['openstack']['object-storage']['domain_remap']['log_level'] %>
@@ -183,29 +96,13 @@ reseller_prefixes = <%= node['openstack']['object-storage']['domain_remap']['res
 
 [filter:catch_errors]
 use = egg:swift#catch_errors
-# You can override the default log routing for this filter here:
-# set log_name = catch_errors
-# set log_facility = LOG_LOCAL0
-# set log_level = INFO
-# set log_headers = False
 
 [filter:cname_lookup]
-# Note: this middleware requires python-dnspython
 use = egg:swift#cname_lookup
-# You can override the default log routing for this filter here:
-# set log_name = cname_lookup
-# set log_facility = LOG_LOCAL0
-# set log_level = INFO
-# set log_headers = False
-# storage_domain = example.com
-# lookup_depth = 1
 
-# Note: Put staticweb just after your auth filter(s) in the pipeline
 [filter:staticweb]
 use = egg:swift#staticweb
-# Seconds to cache container x-container-meta-web-* header values.
 cache_timeout = <%= node['openstack']['object-storage']['staticweb']['cache_timeout'] %>
-# You can override the default log routing for this filter here:
 set log_name = <%= node['openstack']['object-storage']['staticweb']['log_name'] %>
 set log_facility = <%= node['openstack']['object-storage']['staticweb']['log_facility'] %>
 set log_level = <%= node['openstack']['object-storage']['staticweb']['log_level'] %>
@@ -214,56 +111,19 @@ set access_log_facility = <%= node['openstack']['object-storage']['staticweb']['
 set access_log_level = <%= node['openstack']['object-storage']['staticweb']['access_log_level'] %>
 set log_headers = <%= node['openstack']['object-storage']['staticweb']['log_headers'] %>
 
-# Note: Put tempurl just before your auth filter(s) in the pipeline
 [filter:tempurl]
 use = egg:swift#tempurl
-#
-# The headers to remove from incoming requests. Simply a whitespace delimited
-# list of header names and names can optionally end with '*' to indicate a
-# prefix match. incoming_allow_headers is a list of exceptions to these
-# removals.
 incoming_remove_headers = <%= node['openstack']['object-storage']['tempurl']['incoming_remove_headers'] %>
-#
-# The headers allowed as exceptions to incoming_remove_headers. Simply a
-# whitespace delimited list of header names and names can optionally end with
-# '*' to indicate a prefix match.
 incoming_allow_headers = <%= node['openstack']['object-storage']['tempurl']['incoming_allow_headers'] %>
-#
-# The headers to remove from outgoing responses. Simply a whitespace delimited
-# list of header names and names can optionally end with '*' to indicate a
-# prefix match. outgoing_allow_headers is a list of exceptions to these
-# removals.
 outgoing_remove_headers = <%= node['openstack']['object-storage']['tempurl']['outgoing_remove_headers'] %>
-#
-# The headers allowed as exceptions to outgoing_remove_headers. Simply a
-# whitespace delimited list of header names and names can optionally end with
-# '*' to indicate a prefix match.
 outgoing_allow_headers = <%= node['openstack']['object-storage']['tempurl']['outgoing_allow_headers'] %>
 
-# Note: Put formpost just before your auth filter(s) in the pipeline
 [filter:formpost]
 use = egg:swift#formpost
 
 [filter:keystoneauth]
-operator_roles = Member,admin
 use = egg:swift#keystoneauth
+operator_roles = Member,admin
 
 [filter:proxy-logging]
 use = egg:swift#proxy_logging
-# access_log_name = proxy
-# access_log_facility = LOG_LOCAL0
-# access_log_level = INFO
-# access_log_address = /dev/log
-# If set, access_log_udp_host will override access_log_address
-# access_log_udp_host =
-# access_log_udp_port = 514
-# You can use log_statsd_* from [DEFAULT] or override them here:
-# access_log_statsd_host = localhost
-# access_log_statsd_port = 8125
-# access_log_statsd_default_sample_rate = <%= node['openstack']['object-storage']['statistics']['sample_rate'] %>
-# access_log_statsd_metric_prefix =
-# access_log_headers = False
-# What HTTP methods are allowed for StatsD logging (comma-sep); request methods
-# not in this list will have "BAD_METHOD" for the <verb> portion of the metric.
-# log_statsd_valid_http_methods = GET,HEAD,POST,PUT,DELETE,COPY
-

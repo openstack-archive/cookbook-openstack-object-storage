@@ -56,6 +56,17 @@ describe 'openstack-object-storage::object-server' do
       end
 
       it_behaves_like 'a common swift server configurator', 'object', '0.0.0.0', '6000'
+
+      it_behaves_like 'some common swift server values'
+
+      describe 'default replicator values' do
+        { 'run_pause' => '30',
+          'reclaim_age' => '604800' }.each do |k, v|
+          it "sets the default for #{k}" do
+            expect(chef_run).to render_config_file(file.name).with_section_content('object-replicator', /^#{Regexp.quote("#{k} = #{v}")}$/)
+          end
+        end
+      end
     end
   end
 end
