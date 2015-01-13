@@ -99,6 +99,8 @@ describe 'openstack-object-storage::container-server' do
       describe 'template contents' do
         it_behaves_like 'a common swift server configurator', 'container', '0.0.0.0', '6001'
 
+        it_behaves_like 'some common swift server values'
+
         it 'sets allowed_sync_hosts when present' do
           node.set['openstack']['object-storage']['container-server']['allowed_sync_hosts'] = %w(host1 host2)
           expect(chef_run).to render_file(file.name).with_content(/^allowed_sync_hosts = host1,host2$/)

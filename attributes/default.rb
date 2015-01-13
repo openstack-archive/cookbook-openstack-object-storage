@@ -97,10 +97,6 @@ default['openstack']['object-storage']['max_account_name_length'] = 256
 # of a container name
 default['openstack']['object-storage']['max_container_name_length'] = 256
 
-# the release only has any effect on ubuntu, and must be
-# a valid release on http://ubuntu-cloud.archive.canonical.com/ubuntu
-default['openstack']['object-storage']['release'] = 'juno'
-
 # Use the openstack-common cookbook databags with the
 # following keys:
 # secret tokens
@@ -255,16 +251,43 @@ default['openstack']['object-storage']['disk_test_filter'] = [
 # template overrides
 #-------------------
 
+# account-server
+
 # Use an integer to override the number of pre-forked processes that will
-# accept connections.  Should default to the number of effective cpu
-# cores in the system.  It's worth noting that individual workers will
-# use many eventlet co-routines to service multiple concurrent requests.
-default['openstack']['object-storage']['proxy-server']['workers'] = 'auto'
+# accept connections.  Zero means no fork. Should default to the number of
+# effective cpu cores in the system.  It's worth noting that individual
+# workers will # use many eventlet co-routines to service multiple concurrent
+# requests.
 default['openstack']['object-storage']['account-server']['workers'] = 'auto'
-default['openstack']['object-storage']['container-server']['workers'] = 'auto'
-default['openstack']['object-storage']['object-server']['workers'] = 'auto'
+
+# Maximum number of clients one worker can process simultaneously (it will
+# actually accept(2) N + 1). Setting this to one (1) will only handle one request
+# at a time, without accepting another request concurrently.  The default is 1024.
+default['openstack']['object-storage']['account-server']['max_clients'] = 1024
+
+# Parent directory or where devices are mounted. Default is /srv/node
+default['openstack']['object-storage']['account-server']['devices'] = '/srv/node'
+
+# Whether or not check if the devices are mounted to prevent accidentally writing to
+# the root device. The default is set to true.
+default['openstack']['object-storage']['account-server']['mount_check'] = true
 
 # proxy-server
+
+# Use an integer to override the number of pre-forked processes that will
+# accept connections.  Zero means no fork. Should default to the number of
+# effective cpu cores in the system.  It's worth noting that individual
+# workers will # use many eventlet co-routines to service multiple concurrent
+# requests.
+default['openstack']['object-storage']['proxy-server']['workers'] = 'auto'
+
+# Maximum number of clients one worker can process simultaneously (it will
+# actually accept(2) N + 1). Setting this to one (1) will only handle one request
+# at a time, without accepting another request concurrently.  The default is 1024.
+default['openstack']['object-storage']['proxy-server']['max_clients'] = 1024
+
+# Request timeout to external services. The default is 10 seconds.
+default['openstack']['object-storage']['proxy-server']['node_timeout'] = 10
 
 # enable or disable formpost
 default['openstack']['object-storage']['formpost']['enabled'] = false
@@ -334,6 +357,25 @@ default['openstack']['object-storage']['staticweb']['log_headers'] = 'False'
 
 # container-server
 
+# Use an integer to override the number of pre-forked processes that will
+# accept connections.  Zero means no fork. Should default to the number of
+# effective cpu cores in the system.  It's worth noting that individual
+# workers will # use many eventlet co-routines to service multiple concurrent
+# requests.
+default['openstack']['object-storage']['container-server']['workers'] = 'auto'
+
+# Maximum number of clients one worker can process simultaneously (it will
+# actually accept(2) N + 1). Setting this to one (1) will only handle one request
+# at a time, without accepting another request concurrently.  The default is 1024.
+default['openstack']['object-storage']['container-server']['max_clients'] = 1024
+
+# Parent directory or where devices are mounted. Default is /srv/node
+default['openstack']['object-storage']['container-server']['devices'] = '/srv/node'
+
+# Whether or not check if the devices are mounted to prevent accidentally writing to
+# the root device. The default is set to true.
+default['openstack']['object-storage']['container-server']['mount_check'] = true
+
 # Override this with an allowed list of your various swift clusters if you wish
 # to enable container sync for your end-users between clusters.  This should
 # be an array of fqdn hostnames for the cluster end-points that your end-users
@@ -353,6 +395,34 @@ default['openstack']['object-storage']['container-server']['container-sync']['in
 
 # Maximum amount of time to spend syncing each container per pass (in seconds)
 default['openstack']['object-storage']['container-server']['container-sync']['container_time'] = 60
+
+# object-server
+
+# Use an integer to override the number of pre-forked processes that will
+# accept connections.  Zero means no fork. Should default to the number of
+# effective cpu cores in the system.  It's worth noting that individual
+# workers will # use many eventlet co-routines to service multiple concurrent
+# requests.
+default['openstack']['object-storage']['object-server']['workers'] = 'auto'
+
+# Maximum number of clients one worker can process simultaneously (it will
+# actually accept(2) N + 1). Setting this to one (1) will only handle one request
+# at a time, without accepting another request concurrently.  The default is 1024.
+default['openstack']['object-storage']['object-server']['max_clients'] = 1024
+
+# Parent directory or where devices are mounted. Default is /srv/node
+default['openstack']['object-storage']['object-server']['devices'] = '/srv/node'
+
+# Whether or not check if the devices are mounted to prevent accidentally writing to
+# the root device. The default is set to true.
+default['openstack']['object-storage']['object-server']['mount_check'] = true
+
+# Time in seconds to wait between replication passes. The default is 30.
+default['openstack']['object-storage']['object-server']['replicator']['run_pause'] = 30
+
+# Time elapsed in seconds before an object can be reclaimed. The default is
+# 604800 seconds.
+default['openstack']['object-storage']['object-server']['replicator']['reclaim_age'] = 604800
 
 #------------------
 # swauth source

@@ -116,16 +116,17 @@ shared_examples 'a common swift server configurator' do |server_type, bind_ip, b
     'bind_port' => "#{bind_port}",
     'log_statsd_default_sample_rate' => '1',
     'log_statsd_metric_prefix' => 'openstack.swift.Fauxhai',
+    'max_clients' => '1024',
     'workers' => 'auto' }.each do |k, v|
     it "sets the default for #{k}" do
-      expect(chef_run).to render_file(file.name).with_content(/^#{Regexp.quote("#{k} = #{v}")}$/)
+      expect(chef_run).to render_config_file(file.name).with_section_content('DEFAULT', /^#{Regexp.quote("#{k} = #{v}")}$/)
     end
   end
 
   %w(ip port).each do |attr|
     it "sets the bind_#{attr} attr" do
       node.set['openstack']['object-storage']['network']["#{server_type}-bind-#{attr}"] = "#{attr}_value"
-      expect(chef_run).to render_file(file.name).with_content(/^bind_#{attr} = #{attr}_value$/)
+      expect(chef_run).to render_config_file(file.name).with_section_content('DEFAULT', /^bind_#{attr} = #{attr}_value$/)
     end
   end
 
@@ -136,19 +137,19 @@ shared_examples 'a common swift server configurator' do |server_type, bind_ip, b
 
     it 'sets the log_statsd_default_sample_rate attribute' do
       node.set['openstack']['object-storage']['statistics']['sample_rate'] = 'sample_rate_value'
-      expect(chef_run).to render_file(file.name).with_content(/^log_statsd_default_sample_rate = sample_rate_value$/)
+      expect(chef_run).to render_config_file(file.name).with_section_content('DEFAULT', /^log_statsd_default_sample_rate = sample_rate_value$/)
     end
 
     it 'sets the log_statsd_metric_prefix attribute' do
       node.set['openstack']['object-storage']['statistics']['statsd_prefix'] = 'statsd_prefix_value'
       chef_run.node.automatic['hostname'] = 'myhostname'
-      expect(chef_run).to render_file(file.name).with_content(/^log_statsd_metric_prefix = statsd_prefix_value\.myhostname$/)
+      expect(chef_run).to render_config_file(file.name).with_section_content('DEFAULT', /^log_statsd_metric_prefix = statsd_prefix_value\.myhostname$/)
     end
   end
 
   it 'does not show statistic related attributed when disabled' do
     node.set['openstack']['object-storage']['statistics']['enabled'] = false
-    expect(chef_run).not_to render_file(file.name).with_content(/^log_statsd_host = localhost$/)
+    expect(chef_run).not_to render_config_file(file.name).with_section_content('DEFAULT', /^log_statsd_host = localhost$/)
   end
 end
 
@@ -182,5 +183,14 @@ shared_examples 'custom template banner displayer' do
   it 'shows the custom banner' do
     node.set['openstack']['object-storage']['custom_template_banner'] = 'custom_template_banner_value'
     expect(chef_run).to render_file(file_name).with_content(/^custom_template_banner_value$/)
+  end
+end
+
+shared_examples 'some common swift server values' do
+  { 'devices' => '/srv/node',
+    'mount_check' => 'true' }.each do |k, v|
+    it "sets the default for #{k}" do
+      expect(chef_run).to render_config_file(file.name).with_section_content('DEFAULT', /^#{Regexp.quote("#{k} = #{v}")}$/)
+    end
   end
 end
