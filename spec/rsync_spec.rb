@@ -24,6 +24,10 @@ describe 'openstack-object-storage::rsync' do
     describe '/etc/rsyncd.conf' do
       let(:file) { chef_run.template('/etc/rsyncd.conf') }
 
+      it_behaves_like 'custom template banner displayer' do
+        let(:file_name) { file.name }
+      end
+
       it 'creates /etc/rsyncd.conf' do
         expect(chef_run).to create_template(file.name).with(
           mode: 0644
