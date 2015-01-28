@@ -49,7 +49,8 @@ platform_options['proxy_packages'].each do |pkg|
   end
 end
 
-if node['openstack']['object-storage']['authmode'] == 'swauth'
+case node['openstack']['object-storage']['authmode']
+when 'swauth'
   case node['openstack']['object-storage']['swauth_source']
   when 'package'
     platform_options['swauth_packages'].each do |pkg|
@@ -75,6 +76,15 @@ if node['openstack']['object-storage']['authmode'] == 'swauth'
       environment 'PREFIX' => '/usr/local'
     end
   end
+when 'keystone'
+  package 'python-keystoneclient' do
+    action :upgrade
+  end
+  identity_endpoint = endpoint 'identity-api'
+  identity_admin_endpoint = endpoint 'identity-admin'
+  service_pass = get_password 'service', 'openstack-object-storage'
+
+  auth_uri = auth_uri_transform identity_endpoint.to_s, node['openstack']['object-storage']['api']['auth']['version']
 end
 
 package 'python-swift-informant' do
@@ -82,20 +92,14 @@ package 'python-swift-informant' do
   only_if { node['openstack']['object-storage']['use_informant'] }
 end
 
-package 'python-keystoneclient' do
-  action :upgrade
-  only_if { node['openstack']['object-storage']['authmode'] == 'keystone' }
-end
-
 directory '/var/cache/swift' do
-  owner 'swift'
-  group 'swift'
+  owner node['openstack']['object-storage']['user']
+  group node['openstack']['object-storage']['group']
   mode 00700
 end
 
 swift_proxy_service = platform_options['service_prefix'] + 'swift-proxy' + platform_options['service_suffix']
 service 'swift-proxy' do
-  # openstack-swift-proxy.service on fedora-17, swift-proxy on ubuntu
   service_name swift_proxy_service
   provider platform_options['service_provider']
   supports status: true, restart: true
@@ -139,15 +143,18 @@ proxy_api_bind_host = proxy_api_bind.host if proxy_api_bind_host.nil?
 # create proxy config file
 template '/etc/swift/proxy-server.conf' do
   source 'proxy-server.conf.erb'
-  owner 'swift'
-  group 'swift'
-  mode 0600
+  owner node['openstack']['object-storage']['user']
+  group node['openstack']['object-storage']['group']
+  mode 00600
   variables(
     'authmode' => node['openstack']['object-storage']['authmode'],
     'bind_host' => proxy_api_bind_host,
     'bind_port' => proxy_api_bind_port,
     'authkey' => authkey,
-    'memcache_servers' => memcache_servers
+    'memcache_servers' => memcache_servers,
+    'auth_uri' => auth_uri,
+    'identity_admin_endpoint' => identity_admin_endpoint,
+    'service_pass' => service_pass
   )
   notifies :restart, 'service[swift-proxy]', :immediately
 end

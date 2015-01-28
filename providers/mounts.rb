@@ -56,8 +56,8 @@ action :ensure_exists do
 
   # make sure we have a "path"
   Directory(path) do
-    group 'swift'
-    owner 'swift'
+    owner node['openstack']['object-storage']['user']
+    group node['openstack']['object-storage']['group']
     recursive true
   end.run_action(:create)
 
@@ -113,8 +113,8 @@ action :ensure_exists do
     mount_path = "#{path}/#{info['mountpoint']}"
 
     Directory(mount_path) do
-      group 'swift'
-      owner 'swift'
+      owner node['openstack']['object-storage']['user']
+      group node['openstack']['object-storage']['group']
       recursive true
     end.run_action(:create)
 
@@ -122,8 +122,8 @@ action :ensure_exists do
     when 'ext4'
       mount_options = 'noatime,nodiratime,nobarrier,user_xattr'
     when 'xfs'
-      case node['platform']
-      when 'ubuntu', 'debian'
+      case node['platform_family']
+      when 'debian'
         mount_options = 'noatime,nodiratime,nobarrier,logbufs=8,nobootwait'
       else
         mount_options = 'noatime,nodiratime,nobarrier,logbufs=8'

@@ -97,16 +97,8 @@ end
 
 shared_examples 'keystone-authmode' do
   describe 'authorization mode' do
-    # Default is to use authorization mode of swauth which does not require keystone client.
-    it 'does not upgrade keystoneclient package' do
-      expect(chef_run).not_to upgrade_package('python-keystoneclient')
-    end
-    describe 'keystone authorization mode' do
-      before { node.set['openstack']['object-storage']['authmode'] = 'keystone' }
-
-      it 'does upgrade keystoneclient package' do
-        expect(chef_run).to upgrade_package('python-keystoneclient')
-      end
+    it 'does upgrade keystoneclient package' do
+      expect(chef_run).to upgrade_package('python-keystoneclient')
     end
   end
 end
