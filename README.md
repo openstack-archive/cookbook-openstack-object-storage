@@ -11,31 +11,31 @@ Requirements
 Clients
 --------
 
- * CentOS >= 6.3
- * Ubuntu >= 12.04
+ * CentOS >= 7
+ * Ubuntu >= 14.04
 
 Chef
 ---------
 
- * 11.4.4
+ * 12
 
-Cookbooks
----------
+Dependent Cookbooks
+-------------------
 
  * openstack-common
+ * openstack-identity
  * memcached
  * statsd
- * apt
 
 Roles
 =====
 
  * swift-account-server - storage node for account data
  * swift-container-server - storage node for container data
- * swift-object-server - storage node for object server
- * swift-proxy-server - proxy for swift storge nodes
- * swift-setup - server responsible for generating initial settings
  * swift-management-server - responsible for ring generation
+ * swift-object-server - storage node for object server
+ * swift-proxy-server - proxy for swift storage nodes
+ * swift-setup - server responsible for generating initial settings
 
 The swift-management-server role performs the following functions:
 
@@ -44,7 +44,7 @@ The swift-management-server role performs the following functions:
  * generally always has the swift-setup role too
  * there can only be _one_ swift-management-server
 
-There *must* be  node with the the swift-managment-server role to act
+There *must* be a node with the the swift-management-server role to act
 as the ring repository.
 
 In small environments, it is likely that all storage machines will
@@ -56,7 +56,7 @@ swift-{account,container,object}-server roles, and there will be
 dedicated hosts with the swift-proxy-server role.
 
 In really really huge environments, it's possible that the storage
-node will be split into swift-{container,accout}-server nodes and
+node will be split into swift-{container,account}-server nodes and
 swift-object-server nodes.
 
 Recipes
@@ -69,7 +69,7 @@ client
 Attributes
 ==========
 
- * ```default[:swift][:authmode]``` - "swauth" or "keystone" (default "swauth"). Right now, only swauth is supported (defaults to swauth)
+ * ```default[:swift][:authmode]``` - "swauth" or "keystone" (default "keystone").
 
  * ```default[:swift][:swauth_source]``` - "git" or "package"(default). Selects between installing python-swauth from git or system package
 
@@ -82,7 +82,7 @@ Attributes
  * ```default[:swift][:audit_hour]``` - Hour to run swift_auditor on storage nodes (defaults to 5)
 
  * ```default[:swift][:disk_enum_expr]``` - Eval-able expression that lists
-   candidate disk nodes for disk probing.  The result shoule be a hash
+   candidate disk nodes for disk probing.  The result should be a hash
    with keys being the device name (without the leading "/dev/") and a
    hash block of any extra info associated with the device.  For
    example: { "sdc" => { "model": "Hitachi 7K3000" }}.  Largely,
@@ -98,7 +98,7 @@ Attributes
  * ```default[:swift][:ring][:replicas]``` - how many replicas swift should retain (defaults to 3)
 
  * ```default[:swift][:disk_test_filter]``` - an array of expressions that must
-   all be true in order a block deviced to be considered for
+   all be true in order a block device to be considered for
    formatting and inclusion in the cluster.  Each rule gets evaluated
    with "candidate" set to the device name (without the leading
    "/dev/") and info set to the node hash value.  Default rules:
@@ -219,34 +219,6 @@ Example environment
 This sets up defaults for a swauth-based cluster with the storage
 network on 10.0.0.0/24.
 
-Example all-in-one
---------------------------
-
-Example all-in-one storage node config (note there should only ever be
-one node with the swift-setup and swift-management roles)
-
-```json
-{
-  "id":       "storage1",
-  "name":     "storage1",
-  "json_class": "Chef::Node",
-  "run_list": [
-    "role[swift-setup]",
-    "role[swift-management-server]",
-    "role[swift-account-server]",
-    "role[swift-object-server]",
-    "role[swift-container-server]",
-    "role[swift-proxy-server]"
-  ],
-  "chef_environment": "development",
-  "normal": {
-    "swift": {
-      "zone": "1"
-    }
-  }
-}
-```
-
 Standalone Storage Server
 -------------------------
 
@@ -277,7 +249,7 @@ Testing
 Please refer to the [TESTING.md](TESTING.md) for instructions for testing the cookbook.
 
 Berkshelf
-=====
+=========
 
 Berks will resolve version requirements and dependencies on first run and
 store these in Berksfile.lock. If new cookbooks become available you can run
@@ -300,7 +272,7 @@ License and Author
 |                      |                                                    |
 | **Copyright**        |  Copyright (c) 2013, AT&T, Inc.                    |
 | **Copyright**        |  Copyright (c) 2012, Rackspace US, Inc.            |
-| **Copyright**        |  Copyright (c) 2013, IBM, Corp.                    |
+| **Copyright**        |  Copyright (c) 2013-2015 IBM, Corp.                |
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
