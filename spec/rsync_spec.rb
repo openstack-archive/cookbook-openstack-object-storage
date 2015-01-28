@@ -30,7 +30,7 @@ describe 'openstack-object-storage::rsync' do
 
       it 'creates /etc/rsyncd.conf' do
         expect(chef_run).to create_template(file.name).with(
-          mode: 0644
+          mode: 00644
         )
       end
 

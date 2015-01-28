@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of cookbook-openstack-object-storage.
 
+## 10.1.0
+* Use keystone as default authentication
+
 ## 10.0.0
 * Upgrading to Juno
 * Upgrading berkshelf from 2.0.18 to 3.1.5

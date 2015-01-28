@@ -22,8 +22,8 @@ describe 'openstack-object-storage::proxy-server' do
       expect(chef_run).to upgrade_package('swift-proxy')
     end
 
-    it 'upgrades swauth package if swauth is selected' do
-      expect(chef_run).to upgrade_package('swauth')
+    it 'does not upgrade swauth package' do
+      expect(chef_run).not_to upgrade_package('swauth')
     end
 
     it 'starts swift-proxy on boot' do
@@ -41,7 +41,7 @@ describe 'openstack-object-storage::proxy-server' do
         expect(chef_run).to create_template(file.name).with(
           user: 'swift',
           group: 'swift',
-          mode: 0600
+          mode: 00600
         )
       end
 
@@ -50,9 +50,8 @@ describe 'openstack-object-storage::proxy-server' do
 
         it 'has default contents' do
           array = [
-            /^pipeline = catch_errors healthcheck cache ratelimit swauth proxy-logging proxy-server$/,
-            /^workers = auto$/,
-            /^super_admin_key = swift_authkey-secret$/
+            /^pipeline = catch_errors healthcheck cache ratelimit authtoken keystoneauth proxy-logging proxy-server$/,
+            /^workers = auto$/
           ]
           array.each do |content|
             expect(chef_run).to render_file(file.name).with_content(content)
@@ -60,12 +59,7 @@ describe 'openstack-object-storage::proxy-server' do
         end
 
         it 'uses default attribute value for authmode' do
-          expect(chef_run.node['openstack']['object-storage']['authmode']).to eq('swauth')
-        end
-
-        it 'has auth key override' do
-          node.set['openstack']['object-storage']['authkey'] = '1234'
-          expect(chef_run).to render_file(file.name).with_content(/^super_admin_key = 1234$/)
+          expect(chef_run.node['openstack']['object-storage']['authmode']).to eq('keystone')
         end
 
         %w(tempurl formpost domain_remap staticweb).each do |attr|
@@ -200,7 +194,6 @@ describe 'openstack-object-storage::proxy-server' do
           end
 
           it 'includes keystone related items when authmode is keystone' do
-            node.set['openstack']['object-storage']['authmode'] = 'keystone'
             expect(chef_run).to render_file(file.name).with_content(/^pipeline = .*authtoken keystoneauth.*$/)
           end
 
@@ -221,7 +214,6 @@ describe 'openstack-object-storage::proxy-server' do
         end
 
         it 'sets account_autocreate when authmode is keystone' do
-          node.set['openstack']['object-storage']['authmode'] = 'keystone'
           expect(chef_run).to render_file(file.name).with_content(/^account_autocreate = true$/)
         end
 
@@ -233,6 +225,11 @@ describe 'openstack-object-storage::proxy-server' do
         context 'swauth enabled' do
           before do
             node.set['openstack']['object-storage']['authmode'] = 'swauth'
+          end
+
+          it 'has auth key override' do
+            node.set['openstack']['object-storage']['authkey'] = '1234'
+            expect(chef_run).to render_file(file.name).with_content(/^super_admin_key = 1234$/)
           end
 
           it 'sets allow_account_management attribute when authmode is swauth' do
@@ -287,6 +284,24 @@ describe 'openstack-object-storage::proxy-server' do
           it 'does not set allowed_sync_hosts when present' do
             node.set['openstack']['object-storage']['container-server']['allowed_sync_hosts'] = %w(host1 host2)
             expect(chef_run).not_to render_file(file.name).with_content(/^allowed_sync_hosts = host1,host2$/)
+          end
+        end
+
+        context 'authtoken enabled' do
+          { 'paste.filter_factory' => 'keystoneclient.middleware.auth_token:filter_factory',
+            'auth_uri' => 'http://127.0.0.1:5000/v2.0',
+            'auth_host' => '127.0.0.1',
+            'auth_port' => '35357',
+            'auth_protocol' => 'http',
+            'auth_version' => 'v2.0',
+            'admin_tenant_name' => 'service',
+            'admin_user' => 'swift',
+            'admin_password' => 'swift-pass',
+            'signing_dir' => '/var/cache/swift/api'
+          }.each do |k, v|
+            it "sets the default for #{k}" do
+              expect(chef_run).to render_config_file(file.name).with_section_content('filter:authtoken', /^#{Regexp.quote("#{k} = #{v}")}$/)
+            end
           end
         end
 
