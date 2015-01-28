@@ -31,43 +31,6 @@ platform_options['account_packages'].each.each do |pkg|
   end
 end
 
-# epel/f-17 missing init scripts for the non-major services.
-# https://bugzilla.redhat.com/show_bug.cgi?id=807170
-%w{auditor reaper replicator}.each do |svc|
-  template "/etc/systemd/system/openstack-swift-account-#{svc}.service" do
-    owner 'root'
-    group 'root'
-    mode '0644'
-    source 'simple-systemd-config.erb'
-    variables(
-      description: 'OpenStack Object Storage (swift) - ' +
-                   "Account #{svc.capitalize}",
-      user: 'swift',
-      exec: "/usr/bin/swift-account-#{svc} " +
-            '/etc/swift/account-server.conf'
-    )
-    only_if { platform?('fedora') }
-  end
-end
-
-# TODO(breu): track against upstream epel packages to determine if this
-# is still necessary
-# https://bugzilla.redhat.com/show_bug.cgi?id=807170
-%w{auditor reaper replicator}.each do |svc|
-  template "/etc/init.d/openstack-swift-account-#{svc}" do
-    owner 'root'
-    group 'root'
-    mode '0755'
-    source 'simple-redhat-init-config.erb'
-    variables(
-      description: 'OpenStack Object Storage (swift) - ' +
-                   "Account #{svc.capitalize}",
-      exec: "account-#{svc}"
-    )
-    only_if { platform?(%w{redhat centos}) }
-  end
-end
-
 %w{swift-account swift-account-auditor swift-account-reaper swift-account-replicator}.each do |svc|
   service_name = platform_options['service_prefix'] + svc + platform_options['service_suffix']
   service svc do
@@ -82,9 +45,9 @@ end
 # create account server template
 template '/etc/swift/account-server.conf' do
   source 'account-server.conf.erb'
-  owner 'swift'
-  group 'swift'
-  mode 0600
+  owner node['openstack']['object-storage']['user']
+  group node['openstack']['object-storage']['group']
+  mode 00600
   variables(
     'bind_ip' => node['openstack']['object-storage']['network']['account-bind-ip'],
     'bind_port' => node['openstack']['object-storage']['network']['account-bind-port']

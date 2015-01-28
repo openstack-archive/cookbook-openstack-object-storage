@@ -6,31 +6,31 @@ pipeline = []
 # the pipeline ordering is important and certain inclusions
 # must either preceed or follow the selected auth module
 
-if (node['openstack']['object-storage']['authmode'] == "swauth" and node['openstack']['object-storage']['tempurl']['enabled'] == true)
-  pipeline << "tempurl"
+if (node['openstack']['object-storage']['authmode'] == 'swauth' and node['openstack']['object-storage']['tempurl']['enabled'] == true)
+  pipeline << 'tempurl'
 end
 
 if node['openstack']['object-storage']['domain_remap']['enabled']
-  pipeline << "domain_remap"
+  pipeline << 'domain_remap'
 end
 
 if node['openstack']['object-storage']['formpost']['enabled']
-  pipeline << "formpost"
+  pipeline << 'formpost'
 end
 
 case @authmode
-when "keystone"
-  pipeline << "authtoken"
-  pipeline << "keystoneauth"
-when "swauth"
-  pipeline << "swauth"
+when 'keystone'
+  pipeline << 'authtoken'
+  pipeline << 'keystoneauth'
+when 'swauth'
+  pipeline << 'swauth'
 end
 
 if node['openstack']['object-storage']['staticweb']['enabled']
-  pipeline << "staticweb"
+  pipeline << 'staticweb'
 end
 
-if pipeline.include?("swauth")
+if pipeline.include?('swauth')
    account_management = true
 else
    account_management = false
@@ -51,26 +51,26 @@ log_statsd_metric_prefix = <%= node['openstack']['object-storage']['statistics']
 <% end %>
 
 [pipeline:main]
-pipeline = catch_errors healthcheck cache ratelimit <%= pipeline.join(" ") %> proxy-logging proxy-server
+pipeline = catch_errors healthcheck cache ratelimit <%= pipeline.join(' ') %> proxy-logging proxy-server
 
 [app:proxy-server]
 use = egg:swift#proxy
 allow_account_management = <%= account_management %>
 node_timeout = <%= node['openstack']['object-storage']['proxy-server']['node_timeout'] %>
-<% if pipeline.include?("keystoneauth") -%>
+<% if pipeline.include?('keystoneauth') -%>
 account_autocreate = true
 <% end %>
 
-<% if pipeline.include?("swauth") -%>
+<% if pipeline.include?('swauth') -%>
 [filter:swauth]
 use = egg:swauth#swauth
 super_admin_key = <%= @authkey %>
 default_swift_cluster = local#<%= node['openstack']['object-storage']['swift_url'] %>#<%= node['openstack']['object-storage']['swauth_url'] %>
-<% if pipeline.include?("tempurl") -%>
+<% if pipeline.include?('tempurl') -%>
 allow_overrides = true
 <% end %>
 <% if node['openstack']['object-storage']['container-server']['allowed_sync_hosts'].any? -%>
-allowed_sync_hosts = <%= node['openstack']['object-storage']['container-server']['allowed_sync_hosts'].join(",") %>
+allowed_sync_hosts = <%= node['openstack']['object-storage']['container-server']['allowed_sync_hosts'].join(',') %>
 <% end %>
 <% end %>
 
@@ -79,7 +79,7 @@ use = egg:swift#healthcheck
 
 [filter:cache]
 use = egg:swift#memcache
-memcache_servers = <%= @memcache_servers.join(",") %>
+memcache_servers = <%= @memcache_servers.join(',') %>
 
 [filter:ratelimit]
 use = egg:swift#ratelimit
@@ -121,9 +121,23 @@ outgoing_allow_headers = <%= node['openstack']['object-storage']['tempurl']['out
 [filter:formpost]
 use = egg:swift#formpost
 
+<% if pipeline.include?('authtoken') -%>
+[filter:authtoken]
+paste.filter_factory = keystoneclient.middleware.auth_token:filter_factory
+auth_uri = <%= @auth_uri %>
+auth_host = <%= @identity_admin_endpoint.host %>
+auth_port = <%= @identity_admin_endpoint.port %>
+auth_protocol = <%= @identity_admin_endpoint.scheme %>
+auth_version = <%= node['openstack']['object-storage']['api']['auth']['version'] %>
+admin_tenant_name = <%= node['openstack']['object-storage']['service_tenant_name'] %>
+admin_user = <%= node['openstack']['object-storage']['service_user'] %>
+admin_password = <%= @service_pass %>
+signing_dir = <%= node['openstack']['object-storage']['api']['auth']['cache_dir'] %>
+
 [filter:keystoneauth]
 use = egg:swift#keystoneauth
-operator_roles = Member,admin
+operator_roles = admin, swiftoperator
+<% end %>
 
 [filter:proxy-logging]
 use = egg:swift#proxy_logging

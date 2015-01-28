@@ -27,29 +27,19 @@ platform_options['rsync_packages'].each do |pkg|
   end
 end
 
-# epel/f-17 broken: https://bugzilla.redhat.com/show_bug.cgi?id=737710
-cookbook_file '/etc/systemd/system/rsync.service' do
-  owner 'root'
-  group 'root'
-  mode '0644'
-  source 'rsync.service'
-  action :create
-  only_if { platform?('fedora') }
-end
-
 # rhel based systems install rsync and run it with rsync.  We don't want to do that
 cookbook_file '/etc/init.d/rsyncd' do
   owner 'root'
   group 'root'
-  mode '0755'
+  mode 00755
   source 'rsync.init'
   action :create
-  only_if { platform?('centos', 'redhat', 'scientific') }
+  only_if { platform_family?('rhel') }
 end
 
 # FIXME: chicken and egg
-case node['platform']
-when 'centos', 'redhat', 'fedora'
+case node['platform_family']
+when 'rhel'
   # enable rsyncd
   rsync_servicename = 'rsyncd'
   service 'rsyncd' do
@@ -62,7 +52,7 @@ when 'centos', 'redhat', 'fedora'
     supports status: false, restart: false, start: false, stop: false
     action [:disable]
   end
-when 'ubuntu', 'debian'
+when 'debian'
   rsync_servicename = 'rsync'
   service 'rsync' do
     supports status: false, restart: true
@@ -73,7 +63,7 @@ end
 
 template '/etc/rsyncd.conf' do
   source 'rsyncd.conf.erb'
-  mode 0644
+  mode 00644
   notifies :restart, "service[#{rsync_servicename}]", :immediately
 end
 
@@ -82,6 +72,5 @@ execute 'enable rsync' do
   only_if "grep -q 'RSYNC_ENABLE=false' /etc/default/rsync"
   notifies :restart, 'service[rsync]', :immediately
   action :run
-  # TODO(chrislaco) Convert these to platform_family?
-  not_if { platform?('fedora', 'centos', 'redhat', 'scientific') }
+  not_if { platform_family?('rhel') }
 end
