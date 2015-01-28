@@ -35,7 +35,7 @@ end
 service 'xinetd' do
   supports status: false, restart: true
   action [:enable, :start]
-  only_if { platform?('centos', 'redhat', 'fedora') }
+  only_if { platform_family?('rhel') }
 end
 
 execute 'create empty git repo' do
@@ -65,30 +65,13 @@ execute 'initialize git repo' do
   notifies :run, 'execute[create empty git repo]', :immediately
 end
 
-# epel/f-17 missing systemd-ified inits
-# https://bugzilla.redhat.com/show_bug.cgi?id=737183
-template '/etc/systemd/system/git.service' do
-  owner 'root'
-  group 'root'
-  mode '0644'
-  source 'simple-systemd-config.erb'
-  variables(
-    description: 'Git daemon service',
-    user: 'nobody',
-    exec: '/usr/libexec/git-core/git-daemon ' \
-             '--base-path=/var/lib/git --export-all --user-path=public_git' \
-             '--syslog --verbose'
-  )
-  only_if { platform?('fedora') }
-end
-
-case node['platform']
-when 'centos', 'redhat', 'fedora'
+case platform_family
+when 'rhel'
   service 'git-daemon' do
     service_name platform_options['git_service']
     action [:enable]
   end
-when 'ubuntu', 'debian'
+when 'debian'
   service 'git-daemon' do
     service_name platform_options['git_service']
     action [:enable, :start]
@@ -102,7 +85,7 @@ cookbook_file '/etc/default/git-daemon' do
   source 'git-daemon.default'
   action :create
   notifies :restart, 'service[git-daemon]', :immediately
-  not_if { platform?('fedora', 'centos', 'redhat') }
+  not_if { platform_family?('rhel') }
 end
 
 directory '/etc/swift/ring-workspace' do
