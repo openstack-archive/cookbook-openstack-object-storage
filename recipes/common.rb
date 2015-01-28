@@ -93,7 +93,7 @@ template '/etc/swift/swift.conf' do
   source 'swift.conf.erb'
   owner 'swift'
   group 'swift'
-  mode 0700
+  mode 0600
   variables(
     swift_hash_path_prefix: swift_hash_path_prefix,
     swift_hash_path_suffix: swift_hash_path_suffix

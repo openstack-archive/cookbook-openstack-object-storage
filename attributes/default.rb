@@ -133,11 +133,16 @@ default['openstack']['object-storage']['container_server_chef_role']  = 'swift-c
 # authentication
 #--------------------
 
-default['openstack']['object-storage']['authmode']              = 'swauth'
+# Authenitcation mode, either keystone or swauth
+default['openstack']['object-storage']['authmode']              = 'keystone'
 default['openstack']['object-storage']['authkey']               = nil
 default['openstack']['object-storage']['swift_url']             = 'http://127.0.0.1:8080/v1/'
 default['openstack']['object-storage']['swauth_url']            = 'http://127.0.0.1:8080/v1/'
 default['openstack']['object-storage']['auth_url']              = 'http://127.0.0.1:8080/auth/v1.0'
+# Keystone version
+default['openstack']['object-storage']['api']['auth']['version'] = node['openstack']['api']['auth']['version']
+# Keystone PKI signing directory
+default['openstack']['object-storage']['api']['auth']['cache_dir'] = '/var/cache/swift/api'
 
 #---------------------
 # dispersion settings
@@ -440,8 +445,8 @@ default['openstack']['object-storage']['swauth_version'] = '1.0.8'
 #------------------
 
 # Leveling between distros
-case platform
-when 'redhat'
+case platform_family
+when 'rhel'
   default['openstack']['object-storage']['platform'] = {
     'disk_format' => 'ext4',
     'proxy_packages' => %w{openstack-swift-proxy sudo cronie python-memcached},
@@ -461,50 +466,7 @@ when 'redhat'
     'override_options' => '',
     'swift_statsd_publish' => '/usr/bin/swift-statsd-publish.py'
   }
-#
-# python-iso8601 is a missing dependency for swift.
-# https://bugzilla.redhat.com/show_bug.cgi?id=875948
-when 'centos'
-  default['openstack']['object-storage']['platform'] = {
-    'disk_format' => 'xfs',
-    'proxy_packages' => %w{openstack-swift-proxy sudo cronie python-iso8601 python-memcached},
-    'object_packages' => %w{openstack-swift-object sudo cronie python-iso8601},
-    'container_packages' => %w{openstack-swift-container sudo cronie python-iso8601},
-    'account_packages' => %w{openstack-swift-account sudo cronie python-iso8601},
-    'swift_packages' => %w{openstack-swift sudo cronie python-iso8601},
-    'swift_client_packages' => ['python-swiftclient'],
-    'swauth_packages' => %w{openstack-swauth sudo cronie python-iso8601},
-    'rsync_packages' => ['rsync'],
-    'git_packages' => ['xinetd', 'git', 'git-daemon'],
-    'service_prefix' => 'openstack-',
-    'service_suffix' => '',
-    'git_dir' => '/var/lib/git',
-    'git_service' => 'git',
-    'service_provider' => Chef::Provider::Service::Redhat,
-    'override_options' => '',
-    'swift_statsd_publish' => '/usr/bin/swift-statsd-publish.py'
-  }
-when 'fedora'
-  default['openstack']['object-storage']['platform'] = {
-    'disk_format' => 'xfs',
-    'proxy_packages' => ['openstack-swift-proxy', 'python-memcached'],
-    'object_packages' => ['openstack-swift-object'],
-    'container_packages' => ['openstack-swift-container'],
-    'account_packages' => ['openstack-swift-account'],
-    'swift_packages' => ['openstack-swift'],
-    'swift_client_packages' => ['python-swiftclient'],
-    'swauth_packages' => ['openstack-swauth'],
-    'rsync_packages' => ['rsync'],
-    'git_packages' => ['git', 'git-daemon'],
-    'service_prefix' => 'openstack-',
-    'service_suffix' => '.service',
-    'git_dir' => '/var/lib/git',
-    'git_service' => 'git',
-    'service_provider' => Chef::Provider::Service::Systemd,
-    'override_options' => '',
-    'swift_statsd_publish' => '/usr/bin/swift-statsd-publish.py'
-  }
-when 'ubuntu'
+when 'debian'
   default['openstack']['object-storage']['platform'] = {
     'disk_format' => 'xfs',
     'proxy_packages' => ['swift-proxy', 'python-memcache'],

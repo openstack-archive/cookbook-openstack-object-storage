@@ -122,8 +122,8 @@ action :ensure_exists do
     when 'ext4'
       mount_options = 'noatime,nodiratime,nobarrier,user_xattr'
     when 'xfs'
-      case node['platform']
-      when 'ubuntu', 'debian'
+      case node['platform_family']
+      when 'debian'
         mount_options = 'noatime,nodiratime,nobarrier,logbufs=8,nobootwait'
       else
         mount_options = 'noatime,nodiratime,nobarrier,logbufs=8'

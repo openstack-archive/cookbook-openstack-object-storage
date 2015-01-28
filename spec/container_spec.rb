@@ -60,23 +60,6 @@ describe 'openstack-object-storage::container-server' do
       end
     end
 
-    describe 'container sync' do
-      let(:file) { chef_run.cookbook_file('/etc/init/swift-container-sync.conf') }
-      let(:link) { chef_run.link('/etc/init.d/swift-container-sync') }
-
-      it 'creates /etc/init/swift-container-sync.conf' do
-        expect(chef_run).to create_cookbook_file(file.name).with(
-          user: 'root',
-          group: 'root',
-          mode: 0755
-        )
-      end
-
-      it 'creates /etc/init.d/swift-container-sync' do
-        expect(chef_run).to create_link(link.name)
-      end
-    end
-
     describe '/etc/swift/container-server.conf' do
       let(:file) { chef_run.template('/etc/swift/container-server.conf') }
 
