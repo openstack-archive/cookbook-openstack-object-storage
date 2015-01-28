@@ -13,11 +13,11 @@ describe 'openstack-object-storage::setup' do
     include_examples 'keystone-authmode'
 
     it 'does not include the identity registration recipe' do
+      node.set['openstack']['object-storage']['authmode'] = 'swauth'
       expect(chef_run).not_to include_recipe('openstack-object-storage::identity_registration')
     end
 
     it 'includes the identity registration recipe' do
-      node.set['openstack']['object-storage']['authmode'] = 'keystone'
       expect(chef_run).to include_recipe('openstack-object-storage::identity_registration')
     end
 

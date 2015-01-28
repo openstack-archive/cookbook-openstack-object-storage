@@ -133,11 +133,16 @@ default['openstack']['object-storage']['container_server_chef_role']  = 'swift-c
 # authentication
 #--------------------
 
-default['openstack']['object-storage']['authmode']              = 'swauth'
+# Authenitcation mode, either keystone or swauth
+default['openstack']['object-storage']['authmode']              = 'keystone'
 default['openstack']['object-storage']['authkey']               = nil
 default['openstack']['object-storage']['swift_url']             = 'http://127.0.0.1:8080/v1/'
 default['openstack']['object-storage']['swauth_url']            = 'http://127.0.0.1:8080/v1/'
 default['openstack']['object-storage']['auth_url']              = 'http://127.0.0.1:8080/auth/v1.0'
+# Keystone version
+default['openstack']['object-storage']['api']['auth']['version'] = node['openstack']['api']['auth']['version']
+# Keystone PKI signing directory
+default['openstack']['object-storage']['api']['auth']['cache_dir'] = '/var/cache/swift/api'
 
 #---------------------
 # dispersion settings
