@@ -11,8 +11,8 @@ describe 'openstack-object-storage::management-server' do
 
     include_context 'swift-stubs'
 
-    it 'upgrades swift swauth package' do
-      expect(chef_run).to upgrade_package 'swauth'
+    it 'does not upgrade swauth package' do
+      expect(chef_run).not_to upgrade_package 'swauth'
     end
 
     describe '/etc/swift/dispersion.conf' do
@@ -26,7 +26,7 @@ describe 'openstack-object-storage::management-server' do
         expect(chef_run).to create_template(file.name).with(
           user: 'swift',
           group: 'swift',
-          mode: 0600
+          mode: 00600
         )
       end
 
@@ -127,7 +127,7 @@ describe 'openstack-object-storage::management-server' do
         expect(chef_run).to create_template(file.name).with(
           user: 'root',
           group: 'root',
-          mode: 0755
+          mode: 00755
         )
       end
 

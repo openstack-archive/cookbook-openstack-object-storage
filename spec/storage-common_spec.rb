@@ -18,7 +18,7 @@ describe 'openstack-object-storage::storage-common' do
         expect(chef_run).to create_directory(dir.name).with(
           user: 'swift',
           group: 'swift',
-          mode: 0700
+          mode: 00700
         )
       end
     end
@@ -34,7 +34,7 @@ describe 'openstack-object-storage::storage-common' do
         expect(chef_run).to create_template(file.name).with(
           user: 'swift',
           group: 'swift',
-          mode: 0600
+          mode: 00600
         )
       end
 
