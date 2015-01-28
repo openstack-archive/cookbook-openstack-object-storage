@@ -71,10 +71,9 @@ end
 
 directory '/etc/swift' do
   action :create
-  owner 'swift'
-  group 'swift'
-  mode 0700
-  only_if '/usr/bin/id swift'
+  owner node['openstack']['object-storage']['user']
+  group node['openstack']['object-storage']['group']
+  mode 00700
 end
 
 # determine hash
@@ -91,21 +90,19 @@ end
 
 template '/etc/swift/swift.conf' do
   source 'swift.conf.erb'
-  owner 'swift'
-  group 'swift'
-  mode 0700
+  owner node['openstack']['object-storage']['user']
+  group node['openstack']['object-storage']['group']
+  mode 00600
   variables(
     swift_hash_path_prefix: swift_hash_path_prefix,
     swift_hash_path_suffix: swift_hash_path_suffix
   )
-  only_if '/usr/bin/id swift'
 end
 
 # need a swift user
-user 'swift' do
+user node['openstack']['object-storage']['user'] do
   shell '/bin/bash'
   action :modify
-  only_if '/usr/bin/id swift'
 end
 
 package 'git' do
@@ -118,14 +115,13 @@ end
 git_builder_ip = node['openstack']['object-storage']['git_builder_ip']
 template '/etc/swift/pull-rings.sh' do
   source 'pull-rings.sh.erb'
-  owner 'swift'
-  group 'swift'
-  mode 0700
+  owner node['openstack']['object-storage']['user']
+  group node['openstack']['object-storage']['group']
+  mode 00700
   variables(
     builder_ip: git_builder_ip,
     service_prefix: platform_options['service_prefix']
   )
-  only_if '/usr/bin/id swift'
 end
 
 execute '/etc/swift/pull-rings.sh' do

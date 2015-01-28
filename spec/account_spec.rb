@@ -45,7 +45,7 @@ describe 'openstack-object-storage::account-server' do
         expect(chef_run).to create_template(file.name).with(
           user: 'swift',
           group: 'swift',
-          mode: 0600
+          mode: 00600
         )
       end
 

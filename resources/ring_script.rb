@@ -38,5 +38,5 @@ end
 attribute :name,      kind_of: String
 attribute :owner,     kind_of: String, default: 'root'
 attribute :group,     kind_of: String, default: 'root'
-attribute :mode,      kind_of: String, default: '0600'
+attribute :mode,      kind_of: String, default: '00600'
 attribute :ring_path, kind_of: String, default: '/etc/swift'
