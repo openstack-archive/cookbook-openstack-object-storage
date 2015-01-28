@@ -38,7 +38,7 @@ describe 'openstack-object-storage::common' do
         expect(chef_run).to create_template(file.name).with(
           user: 'root',
           group: 'root',
-          mode: 0644
+          mode: 00644
         )
       end
 
@@ -69,7 +69,7 @@ describe 'openstack-object-storage::common' do
         expect(chef_run).to create_directory(dir.name).with(
           user: 'swift',
           group: 'swift',
-          mode: 0700
+          mode: 00700
         )
       end
     end
@@ -85,7 +85,7 @@ describe 'openstack-object-storage::common' do
         expect(chef_run).to create_template(file.name).with(
           user: 'swift',
           group: 'swift',
-          mode: 0700
+          mode: 00600
         )
       end
 
@@ -132,7 +132,7 @@ describe 'openstack-object-storage::common' do
         expect(chef_run).to create_template(file.name).with(
           user: 'swift',
           group: 'swift',
-          mode: 0700
+          mode: 00700
         )
       end
 

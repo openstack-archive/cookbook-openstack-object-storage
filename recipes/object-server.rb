@@ -27,44 +27,7 @@ platform_options = node['openstack']['object-storage']['platform']
 platform_options['object_packages'].each do |pkg|
   package pkg do
     action :upgrade
-    options platform_options['override_options'] # retain configs
-  end
-end
-
-# epel/f-17 missing init scripts for the non-major services.
-# https://bugzilla.redhat.com/show_bug.cgi?id=807170
-%w{auditor updater replicator}.each do |svc|
-  template "/etc/systemd/system/openstack-swift-object-#{svc}.service" do
-    owner 'root'
-    group 'root'
-    mode '0644'
-    source 'simple-systemd-config.erb'
-    variables(
-      description: 'OpenStack Object Storage (swift) - ' +
-                      "Object #{svc.capitalize}",
-      user: 'swift',
-      exec: "/usr/bin/swift-object-#{svc} " +
-            '/etc/swift/object-server.conf'
-    )
-    only_if { platform?('fedora') }
-  end
-end
-
-# TODO(breu): track against upstream epel packages to determine if this
-# is still necessary
-# https://bugzilla.redhat.com/show_bug.cgi?id=807170
-%w{auditor updater replicator}.each do |svc|
-  template "/etc/init.d/openstack-swift-object-#{svc}" do
-    owner 'root'
-    group 'root'
-    mode '0755'
-    source 'simple-redhat-init-config.erb'
-    variables(
-      description: 'OpenStack Object Storage (swift) - ' +
-                   "Object #{svc.capitalize}",
-      exec: "object-#{svc}"
-    )
-    only_if { platform?('redhat', 'centos') }
+    options platform_options['override_options']
   end
 end
 
@@ -85,9 +48,9 @@ end
 
 template '/etc/swift/object-server.conf' do
   source 'object-server.conf.erb'
-  owner 'swift'
-  group 'swift'
-  mode 0600
+  owner node['openstack']['object-storage']['user']
+  group node['openstack']['object-storage']['group']
+  mode 00600
   variables(
     'bind_ip' => node['openstack']['object-storage']['network']['object-bind-ip'],
     'bind_port' => node['openstack']['object-storage']['network']['object-bind-port']
@@ -102,5 +65,5 @@ end
 cron 'swift-recon' do
   minute '*/5'
   command 'swift-recon-cron /etc/swift/object-server.conf'
-  user 'swift'
+  user node['openstack']['object-storage']['user']
 end
