@@ -38,6 +38,97 @@ describe 'openstack-object-storage::identity_registration' do
       )
     end
 
+    it 'with different admin URL ' do
+      general_url = 'http://general.host:456/general_path'
+      admin_url = 'https://admin.host:123/admin_path'
+
+      # Set general endpoint
+      node.set['openstack']['endpoints']['object-storage-api']['uri'] = general_url
+      # Set the admin endpoint override
+      node.set['openstack']['endpoints']['admin']['object-storage-api']['uri'] = admin_url
+
+      expect(chef_run).to create_endpoint_openstack_identity_register(
+         'Register Object Storage Endpoint'
+      ).with(
+        auth_uri: 'http://127.0.0.1:35357/v2.0',
+        bootstrap_token: 'bootstrap-token',
+        service_type: 'object-store',
+        endpoint_region: 'RegionOne',
+        endpoint_adminurl: admin_url,
+        endpoint_internalurl: general_url,
+        endpoint_publicurl: general_url,
+        action: [:create_endpoint]
+      )
+    end
+
+    it 'with different internal URL ' do
+      general_url = 'http://general.host:456/general_path'
+      internal_url = 'http://internal.host:456/internal_path'
+
+      # Set general endpoint
+      node.set['openstack']['endpoints']['object-storage-api']['uri'] = general_url
+      # Set the internal endpoint override
+      node.set['openstack']['endpoints']['internal']['object-storage-api']['uri'] = internal_url
+
+      expect(chef_run).to create_endpoint_openstack_identity_register(
+         'Register Object Storage Endpoint'
+      ).with(
+        auth_uri: 'http://127.0.0.1:35357/v2.0',
+        bootstrap_token: 'bootstrap-token',
+        service_type: 'object-store',
+        endpoint_region: 'RegionOne',
+        endpoint_adminurl: general_url,
+        endpoint_internalurl: internal_url,
+        endpoint_publicurl: general_url,
+        action: [:create_endpoint]
+      )
+    end
+
+    it 'with different public URL ' do
+      general_url = 'http://general.host:456/general_path'
+      public_url = 'https://public.host:789/public_path'
+
+      # Set general endpoint
+      node.set['openstack']['endpoints']['object-storage-api']['uri'] = general_url
+      # Set the public endpoint override
+      node.set['openstack']['endpoints']['public']['object-storage-api']['uri'] = public_url
+
+      expect(chef_run).to create_endpoint_openstack_identity_register(
+         'Register Object Storage Endpoint'
+      ).with(
+        auth_uri: 'http://127.0.0.1:35357/v2.0',
+        bootstrap_token: 'bootstrap-token',
+        service_type: 'object-store',
+        endpoint_region: 'RegionOne',
+        endpoint_adminurl: general_url,
+        endpoint_internalurl: general_url,
+        endpoint_publicurl: public_url,
+        action: [:create_endpoint]
+      )
+    end
+
+    it 'with all different URLs ' do
+      admin_url = 'https://admin.host:123/admin_path'
+      internal_url = 'http://internal.host:456/internal_path'
+      public_url = 'https://public.host:789/public_path'
+
+      node.set['openstack']['endpoints']['admin']['object-storage-api']['uri'] = admin_url
+      node.set['openstack']['endpoints']['internal']['object-storage-api']['uri'] = internal_url
+      node.set['openstack']['endpoints']['public']['object-storage-api']['uri'] = public_url
+      expect(chef_run).to create_endpoint_openstack_identity_register(
+         'Register Object Storage Endpoint'
+      ).with(
+        auth_uri: 'http://127.0.0.1:35357/v2.0',
+        bootstrap_token: 'bootstrap-token',
+        service_type: 'object-store',
+        endpoint_region: 'RegionOne',
+        endpoint_adminurl: admin_url,
+        endpoint_internalurl: internal_url,
+        endpoint_publicurl: public_url,
+        action: [:create_endpoint]
+      )
+    end
+
     it 'with custom region override' do
       node.set['openstack']['object-storage']['region'] = 'swiftRegion'
       expect(chef_run).to create_endpoint_openstack_identity_register(

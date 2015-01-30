@@ -27,12 +27,14 @@ class ::Chef::Recipe # rubocop:disable Documentation
   include ::Openstack
 end
 
-identity_admin_endpoint = endpoint 'identity-admin'
+identity_admin_endpoint = admin_endpoint 'identity-admin'
 
 token = get_secret 'openstack_identity_bootstrap_token'
 auth_url = ::URI.decode identity_admin_endpoint.to_s
 
-api_endpoint = endpoint 'object-storage-api'
+admin_api_endpoint = admin_endpoint 'object-storage-api'
+internal_api_endpoint = internal_endpoint 'object-storage-api'
+public_api_endpoint = public_endpoint 'object-storage-api'
 
 service_pass = get_password 'service', 'openstack-object-storage'
 service_tenant_name = node['openstack']['object-storage']['service_tenant_name']
@@ -57,9 +59,9 @@ openstack_identity_register 'Register Object Storage Endpoint' do
   bootstrap_token token
   service_type 'object-store'
   endpoint_region region
-  endpoint_adminurl api_endpoint.to_s
-  endpoint_internalurl api_endpoint.to_s
-  endpoint_publicurl api_endpoint.to_s
+  endpoint_adminurl admin_api_endpoint.to_s
+  endpoint_internalurl internal_api_endpoint.to_s
+  endpoint_publicurl public_api_endpoint.to_s
 
   action :create_endpoint
 end

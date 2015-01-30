@@ -10,6 +10,7 @@ This file is used to list changes made in each version of cookbook-openstack-obj
 * Use Common bind endpoint
 * Add swift.conf template
 * Cleanup service templates
+* Use common specific_endpoint routines (bug 1412919)
 
 ## 9.0.3
 * Bugfix run_command exitstatus
