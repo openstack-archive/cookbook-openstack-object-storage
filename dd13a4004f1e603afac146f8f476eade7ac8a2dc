@@ -1,0 +1,10 @@
+Verified+2: Jenkins
+Code-Review+2: Mark Vanderwiel <vanderwl@us.ibm.com>
+Code-Review+1: Zhiwei Chen <zhiwchen@cn.ibm.com>
+Code-Review+2: Jan Klare <j.klare@x-ion.de>
+Workflow+1: Jan Klare <j.klare@x-ion.de>
+Submitted-by: Jenkins
+Submitted-at: Wed, 04 Feb 2015 11:29:02 +0000
+Reviewed-on: https://review.openstack.org/133043
+Project: stackforge/cookbook-openstack-object-storage
+Branch: refs/heads/master
