@@ -19,5 +19,5 @@ end
 
 depends 'memcached', '>= 1.7.2'
 depends 'statsd', '>= 0.1.5'
-depends 'openstack-common', '~> 10.0'
-depends 'openstack-identity', '~> 10.0'
+depends 'openstack-common', '>= 10.2.0'
+depends 'openstack-identity', '>= 10.0.0'
