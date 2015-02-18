@@ -22,9 +22,9 @@ include_recipe 'openstack-object-storage::rsync'
 
 template '/etc/swift/drive-audit.conf' do
   source 'drive-audit.conf.erb'
-  owner 'swift'
-  group 'swift'
-  mode 0600
+  owner node['openstack']['object-storage']['user']
+  group node['openstack']['object-storage']['group']
+  mode 00600
 end
 
 cron 'drive-audit' do
@@ -34,8 +34,8 @@ cron 'drive-audit' do
 end
 
 directory '/var/cache/swift' do
-  group 'swift'
-  owner 'swift'
+  owner node['openstack']['object-storage']['user']
+  group node['openstack']['object-storage']['group']
   recursive true
   action :create
   mode 00700

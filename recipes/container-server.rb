@@ -31,43 +31,6 @@ platform_options['container_packages'].each do |pkg|
   end
 end
 
-# epel/f-17 missing init scripts for the non-major services.
-# https://bugzilla.redhat.com/show_bug.cgi?id=807170
-%w{auditor updater replicator}.each do |svc|
-  template "/etc/systemd/system/openstack-swift-container-#{svc}.service" do
-    owner 'root'
-    group 'root'
-    mode '0644'
-    source 'simple-systemd-config.erb'
-    variables(
-      description: 'OpenStack Object Storage (swift) - ' +
-                  "Container #{svc.capitalize}",
-      user: 'swift',
-      exec: "/usr/bin/swift-container-#{svc} " +
-            '/etc/swift/container-server.conf'
-    )
-    only_if { platform?('fedora') }
-  end
-end
-
-# TODO(breu): track against upstream epel packages to determine if this
-# is still necessary
-# https://bugzilla.redhat.com/show_bug.cgi?id=807170
-%w{auditor updater replicator}.each do |svc|
-  template "/etc/init.d/openstack-swift-container-#{svc}" do
-    owner 'root'
-    group 'root'
-    mode '0755'
-    source 'simple-redhat-init-config.erb'
-    variables(
-      description: 'OpenStack Object Storage (swift) - ' +
-                   "Container #{svc.capitalize}",
-      exec: "container-#{svc}"
-    )
-    only_if { platform?('redhat', 'centos') }
-  end
-end
-
 %w{swift-container swift-container-auditor swift-container-replicator swift-container-updater}.each do |svc|
   service_name = platform_options['service_prefix'] + svc + platform_options['service_suffix']
 
@@ -82,9 +45,9 @@ end
 
 template '/etc/swift/container-server.conf' do
   source 'container-server.conf.erb'
-  owner 'swift'
-  group 'swift'
-  mode 0600
+  owner node['openstack']['object-storage']['user']
+  group node['openstack']['object-storage']['group']
+  mode 00600
   variables(
     'bind_ip' => node['openstack']['object-storage']['network']['container-bind-ip'],
     'bind_port' => node['openstack']['object-storage']['network']['container-bind-port']
@@ -94,23 +57,6 @@ template '/etc/swift/container-server.conf' do
   notifies :restart, 'service[swift-container-replicator]', :immediately
   notifies :restart, 'service[swift-container-updater]', :immediately
   notifies :restart, 'service[swift-container-auditor]', :immediately
-end
-
-# Ubuntu 12.04 packages are missing the swift-container-sync service scripts
-# See https://bugs.launchpad.net/cloud-archive/+bug/1250171
-if platform?('ubuntu')
-  cookbook_file '/etc/init/swift-container-sync.conf' do
-    owner 'root'
-    group 'root'
-    mode 0755
-    source 'swift-container-sync.conf.upstart'
-    action :create
-    not_if '[ -e /etc/init/swift-container-sync.conf ]'
-  end
-  link '/etc/init.d/swift-container-sync' do
-    to '/lib/init/upstart-job'
-    not_if '[ -e /etc/init.d/swift-container-sync ]'
-  end
 end
 
 service_name = platform_options['service_prefix'] + 'swift-container-sync' + platform_options['service_suffix']
