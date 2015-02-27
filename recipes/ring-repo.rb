@@ -97,7 +97,7 @@ directory '/etc/swift/ring-workspace' do
   action :create
 end
 
-execute 'checkout-rings' do
+execute 'checkout-rings' do # ~FC040
   cwd '/etc/swift/ring-workspace'
   command "git clone file://#{platform_options["git_dir"]}/rings"
   user node['openstack']['object-storage']['user']
