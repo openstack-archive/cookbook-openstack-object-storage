@@ -23,9 +23,11 @@
 require 'pp'
 
 # rubocop:disable PerlBackrefs, CyclomaticComplexity, MethodLength
-def generate_script
+def generate_script # rubocop:disable Metrics/AbcSize
   # need to load and parse the existing rings.
-  ports = { 'object' => '6000', 'container' => '6001', 'account' => '6002' }
+  ports = { 'object' => node['openstack']['object-storage']['network']['object-bind-port'],
+            'container' => node['openstack']['object-storage']['network']['container-bind-port'],
+            'account' => node['openstack']['object-storage']['network']['account-bind-port'] }
   must_rebalance = false
 
   ring_path = @new_resource.ring_path
@@ -39,13 +41,14 @@ def generate_script
     if ::File.exist?("#{ring_path}/#{which}.builder")
       IO.popen("su swift -c 'swift-ring-builder #{ring_path}/#{which}.builder'") do |pipe|
         ring_data[:raw][which] = pipe.readlines
-        # Chef::Log.debug("#{ which.capitalize } Ring data: #{ring_data[:raw][which]}")
+        Chef::Log.debug("#{which} Ring data raw:\n#{PP.pp(ring_data[:raw][which], '')}")
         ring_data[:parsed][which] = parse_ring_output(ring_data[:raw][which])
+        Chef::Log.info("#{which} Ring data parsed:\n#{PP.pp(ring_data[:parsed][which], '')}")
 
         node.set['openstack']['object-storage']['state']['ring'][which] = ring_data[:parsed][which]
       end
     else
-      Chef::Log.info("#{which.capitalize} ring builder files do not exist!")
+      Chef::Log.info("#{which} ring builder files do not exist!")
     end
 
     # collect all the ring data, and note what disks are in use.  All I really
@@ -60,31 +63,28 @@ def generate_script
       end
     end
 
-    Chef::Log.debug("#{which.capitalize} Ring - In use: #{PP.pp(ring_data[:in_use][which], '')}")
+    Chef::Log.info("#{which} Ring - In use: #{PP.pp(ring_data[:in_use][which], '')}")
 
     # figure out what's present in the cluster
     disk_data[which] = {}
     role = node['openstack']['object-storage']["#{which}_server_chef_role"]
     disk_state, _, _ = Chef::Search::Query.new.search(:node, "chef_environment:#{node.chef_environment} AND roles:#{role}")
+    Chef::Log.info("#{which} node count: #{disk_state.count} for role: #{role}")
 
     # for a running track of available disks
     disk_data[:available] ||= {}
     disk_data[:available][which] ||= {}
 
     disk_state.each do |swiftnode|
-      if swiftnode['openstack']['object-storage']['state'] && swiftnode['openstack']['object-storage']['state']['devs']
+      Chef::Log.info("#{which} node: #{swiftnode[:hostname]} state:\n#{PP.pp(swiftnode['openstack']['object-storage']['state'], '')}")
+      if swiftnode['openstack']['object-storage']['state']['devs']
         swiftnode['openstack']['object-storage']['state']['devs'].each do |k, v|
           disk_data[which][v[:ip]] = disk_data[which][v[:ip]] || {}
           disk_data[which][v[:ip]][k] = {}
           v.keys.each { |x| disk_data[which][v[:ip]][k].store(x, v[x]) }
 
-          if swiftnode['openstack']['object-storage'].key?("#{which}-zone")
-            disk_data[which][v[:ip]][k]['zone'] = swiftnode['openstack']['object-storage']["#{which}-zone"]
-          elsif swiftnode['openstack']['object-storage'].key?('zone')
-            disk_data[which][v[:ip]][k]['zone'] = swiftnode['openstack']['object-storage']['zone']
-          else
-            fail "Node #{swiftnode[:hostname]} has no zone assigned"
-          end
+          disk_data[which][v[:ip]][k]['region'] = swiftnode['openstack']['object-storage']['ring']['region']
+          disk_data[which][v[:ip]][k]['zone'] = swiftnode['openstack']['object-storage']['ring']['zone']
 
           disk_data[:available][which][v[:mountpoint]] = v[:ip]
 
@@ -94,7 +94,7 @@ def generate_script
         end
       end
     end
-    Chef::Log.debug("#{which.capitalize} Ring - Avail:  #{PP.pp(disk_data[:available][which], '')}")
+    Chef::Log.info("#{which} Ring - Avail:\n#{PP.pp(disk_data[:available][which], '')}")
   end
 
   # Have the raw data, now bump it together and drop the script
@@ -102,6 +102,7 @@ def generate_script
   s = "#!/bin/bash\n\n# This script is automatically generated.\n"
   s << "# Running it will likely blow up your system if you don't review it carefully.\n"
   s << "# You have been warned.\n\n"
+  s << "set -x\n"
   unless node['openstack']['object-storage']['auto_rebuild_rings']
     s << "if [ \"$1\" != \"--force\" ]; then\n"
     s << "  echo \"Auto rebuild rings is disabled, so you must use --force to generate rings\"\n"
@@ -109,7 +110,7 @@ def generate_script
     s << "fi\n\n"
   end
 
-  # Chef::Log.debug("#{PP.pp(disk_data, dump='')}")
+  Chef::Log.info("Disk data: #{PP.pp(disk_data, '')}")
 
   new_disks = {}
   missing_disks = {}
@@ -122,8 +123,8 @@ def generate_script
     # find all in-ring disks that are not in the cluster
     missing_disks[which] = ring_data[:in_use][which].reject { |k, v| disk_data[:available][which].key?(k) }
 
-    Chef::Log.debug("#{which.capitalize} Ring - Missing:  #{PP.pp(missing_disks[which], '')}")
-    Chef::Log.debug("#{which.capitalize} Ring - New:  #{PP.pp(new_disks[which], '')}")
+    Chef::Log.info("#{which} Ring - Missing:\n#{PP.pp(missing_disks[which], '')}")
+    Chef::Log.info("#{which} Ring - New:\n#{PP.pp(new_disks[which], '')}")
 
     s << "\n# -- #{which.capitalize} Servers --\n\n"
     disk_data[which].keys.sort.each do |ip|
@@ -150,7 +151,7 @@ def generate_script
       disk_data[which][ip].keys.sort.each do |uuid|
         v = disk_data[which][ip][uuid]
         if new_disks[which].key?(v['mountpoint'])
-          s << "swift-ring-builder #{ring_path}/#{which}.builder add z#{v['zone']}-#{v['ip']}:#{ports[which]}/#{v['mountpoint']} #{v['size']}\n"
+          s << "swift-ring-builder #{ring_path}/#{which}.builder add r#{v['region']}z#{v['zone']}-#{v['ip']}:#{ports[which]}/#{v['device']} #{v['size']}\n"
           must_rebalance = true
         end
       end
@@ -159,7 +160,7 @@ def generate_script
     # remove the disks -- sort to ensure consistent order
     missing_disks[which].keys.sort.each do |mountpoint|
       diskinfo = ring_data[:parsed][which][:hosts].select { |k, v| v.key?(mountpoint) }.map { |_, v| v[mountpoint] }[0]
-      Chef::Log.debug("Missing diskinfo: #{PP.pp(diskinfo, '')}")
+      Chef::Log.info("#{which} Missing diskinfo:\n#{PP.pp(diskinfo, '')}")
       description = Hash[diskinfo.select { |k, v| [:zone, :ip, :device].include?(k) }].map { |k, v| "#{k}: #{v}" }.join(', ')
       s << "# #{description}\n"
       s << "swift-ring-builder #{ring_path}/#{which}.builder remove d#{missing_disks[which][mountpoint]}\n"
@@ -169,17 +170,15 @@ def generate_script
     s << "\n"
 
     if must_rebalance
-      s << "swift-ring-builder #{ring_path}/#{which}.builder rebalance\n\n\n"
+      # we'll only rebalance if we meet the minimums for new adds
+      if node['openstack']['object-storage']['wait_for'] > new_servers.count
+        Chef::Log.info("#{which} New servers, but not enough to force a rebalance")
+        must_rebalance = false
+      else
+        s << "swift-ring-builder #{ring_path}/#{which}.builder rebalance\n\n\n"
+      end
     else
       s << "# #{which.capitalize} ring has no outstanding changes!\n\n"
-    end
-
-    # we'll only rebalance if we meet the minimums for new adds
-    if node['openstack']['object-storage'].key?('wait_for')
-      if node['openstack']['object-storage']['wait_for'] > new_servers.count
-        Chef::Log.debug('New servers, but not enough to force a rebalance')
-        must_rebalance = false
-      end
     end
   end
   [s, must_rebalance]
@@ -266,7 +265,7 @@ def parse_ring_output(ring_data)
 end
 
 action :ensure_exists do
-  Chef::Log.debug("Ensuring #{new_resource.name}")
+  Chef::Log.info("Ensuring #{new_resource.name}")
   new_resource.updated_by_last_action(false)
   s, must_update = generate_script
 

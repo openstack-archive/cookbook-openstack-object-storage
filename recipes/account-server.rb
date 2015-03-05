@@ -22,6 +22,10 @@ include_recipe 'openstack-object-storage::common'
 include_recipe 'openstack-object-storage::storage-common'
 include_recipe 'openstack-object-storage::disks'
 
+class Chef::Recipe # rubocop:disable Documentation
+  include ServiceUtils
+end
+
 platform_options = node['openstack']['object-storage']['platform']
 
 platform_options['account_packages'].each.each do |pkg|
@@ -31,11 +35,13 @@ platform_options['account_packages'].each.each do |pkg|
   end
 end
 
+svc_names = {}
 %w{swift-account swift-account-auditor swift-account-reaper swift-account-replicator}.each do |svc|
-  service_name = platform_options['service_prefix'] + svc + platform_options['service_suffix']
+  svc_names[svc] = svc_name(svc)
+end
+
+svc_names.values.each do |svc|
   service svc do
-    service_name service_name
-    provider platform_options['service_provider']
     supports status: true, restart: true
     action [:enable, :start]
     only_if '[ -e /etc/swift/account-server.conf ] && [ -e /etc/swift/account.ring.gz ]'
@@ -53,8 +59,8 @@ template '/etc/swift/account-server.conf' do
     'bind_port' => node['openstack']['object-storage']['network']['account-bind-port']
   )
 
-  notifies :restart, 'service[swift-account]', :immediately
-  notifies :restart, 'service[swift-account-auditor]', :immediately
-  notifies :restart, 'service[swift-account-reaper]', :immediately
-  notifies :restart, 'service[swift-account-replicator]', :immediately
+  notifies :restart, "service[#{svc_names['swift-account']}]", :immediately
+  notifies :restart, "service[#{svc_names['swift-account-auditor']}]", :immediately
+  notifies :restart, "service[#{svc_names['swift-account-reaper']}]", :immediately
+  notifies :restart, "service[#{svc_names['swift-account-replicator']}]", :immediately
 end

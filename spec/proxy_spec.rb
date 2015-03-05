@@ -306,7 +306,7 @@ describe 'openstack-object-storage::proxy-server' do
         end
 
         it 'sets the memcache_servers attribute' do
-          expect(chef_run).to render_file(file.name).with_content(/^memcache_servers = 127.0.0.1:11211$/)
+          expect(chef_run).to render_file(file.name).with_content(/^memcache_servers = host1:111,host2:222$/)
         end
 
         context 'domain_remap' do
