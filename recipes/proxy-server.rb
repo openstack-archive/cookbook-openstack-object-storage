@@ -22,6 +22,7 @@ include_recipe 'openstack-object-storage::memcached'
 
 class Chef::Recipe # rubocop:disable Documentation
   include IPUtils
+  include ServiceUtils
 end
 
 if node.run_list.expand(node.chef_environment).recipes.include?('openstack-object-storage::setup')
@@ -80,8 +81,8 @@ when 'keystone'
   package 'python-keystoneclient' do
     action :upgrade
   end
-  identity_endpoint = endpoint 'identity-api'
-  identity_admin_endpoint = endpoint 'identity-admin'
+  identity_endpoint = internal_endpoint 'identity-internal'
+  identity_admin_endpoint = admin_endpoint 'identity-admin'
   service_pass = get_password 'service', 'openstack-object-storage'
 
   auth_uri = auth_uri_transform identity_endpoint.to_s, node['openstack']['object-storage']['api']['auth']['version']
@@ -98,35 +99,17 @@ directory '/var/cache/swift' do
   mode 00700
 end
 
-swift_proxy_service = platform_options['service_prefix'] + 'swift-proxy' + platform_options['service_suffix']
-service 'swift-proxy' do
-  service_name swift_proxy_service
-  provider platform_options['service_provider']
+proxy_service_name = svc_name('swift-proxy')
+service proxy_service_name do
   supports status: true, restart: true
   action [:enable, :start]
   only_if '[ -e /etc/swift/proxy-server.conf ] && [ -e /etc/swift/object.ring.gz ]'
 end
 
-# use localhost  when using chef solo otherwise, include all memcache
-# servers from all known proxies
-if Chef::Config[:solo]
-  memcache_servers = ['127.0.0.1:11211']
-else
-  memcache_servers = []
-  proxy_role = node['openstack']['object-storage']['proxy_server_chef_role']
-  proxy_nodes = search(:node, "chef_environment:#{node.chef_environment} AND roles:#{proxy_role}")
-  proxy_nodes.each do |proxy|
-    proxy_ip = locate_ip_in_cidr(node['openstack']['object-storage']['network']['proxy-cidr'], proxy)
-    next unless proxy_ip # skip nil ips so we dont break the config
-    server_str = "#{proxy_ip}:11211"
-    memcache_servers << server_str unless memcache_servers.include?(server_str)
-  end
-end
-
 # determine authkey to use
 if node['openstack']['object-storage']['swift_secret_databag_name'].nil?
   authkey = node['openstack']['object-storage']['authkey']
-  authkey = get_secret 'swift_authkey' if authkey.nil?
+  authkey = get_password 'token', 'swift_authkey' if authkey.nil?
 else
   # Deprecated, else case to be removed.
   swift_secrets = Chef::EncryptedDataBagItem.load 'secrets', node['openstack']['object-storage']['swift_secret_databag_name']
@@ -139,6 +122,8 @@ proxy_api_bind_port = node['openstack']['object-storage']['network']['proxy-bind
 proxy_api_bind_port = proxy_api_bind.port if proxy_api_bind_port.nil?
 proxy_api_bind_host = node['openstack']['object-storage']['network']['proxy-bind-ip']
 proxy_api_bind_host = proxy_api_bind.host if proxy_api_bind_host.nil?
+
+memcache_servers = memcached_servers.join ','
 
 # create proxy config file
 template '/etc/swift/proxy-server.conf' do
@@ -156,5 +141,5 @@ template '/etc/swift/proxy-server.conf' do
     'identity_admin_endpoint' => identity_admin_endpoint,
     'service_pass' => service_pass
   )
-  notifies :restart, 'service[swift-proxy]', :immediately
+  notifies :restart, "service[#{proxy_service_name}]", :immediately
 end

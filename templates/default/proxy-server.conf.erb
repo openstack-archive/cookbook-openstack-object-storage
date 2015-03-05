@@ -79,7 +79,7 @@ use = egg:swift#healthcheck
 
 [filter:cache]
 use = egg:swift#memcache
-memcache_servers = <%= @memcache_servers.join(',') %>
+memcache_servers = <%= @memcache_servers %>
 
 [filter:ratelimit]
 use = egg:swift#ratelimit
