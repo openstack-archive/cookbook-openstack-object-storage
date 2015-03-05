@@ -21,6 +21,7 @@
 #
 
 require 'chef/util/file_edit'
+require 'pp'
 
 action :ensure_exists do
   proposed_devices = @new_resource.devices
@@ -69,15 +70,15 @@ action :ensure_exists do
   inverted_mounts = dev_info.reduce({}) { |hsh, (k, v)| hsh.merge(v['mountpoint'] => v.merge('uuid' => k)) }
   fstabs = ::File.readlines('/etc/fstab').reduce({}) do |hash, line|
     line = line.split('#')[0].split
-    Chef::Log.info("#{line[0]} ... #{line[1]}")
+    Chef::Log.debug("#{line[0]} ... #{line[1]}")
     hash.merge(line[1] => line[0])
   end
   fstabs.reject! { |k, v| !k || !v || !k.length || !v.length }
 
-  Chef::Log.info("Mounts: #{mounts}")
-  Chef::Log.info("Valid Mounts: #{valid_mounts}")
-  Chef::Log.info("Mountpoints: #{mountpoints}")
-  Chef::Log.info("Fstabs: #{fstabs}")
+  Chef::Log.info("Mounts: #{PP.pp(mounts, '')}")
+  Chef::Log.info("Valid Mounts: #{PP.pp(valid_mounts, '')}")
+  Chef::Log.info("Mountpoints: #{PP.pp(mountpoints, '')}")
+  Chef::Log.info("Fstabs: #{PP.pp(fstabs, '')}")
 
   # mounts in /srv/node that shouldn't be there
   (mounts.keys.select { |x| x && x[/^#{path}/] } - valid_mounts).each do |dev|
@@ -167,5 +168,6 @@ action :ensure_exists do
         ip: v['ip']
       }
     end
+    Chef::Log.info("State: #{PP.pp(node['openstack']['object-storage']['state']['devs'], '')}")
   end
 end

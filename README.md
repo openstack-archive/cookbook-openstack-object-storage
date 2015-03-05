@@ -69,55 +69,6 @@ client
 Attributes
 ==========
 
- * ```default[:swift][:authmode]``` - "swauth" or "keystone" (default "keystone").
-
- * ```default[:swift][:swauth_source]``` - "git" or "package"(default). Selects between installing python-swauth from git or system package
-
- * ```default[:swift][:swauth_repository]``` - Specifies git repo. Default "https://github.com/gholt/swauth.git"
-
- * ```default[:swift][:swauth_version]``` - Specifies git repo tagged branch. Default "1.0.8"
-
- * ```default[:swift][:swift_hash]``` - swift_hash_path_suffix in /etc/swift/swift.conf (defaults to 107c0568ea84)
-
- * ```default[:swift][:audit_hour]``` - Hour to run swift_auditor on storage nodes (defaults to 5)
-
- * ```default[:swift][:disk_enum_expr]``` - Eval-able expression that lists
-   candidate disk nodes for disk probing.  The result should be a hash
-   with keys being the device name (without the leading "/dev/") and a
-   hash block of any extra info associated with the device.  For
-   example: { "sdc" => { "model": "Hitachi 7K3000" }}.  Largely,
-   though, if you are going to make a list of valid devices, you
-   probably know all the valid devices, and don't need to pass any
-   metadata about them, so { "sdc" => {}} is probably enough.  Example
-   expression: Hash[('a'..'f').to_a.collect{|x| [ "sd{x}", {} ]}]
-
- * ```default[:swift][:ring][:part_power]``` - controls the size of the ring (defaults to 18)
-
- * ```default[:swift][:ring][:min_part_hours]``` - the minimum number of hours before swift is allowed to migrate a partition (defaults to 1)
-
- * ```default[:swift][:ring][:replicas]``` - how many replicas swift should retain (defaults to 3)
-
- * ```default[:swift][:disk_test_filter]``` - an array of expressions that must
-   all be true in order a block device to be considered for
-   formatting and inclusion in the cluster.  Each rule gets evaluated
-   with "candidate" set to the device name (without the leading
-   "/dev/") and info set to the node hash value.  Default rules:
-
-    * "candidate =~ /sd[^a]/ or candidate =~ /hd[^a]/ or candidate =~
-      /vd[^a]/"
-
-    * "File.exists?('/dev/ + candidate)"
-
-    * "not system('/sbin/sfdisk -V /dev/' + candidate + '>/dev/null 2>&2')"
-
-    * "info['removable'] = 0" ])
-
- * ```default[:swift][:expected_disks]``` - an array of device names that the
-   operator expecs to be identified by the previous two values.  This
-   acts as a second-check on discovered disks.  If this array doesn't
-   match the found disks, then chef processing will be stopped.
-   Example: ("b".."f").collect{|x| "sd#{x}"}.  Default: none.
-
 There are other attributes that must be set depending on authmode.
 For "swauth", the following attributes are used:
 
