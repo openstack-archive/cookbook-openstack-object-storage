@@ -26,8 +26,8 @@ default['openstack']['object-storage']['service_role'] = 'admin'
 default['openstack']['object-storage']['user'] = 'swift'
 # Default swift group
 default['openstack']['object-storage']['group'] = 'swift'
-
-default['openstack']['compute']['region'] = node['openstack']['region']
+# Default region
+default['openstack']['object-storage']['region'] = node['openstack']['region']
 
 # Set to some text value if you want templated config files
 # to contain a custom banner at the top of the written file
@@ -45,6 +45,7 @@ default['openstack']['object-storage']['audit_hour'] = '5'
 default['openstack']['object-storage']['disk_enum_expr'] = 'node[:block_device]'
 default['openstack']['object-storage']['auto_rebuild_rings'] = false
 default['openstack']['object-storage']['git_builder_ip'] = '127.0.0.1'
+default['openstack']['object-storage']['wait_for'] = 1
 
 # swift_hash_path_suffix and swift_hash_path_prefix are used as part of the
 # the hashing algorithm when determining data placement in the cluster.
@@ -127,12 +128,12 @@ default['openstack']['object-storage']['swift_secret_databag_name'] = nil
 # roles
 #--------------------
 
-default['openstack']['object-storage']['setup_chef_role']             = 'swift-setup'
-default['openstack']['object-storage']['management_server_chef_role'] = 'swift-management-server'
-default['openstack']['object-storage']['proxy_server_chef_role']      = 'swift-proxy-server'
-default['openstack']['object-storage']['object_server_chef_role']     = 'swift-object-server'
-default['openstack']['object-storage']['account_server_chef_role']    = 'swift-account-server'
-default['openstack']['object-storage']['container_server_chef_role']  = 'swift-container-server'
+default['openstack']['object-storage']['setup_chef_role']             = 'os-object-storage-setup'
+default['openstack']['object-storage']['management_server_chef_role'] = 'os-object-storage-management'
+default['openstack']['object-storage']['proxy_server_chef_role']      = 'os-object-storage-proxy'
+default['openstack']['object-storage']['object_server_chef_role']     = 'os-object-storage-object'
+default['openstack']['object-storage']['account_server_chef_role']    = 'os-object-storage-account'
+default['openstack']['object-storage']['container_server_chef_role']  = 'os-object-storage-container'
 
 #--------------------
 # authentication
@@ -162,6 +163,10 @@ default['openstack']['object-storage']['dispersion']['auth_key'] = nil
 default['openstack']['object-storage']['ring']['part_power'] = 18
 default['openstack']['object-storage']['ring']['min_part_hours'] = 1
 default['openstack']['object-storage']['ring']['replicas'] = 3
+# Zone, will look like "z1" on swift-ring-builder command line
+default['openstack']['object-storage']['ring']['zone'] = '1'
+# Region, will look like "r1" on swift-ring-builder command line
+default['openstack']['object-storage']['ring']['region'] = '1'
 
 #------------------
 # statistics
@@ -468,7 +473,6 @@ when 'rhel'
     'service_suffix' => '',
     'git_dir' => '/var/lib/git',
     'git_service' => 'git',
-    'service_provider' => Chef::Provider::Service::Redhat,
     'override_options' => '',
     'swift_statsd_publish' => '/usr/bin/swift-statsd-publish.py'
   }
@@ -488,7 +492,6 @@ when 'debian'
     'service_suffix' => '',
     'git_dir' => '/var/cache/git',
     'git_service' => 'git-daemon',
-    'service_provider' => Chef::Provider::Service::Upstart,
     'override_options' => "-o Dpkg::Options:='--force-confold' -o Dpkg::Option:='--force-confdef'",
     'swift_statsd_publish' => '/usr/local/bin/swift-statsd-publish.py'
   }

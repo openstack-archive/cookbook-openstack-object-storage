@@ -68,5 +68,25 @@ describe 'openstack-object-storage::object-server' do
         end
       end
     end
+
+    describe '/etc/swift/object-expirer.conf' do
+      let(:file) { chef_run.template('/etc/swift/object-expirer.conf') }
+
+      it_behaves_like 'custom template banner displayer' do
+        let(:file_name) { file.name }
+      end
+
+      it 'creates object-expirerr.conf' do
+        expect(chef_run).to create_template(file.name).with(
+          user: 'swift',
+          group: 'swift',
+          mode: 00600
+        )
+      end
+
+      it 'sets the memcache_servers attribute' do
+        expect(chef_run).to render_file(file.name).with_content(/^memcache_servers = host1:111,host2:222$/)
+      end
+    end
   end
 end

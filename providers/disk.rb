@@ -34,14 +34,14 @@ def load_current_resource
     sfdisk_get_size(dev_name)
   end
 
-  Chef::Log.info('About to print partition table')
+  Chef::Log.info("About to print partition table for #{dev_name}")
 
   s = <<EOF
 current state for dev #{dev_name}
   Size in 1K blocks: #{@current.blocks}
 EOF
 
-  Chef::Log.info('Printing partition table')
+  Chef::Log.info("Printing partition table for #{dev_name}")
 
   num = 0
   parts.each do |p|
@@ -59,14 +59,14 @@ end
 # /dev/sdb: 261 cylinders, 255 heads, 63 sectors/track
 def sfdisk_get_size(dev_name)
   out = Mixlib::ShellOut.new("sfdisk #{dev_name} -s").run_command.stdout
-  Chef::Log.info("updating geo using sfdisk: #{out}")
+  Chef::Log.info("size 1k blocks: #{out.to_i} for #{dev_name}")
 
   # sfdisk sees the world as 1k blocks
   @current.blocks(out.to_i)
 end
 
 def parted_partition_parse(dev_name)
-  Chef::Log.debug("reading partition table for #{dev_name}")
+  Chef::Log.info("reading partition table for #{dev_name}")
 
   # Run parted to get basic info about the disk
   # sample output:
@@ -80,7 +80,7 @@ def parted_partition_parse(dev_name)
 end
 
 def parted_parse_results(input)
-  Chef::Log.debug('read:' + input.inspect)
+  Chef::Log.debug('partition table: ' + input.inspect)
   input = input.to_a
   part_tab = []
   catch :parse_error do
@@ -155,7 +155,7 @@ action :ensure_exists do
     idx = 0
     current_block = 0
 
-    Chef::Log.info("Checking partition #{idx}")
+    Chef::Log.info("Checking partition #{idx} for #{dev_name}")
 
     req.each do |params|
       if cur[idx].nil?
@@ -177,13 +177,13 @@ action :ensure_exists do
       recreate = true unless (cur_size > cur_min) && (cur_size < cur_max)
 
       current_block += cur[idx][:size]
-      Chef::Log.info("partition #{idx} #{(recreate ? 'differs' : 'is same')}: #{cur_size}/#{req_size}")
+      Chef::Log.info("partition #{idx} #{(recreate ? 'differs' : 'is same')}: #{cur_size}/#{req_size} for #{dev_name}")
       idx += 1
     end
   end
 
   if !recreate
-    Chef::Log.info('partition table matches - not recreating')
+    Chef::Log.info('partition table matches for #{dev_name} - not recreating')
   else
     ### make sure to ensure that there are no mounted
     ### filesystems on the device
@@ -195,14 +195,14 @@ action :ensure_exists do
       mounted << md[1]
     end
     mounted.each do |m|
-      Chef::Log.info("unmounting #{m}")
+      Chef::Log.info("unmounting #{m} for #{dev_name}")
       shell_out!("umount #{m}")
     end
 
     # Nuke current partition table.
-    execute 'create new partition table' do
-      command "parted -s -m #{dev_name} mktable gpt"
-    end
+    Chef::Log.info("Creating partition table for #{dev_name}")
+    cmd = Mixlib::ShellOut.new("parted -s -m #{dev_name} mktable gpt").run_command
+    Chef::Log.info("Created partition table for #{dev_name} out:#{cmd.stdout.strip} err:#{cmd.stderr.strip}")
 
     # create new partitions
     idx = 0
@@ -217,14 +217,11 @@ action :ensure_exists do
         requested_size = "#{params[:size]}M"
       end
 
-      s = "parted -m -s #{dev_name} "
-      s << "mkpart #{idx} #{start_block} #{requested_size}" # #{params[:type]}
-      Chef::Log.info("creating new partition #{idx + 1} with:" + s)
-      execute "creating partition #{idx}" do
-        command s
-      end
-      idx += 1
+      Chef::Log.info("Creating partition #{idx + 1} for #{dev_name}")
+      cmd = Mixlib::ShellOut.new("parted -m -s #{dev_name} mkpart #{idx} #{start_block} #{requested_size}").run_command
+      Chef::Log.info("Created partition #{idx + 1} for #{dev_name} out:#{cmd.stdout.strip} err:#{cmd.stderr.strip}")
 
+      idx += 1
     end
     update = true
   end
@@ -233,25 +230,22 @@ action :ensure_exists do
   idx = 1
   req.each do |params|
     device = "#{dev_name}#{idx}"
-    Chef::Log.info("Checking #{device}")
+    Chef::Log.info("Testing file system on #{device} for type #{params[:type]}")
 
-    if ::File.exist?(device)
-      # FIXME: check the format on the file system.  This should be
-      # handled by a disk format provider.  Maybe the xfs/btrfs/etc
-      # providers?
-      Chef::Log.info("Testing file system on #{device} for type #{params[:type]}")
-
-      case params[:type]
-      when 'xfs'
-        unless Mixlib::ShellOut.new("xfs_admin -l #{device}").run_command.exitstatus
-          Mixlib::ShellOut.new("mkfs.xfs -f -i size=512 #{device}").run_command
-          update = true
-        end
-      when 'ext4'
-        unless Mixlib::ShellOut.new("tune2fs -l #{device} | grep \"Filesystem volume name:\" | awk \'{print $4}\' | grep -v \"<none>\"").run_command.exitstatus
-          Mixlib::ShellOut.new("mkfs.ext4 #{device}").run_command
-          update = true
-        end
+    case params[:type]
+    when 'xfs'
+      if Mixlib::ShellOut.new("xfs_admin -l #{device}").run_command.error?
+        Chef::Log.info("Creating file system on #{device} for type #{params[:type]}")
+        cmd = Mixlib::ShellOut.new("mkfs.xfs -L swift -f -i size=512 #{device}").run_command
+        Chef::Log.info("Created file system on #{device} for type #{params[:type]} out:#{cmd.stdout.strip} err:#{cmd.stderr.strip}")
+        update = true
+      end
+    when 'ext4'
+      unless Mixlib::ShellOut.new("tune2fs -l #{device} | grep \"Filesystem volume name:\" | awk \'{print $4}\' | grep -v \"<none>\"").run_command.exitstatus
+        Chef::Log.info("Creating file system on #{device} for type #{params[:type]}")
+        cmd = Mixlib::ShellOut.new("mkfs.ext4 -L swift #{device}").run_command
+        Chef::Log.info("Created file system on #{device} for type #{params[:type]} out:#{cmd.stdout.strip} err:#{cmd.stderr.strip}")
+        update = true
       end
     end
   end
