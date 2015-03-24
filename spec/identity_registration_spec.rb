@@ -178,7 +178,7 @@ describe 'openstack-object-storage::identity_registration' do
       auth_uri: 'http://127.0.0.1:35357/v2.0',
       bootstrap_token: 'bootstrap-token',
       tenant_name: 'service',
-      role_name: 'admin',
+      role_name: 'service',
       user_name: 'swift',
       action: [:grant_role]
     )
