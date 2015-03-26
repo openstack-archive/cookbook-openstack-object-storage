@@ -125,9 +125,7 @@ use = egg:swift#formpost
 [filter:authtoken]
 paste.filter_factory = keystoneclient.middleware.auth_token:filter_factory
 auth_uri = <%= @auth_uri %>
-auth_host = <%= @identity_admin_endpoint.host %>
-auth_port = <%= @identity_admin_endpoint.port %>
-auth_protocol = <%= @identity_admin_endpoint.scheme %>
+identity_uri = <%= @identity_uri %>
 auth_version = <%= node['openstack']['object-storage']['api']['auth']['version'] %>
 admin_tenant_name = <%= node['openstack']['object-storage']['service_tenant_name'] %>
 admin_user = <%= node['openstack']['object-storage']['service_user'] %>
