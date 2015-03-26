@@ -86,6 +86,7 @@ when 'keystone'
   service_pass = get_password 'service', 'openstack-object-storage'
 
   auth_uri = auth_uri_transform identity_endpoint.to_s, node['openstack']['object-storage']['api']['auth']['version']
+  identity_uri = identity_uri_transform(identity_admin_endpoint)
 end
 
 package 'python-swift-informant' do
@@ -138,7 +139,7 @@ template '/etc/swift/proxy-server.conf' do
     'authkey' => authkey,
     'memcache_servers' => memcache_servers,
     'auth_uri' => auth_uri,
-    'identity_admin_endpoint' => identity_admin_endpoint,
+    'identity_uri' => identity_uri,
     'service_pass' => service_pass
   )
   notifies :restart, "service[#{proxy_service_name}]", :immediately
