@@ -114,5 +114,45 @@ describe 'openstack-object-storage::container-server' do
         end
       end
     end
+
+    describe '/etc/swift/object-reconciler.conf' do
+      let(:file) { chef_run.template('/etc/swift/container-reconciler.conf') }
+
+      it_behaves_like 'custom template banner displayer' do
+        let(:file_name) { file.name }
+      end
+
+      it 'creates object-reconciler.conf' do
+        expect(chef_run).to create_template(file.name).with(
+          user: 'swift',
+          group: 'swift',
+          mode: 00600
+        )
+      end
+
+      it 'sets the memcache_servers attribute' do
+        expect(chef_run).to render_file(file.name).with_content(/^memcache_servers = host1:111,host2:222$/)
+      end
+    end
+
+    describe '/etc/swift/container-sync-realms.conf' do
+      before do
+        node.set['openstack']['object-storage']['container-server']['allowed_sync_hosts'] = ['host1', 'host2', 'host3']
+      end
+
+      let(:file) { chef_run.template('/etc/swift/container-sync-realms.conf') }
+
+      it_behaves_like 'custom template banner displayer' do
+        let(:file_name) { file.name }
+      end
+
+      it 'creates container-sync-realms.conf' do
+        expect(chef_run).to create_template(file.name).with(
+          user: 'swift',
+          group: 'swift',
+          mode: 00600
+        )
+      end
+    end
   end
 end

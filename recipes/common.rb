@@ -79,9 +79,9 @@ end
 # determine hash
 if node['openstack']['object-storage']['swift_secret_databag_name'].nil?
   swift_hash_path_prefix = node['openstack']['object-storage']['swift_hash_path_prefix']
-  swift_hash_path_prefix = get_secret 'swift_hash_path_prefix' if swift_hash_path_prefix.nil?
+  swift_hash_path_prefix = get_password 'token', 'swift_hash_path_prefix' if swift_hash_path_prefix.nil?
   swift_hash_path_suffix = node['openstack']['object-storage']['swift_hash_path_suffix']
-  swift_hash_path_suffix = get_secret 'swift_hash_path_suffix' if swift_hash_path_suffix.nil?
+  swift_hash_path_suffix = get_password 'token', 'swift_hash_path_suffix' if swift_hash_path_suffix.nil?
 else
   # Deprecated, else case to be removed.
   swift_secrets = Chef::EncryptedDataBagItem.load 'secrets', node['openstack']['object-storage']['swift_secret_databag_name']
