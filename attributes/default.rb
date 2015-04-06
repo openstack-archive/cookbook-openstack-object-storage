@@ -20,7 +20,7 @@
 
 default['openstack']['object-storage']['service_tenant_name'] = 'service'
 default['openstack']['object-storage']['service_user'] = 'swift'
-default['openstack']['object-storage']['service_role'] = 'admin'
+default['openstack']['object-storage']['service_role'] = 'service'
 
 # Default swift user
 default['openstack']['object-storage']['user'] = 'swift'
