@@ -1,0 +1,8 @@
+Verified+2: Jenkins
+Code-Review+2: Ma Wen Cheng <wenchma@cn.ibm.com>
+Workflow+1: JJ Asghar <jj@getchef.com>
+Submitted-by: Jenkins
+Submitted-at: Mon, 06 Apr 2015 15:39:58 +0000
+Reviewed-on: https://review.openstack.org/167399
+Project: stackforge/cookbook-openstack-object-storage
+Branch: refs/heads/master
