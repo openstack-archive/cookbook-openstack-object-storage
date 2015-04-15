@@ -195,6 +195,8 @@ def parse_ring_output(ring_data)
       next
     elsif line =~ /^Devices:\s+id\s+zone\s+/
       next
+    elsif line =~ /\soverload factor\s/
+      next
     elsif line =~ /^\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\.\d+\.\d+\.\d+)\s+(\d+)\s+(\d+\.\d+\.\d+\.\d+)\s+(\d+)\s+(\S+)\s+([0-9.]+)\s+(\d+)\s+([-0-9.]+)\s*$/
       output[:hosts] ||= {}
       output[:hosts][$4] ||= {}
@@ -241,7 +243,7 @@ def parse_ring_output(ring_data)
       output[:hosts][$3][$5][:weight] = $6
       output[:hosts][$3][$5][:partitions] = $7
       output[:hosts][$3][$5][:balance] = $8
-    elsif line =~ /(\d+) partitions, (\d+\.\d+) replicas, (\d+) regions, (\d+) zones, (\d+) devices, (\d+\.\d+) balance$/
+    elsif line =~ /(\d+) partitions, (\d+\.\d+) replicas, (\d+) regions, (\d+) zones, (\d+) devices, (\d+\.\d+) balance/
       output[:state][:partitions] = $1
       output[:state][:replicas] = $2
       output[:state][:regions] = $3
