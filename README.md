@@ -220,6 +220,7 @@ License and Author
 | **Author**           |  Will Kelly (<will.kelly@rackspace.com>)           |
 | **Author**           |  Chen Zhiwei (<zhiwchen@cn.ibm.com>)               |
 | **Author**           |  Mark Vanderwiel (<vanderwl@us.ibm.com>)           |
+| **Author**           |  Jan Klare (<j.klare@x-ion.de>)                    |
 |                      |                                                    |
 | **Copyright**        |  Copyright (c) 2013, AT&T, Inc.                    |
 | **Copyright**        |  Copyright (c) 2012, Rackspace US, Inc.            |

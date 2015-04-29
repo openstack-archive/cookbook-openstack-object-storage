@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 
 describe 'openstack-object-storage::object-server' do
   describe 'ubuntu' do
-    let(:runner) { ChefSpec::Runner.new(UBUNTU_OPTS) }
+    let(:runner) { ChefSpec::SoloRunner.new(UBUNTU_OPTS) }
     let(:node) { runner.node }
     let(:chef_run) do
       node.set['openstack']['object-storage']['disk_enum_expr'] = "[{ 'sda' => {}}]"
