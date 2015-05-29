@@ -36,7 +36,7 @@ platform_options['container_packages'].each do |pkg|
 end
 
 svc_names = {}
-%w{swift-container swift-container-auditor swift-container-replicator swift-container-updater}.each do |svc|
+%w(swift-container swift-container-auditor swift-container-replicator swift-container-updater).each do |svc|
   svc_names[svc] = svc_name(svc)
 end
 

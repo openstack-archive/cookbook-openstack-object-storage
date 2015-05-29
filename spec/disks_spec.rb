@@ -27,7 +27,5 @@ describe 'openstack-object-storage::disks' do
     it 'upgrades parted package' do
       expect(chef_run).to upgrade_package('parted')
     end
-
   end
-
 end

@@ -25,7 +25,7 @@ describe 'openstack-object-storage::object-server' do
     end
 
     it 'starts swift object services on boot' do
-      %w{swift-object swift-object-replicator swift-object-auditor swift-object-updater}.each do |svc|
+      %w(swift-object swift-object-replicator swift-object-auditor swift-object-updater).each do |svc|
         expect(chef_run).to enable_service(svc)
       end
     end

@@ -47,7 +47,7 @@ Chef::Log.info("Located disks: #{disks}")
 
 disks.each do |disk|
   openstack_object_storage_disk "/dev/#{disk}" do
-    part [{ type: platform_options['disk_format'] , size: :remaining }]
+    part [{ type: platform_options['disk_format'], size: :remaining }]
     action :ensure_exists
   end
 end

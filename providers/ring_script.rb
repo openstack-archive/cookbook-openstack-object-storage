@@ -56,8 +56,8 @@ def generate_script # rubocop:disable Metrics/AbcSize
 
     ring_data[:in_use][which] ||= {}
     if ring_data[:parsed][which][:hosts]
-      ring_data[:parsed][which][:hosts].each do |ip, dev|
-        dev.each do |dev_id, devhash|
+      ring_data[:parsed][which][:hosts].each do |_ip, dev|
+        dev.each do |_dev_id, devhash|
           ring_data[:in_use][which].store(devhash[:device], devhash[:id])
         end
       end
@@ -118,10 +118,10 @@ def generate_script # rubocop:disable Metrics/AbcSize
 
   ['account', 'container', 'object'].each do |which|
     # remove available disks that are already in the ring
-    new_disks[which] = disk_data[:available][which].reject { |k, v| ring_data[:in_use][which].key?(k) }
+    new_disks[which] = disk_data[:available][which].reject { |k, _v| ring_data[:in_use][which].key?(k) }
 
     # find all in-ring disks that are not in the cluster
-    missing_disks[which] = ring_data[:in_use][which].reject { |k, v| disk_data[:available][which].key?(k) }
+    missing_disks[which] = ring_data[:in_use][which].reject { |k, _v| disk_data[:available][which].key?(k) }
 
     Chef::Log.info("#{which} Ring - Missing:\n#{PP.pp(missing_disks[which], '')}")
     Chef::Log.info("#{which} Ring - New:\n#{PP.pp(new_disks[which], '')}")
@@ -159,9 +159,9 @@ def generate_script # rubocop:disable Metrics/AbcSize
 
     # remove the disks -- sort to ensure consistent order
     missing_disks[which].keys.sort.each do |mountpoint|
-      diskinfo = ring_data[:parsed][which][:hosts].select { |k, v| v.key?(mountpoint) }.map { |_, v| v[mountpoint] }[0]
+      diskinfo = ring_data[:parsed][which][:hosts].select { |_k, v| v.key?(mountpoint) }.map { |_, v| v[mountpoint] }[0]
       Chef::Log.info("#{which} Missing diskinfo:\n#{PP.pp(diskinfo, '')}")
-      description = Hash[diskinfo.select { |k, v| [:zone, :ip, :device].include?(k) }].map { |k, v| "#{k}: #{v}" }.join(', ')
+      description = Hash[diskinfo.select { |k, _v| [:zone, :ip, :device].include?(k) }].map { |k, v| "#{k}: #{v}" }.join(', ')
       s << "# #{description}\n"
       s << "swift-ring-builder #{ring_path}/#{which}.builder remove d#{missing_disks[which][mountpoint]}\n"
       must_rebalance = true

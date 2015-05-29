@@ -25,7 +25,7 @@ def load_current_resource
   dev_name = @new_resource.name
   @current = Chef::Resource::OpenstackObjectStorageDisk.new(dev_name)
 
-  parted_partition_parse  dev_name
+  parted_partition_parse dev_name
   parts = @current.part
 
   unless @current.blocks
@@ -168,7 +168,7 @@ action :ensure_exists do
       if req_size == :remaining
         req_size = disk_blocks - current_block
       else
-        req_size = req_size * 1024
+        req_size *= 1024
       end
 
       cur_size = cur[idx][:size]

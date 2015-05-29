@@ -63,7 +63,7 @@ when 'swauth'
   when 'git'
     git "#{Chef::Config[:file_cache_path]}/swauth" do
       repository node['openstack']['object-storage']['swauth_repository']
-      revision   node['openstack']['object-storage']['swauth_version']
+      revision node['openstack']['object-storage']['swauth_version']
       action :sync
     end
 

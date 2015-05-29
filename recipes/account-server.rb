@@ -36,7 +36,7 @@ platform_options['account_packages'].each.each do |pkg|
 end
 
 svc_names = {}
-%w{swift-account swift-account-auditor swift-account-reaper swift-account-replicator}.each do |svc|
+%w(swift-account swift-account-auditor swift-account-reaper swift-account-replicator).each do |svc|
   svc_names[svc] = svc_name(svc)
 end
 

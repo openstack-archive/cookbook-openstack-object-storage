@@ -16,9 +16,7 @@ describe 'openstack-object-storage::rsync' do
     end
 
     it 'starts rsync service on boot' do
-      %w{rsync}.each do |svc|
-        expect(chef_run).to enable_service(svc)
-      end
+      expect(chef_run).to enable_service('rsync')
     end
 
     describe '/etc/rsyncd.conf' do

@@ -149,7 +149,7 @@ describe 'openstack-object-storage::common' do
       describe 'template contents' do
         it 'uses the builder_ip variable' do
           node.set['openstack']['object-storage']['git_builder_ip'] = 'git_builder_ip_value'
-          expect(chef_run).to render_file(file.name).with_content(%r(git clone git://git_builder_ip_value/rings /etc/swift/rings))
+          expect(chef_run).to render_file(file.name).with_content(%r{git clone git://git_builder_ip_value/rings /etc/swift/rings})
         end
 
         it 'uses the service_prefix variable' do

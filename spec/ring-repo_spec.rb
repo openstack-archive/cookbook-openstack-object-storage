@@ -16,9 +16,7 @@ describe 'openstack-object-storage::ring-repo' do
     end
 
     it 'should not start xinetd services on boot' do
-      %w{xinetd}.each do |svc|
-        expect(chef_run).not_to enable_service(svc)
-      end
+      expect(chef_run).not_to enable_service('xinetd')
     end
 
     # FIXME(galstrom21): This spec file should just check that the LWRP

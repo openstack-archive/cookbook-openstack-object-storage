@@ -275,10 +275,10 @@ default['openstack']['sysctl']['net.ipv4.tcp_syncookies'] = 0
 # Each rule gets evaluated with "candidate" set to the device name
 # without the leading "/dev/") and info set to the node hash value.
 default['openstack']['object-storage']['disk_test_filter'] = [
-    'candidate =~ /(sd|hd|xvd|vd)(?!a$)[a-z]+/',
-    "File.exist?('/dev/' + candidate)",
-    "not system('/sbin/parted /dev/' + candidate + ' -s print | grep linux-swap')",
-    "not info.has_key?('removable') or info['removable'] == 0.to_s"]
+  'candidate =~ /(sd|hd|xvd|vd)(?!a$)[a-z]+/',
+  "File.exist?('/dev/' + candidate)",
+  "not system('/sbin/parted /dev/' + candidate + ' -s print | grep linux-swap')",
+  "not info.has_key?('removable') or info['removable'] == 0.to_s"]
 
 #-------------------
 # template overrides
@@ -477,7 +477,7 @@ case platform_family
 when 'rhel'
   default['openstack']['object-storage']['platform'] = {
     'disk_format' => 'ext4',
-    'proxy_packages' => %w{openstack-swift-proxy sudo cronie python-memcached},
+    'proxy_packages' => %w(openstack-swift-proxy sudo cronie python-memcached),
     'object_packages' => ['openstack-swift-object', 'sudo', 'cronie'],
     'container_packages' => ['openstack-swift-container', 'sudo', 'cronie'],
     'account_packages' => ['openstack-swift-account', 'sudo', 'cronie'],

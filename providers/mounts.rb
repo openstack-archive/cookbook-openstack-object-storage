@@ -35,7 +35,7 @@ action :ensure_exists do
 
   # walk through the devices, gathering information
   proposed_devices.each do |device|
-    next unless ::File.exists?("/dev/#{device}")
+    next unless ::File.exist?("/dev/#{device}")
 
     info = {}
     info['device'] = device
@@ -43,7 +43,7 @@ action :ensure_exists do
     info['format'] = @new_resource.format
     info['uuid'] = Mixlib::ShellOut.new("blkid /dev/#{device} -s UUID -o value").run_command.stdout.strip
     info['mountpoint'] = info['uuid'].split('-').join('')
-    info['mounted'] = Mixlib::ShellOut.new("mount | grep '#{path}/#{info["mountpoint"]}\'").run_command.status
+    info['mounted'] = Mixlib::ShellOut.new("mount | grep '#{path}/#{info['mountpoint']}\'").run_command.status
     info['size'] = Mixlib::ShellOut.new("sfdisk -s /dev/#{device}").run_command.stdout.to_i / 1024
 
     next if info['uuid'] == ''
@@ -152,8 +152,8 @@ action :ensure_exists do
     new_resource.updated_by_last_action(true)
   end
 
-  dev_info.reject { |k, v| v['mounted'] }.keys.each do |uuid|
-    dev_info[uuid]['mounted'] = Mixlib::ShellOut.new("mount | grep '#{path}/#{dev_info[uuid]["mountpoint"]}\'").run_command.status
+  dev_info.reject { |_k, v| v['mounted'] }.keys.each do |uuid|
+    dev_info[uuid]['mounted'] = Mixlib::ShellOut.new("mount | grep '#{path}/#{dev_info[uuid]['mountpoint']}\'").run_command.status
   end
 
   if @new_resource.publish_attributes && dev_info != {}

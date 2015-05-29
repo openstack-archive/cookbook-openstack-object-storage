@@ -25,7 +25,7 @@ describe 'openstack-object-storage::identity_registration' do
   context 'registers object storage endpoint' do
     it 'with default values' do
       expect(chef_run).to create_endpoint_openstack_identity_register(
-         'Register Object Storage Endpoint'
+        'Register Object Storage Endpoint'
       ).with(
         auth_uri: 'http://127.0.0.1:35357/v2.0',
         bootstrap_token: 'bootstrap-token',
@@ -48,7 +48,7 @@ describe 'openstack-object-storage::identity_registration' do
       node.set['openstack']['endpoints']['admin']['object-storage-api']['uri'] = admin_url
 
       expect(chef_run).to create_endpoint_openstack_identity_register(
-         'Register Object Storage Endpoint'
+        'Register Object Storage Endpoint'
       ).with(
         auth_uri: 'http://127.0.0.1:35357/v2.0',
         bootstrap_token: 'bootstrap-token',
@@ -71,7 +71,7 @@ describe 'openstack-object-storage::identity_registration' do
       node.set['openstack']['endpoints']['internal']['object-storage-api']['uri'] = internal_url
 
       expect(chef_run).to create_endpoint_openstack_identity_register(
-         'Register Object Storage Endpoint'
+        'Register Object Storage Endpoint'
       ).with(
         auth_uri: 'http://127.0.0.1:35357/v2.0',
         bootstrap_token: 'bootstrap-token',
@@ -94,7 +94,7 @@ describe 'openstack-object-storage::identity_registration' do
       node.set['openstack']['endpoints']['public']['object-storage-api']['uri'] = public_url
 
       expect(chef_run).to create_endpoint_openstack_identity_register(
-         'Register Object Storage Endpoint'
+        'Register Object Storage Endpoint'
       ).with(
         auth_uri: 'http://127.0.0.1:35357/v2.0',
         bootstrap_token: 'bootstrap-token',
@@ -116,7 +116,7 @@ describe 'openstack-object-storage::identity_registration' do
       node.set['openstack']['endpoints']['internal']['object-storage-api']['uri'] = internal_url
       node.set['openstack']['endpoints']['public']['object-storage-api']['uri'] = public_url
       expect(chef_run).to create_endpoint_openstack_identity_register(
-         'Register Object Storage Endpoint'
+        'Register Object Storage Endpoint'
       ).with(
         auth_uri: 'http://127.0.0.1:35357/v2.0',
         bootstrap_token: 'bootstrap-token',
@@ -132,7 +132,7 @@ describe 'openstack-object-storage::identity_registration' do
     it 'with custom region override' do
       node.set['openstack']['object-storage']['region'] = 'swiftRegion'
       expect(chef_run).to create_endpoint_openstack_identity_register(
-         'Register Object Storage Endpoint'
+        'Register Object Storage Endpoint'
       ).with(
         auth_uri: 'http://127.0.0.1:35357/v2.0',
         bootstrap_token: 'bootstrap-token',

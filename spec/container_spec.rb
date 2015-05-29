@@ -25,7 +25,7 @@ describe 'openstack-object-storage::container-server' do
 
     it 'starts swift container services on boot' do
       node.set['openstack']['object-storage']['container-server']['allowed_sync_hosts'] = %w(host1 host2)
-      %w{swift-container swift-container-auditor swift-container-replicator swift-container-updater swift-container-sync}.each do |svc|
+      %w(swift-container swift-container-auditor swift-container-replicator swift-container-updater swift-container-sync).each do |svc|
         expect(chef_run).to enable_service(svc)
       end
     end

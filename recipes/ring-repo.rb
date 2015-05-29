@@ -43,13 +43,13 @@ end
 execute 'create empty git repo' do
   cwd '/tmp'
   umask 022
-  command "mkdir $$; cd $$; git init; echo \"backups\" \> .gitignore; #{git_config_email} ; #{git_config_name} ; git add .gitignore; git commit -m 'initial commit' --author='chef <chef@openstack>'; git push file:///#{platform_options["git_dir"]}/rings master"
+  command "mkdir $$; cd $$; git init; echo \"backups\" \> .gitignore; #{git_config_email} ; #{git_config_name} ; git add .gitignore; git commit -m 'initial commit' --author='chef <chef@openstack>'; git push file:///#{platform_options['git_dir']}/rings master"
   user node['openstack']['object-storage']['user']
   action :nothing
 end
 
 directory 'git-directory' do
-  path "#{platform_options["git_dir"]}/rings"
+  path "#{platform_options['git_dir']}/rings"
   owner node['openstack']['object-storage']['user']
   group node['openstack']['object-storage']['group']
   mode 00755
@@ -58,11 +58,11 @@ directory 'git-directory' do
 end
 
 execute 'initialize git repo' do
-  cwd "#{platform_options["git_dir"]}/rings"
+  cwd "#{platform_options['git_dir']}/rings"
   umask 022
   user node['openstack']['object-storage']['user']
   command 'git init --bare && touch git-daemon-export-ok'
-  creates "#{platform_options["git_dir"]}/rings/config"
+  creates "#{platform_options['git_dir']}/rings/config"
   action :run
   notifies :run, 'execute[create empty git repo]', :immediately
 end
@@ -99,18 +99,17 @@ end
 
 execute 'checkout-rings' do # ~FC040
   cwd '/etc/swift/ring-workspace'
-  command "git clone file://#{platform_options["git_dir"]}/rings"
+  command "git clone file://#{platform_options['git_dir']}/rings"
   user node['openstack']['object-storage']['user']
   creates '/etc/swift/ring-workspace/rings'
 end
 
 ['account', 'container', 'object'].each do |ring_type|
-
   part_power = ring_options['part_power']
   min_part_hours = ring_options['min_part_hours']
   replicas = ring_options['replicas']
 
-  Chef::Log.info("Building initial ring #{ring_type} using part_power=#{part_power}, " +
+  Chef::Log.info("Building initial ring #{ring_type} using part_power=#{part_power}, "\
                  "min_part_hours=#{min_part_hours}, replicas=#{replicas}")
   execute "add #{ring_type}.builder" do
     cwd '/etc/swift/ring-workspace/rings'

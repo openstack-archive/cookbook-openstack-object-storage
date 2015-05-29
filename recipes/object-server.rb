@@ -36,7 +36,7 @@ platform_options['object_packages'].each do |pkg|
 end
 
 svc_names = {}
-%w{swift-object swift-object-replicator swift-object-auditor swift-object-updater}.each do |svc|
+%w(swift-object swift-object-replicator swift-object-auditor swift-object-updater).each do |svc|
   svc_names[svc] = svc_name(svc)
 end
 
@@ -46,7 +46,6 @@ svc_names.values.each do |svc|
     action [:enable, :start]
     only_if '[ -e /etc/swift/object-server.conf ] && [ -e /etc/swift/object.ring.gz ]'
   end
-
 end
 
 memcache_servers = memcached_servers.join ','

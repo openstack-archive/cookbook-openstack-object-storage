@@ -29,7 +29,7 @@ describe 'openstack-object-storage::account-server' do
     end
 
     it 'starts swift account services on boot' do
-      %w{swift-account swift-account-auditor swift-account-reaper swift-account-replicator}.each do |svc|
+      %w(swift-account swift-account-auditor swift-account-reaper swift-account-replicator).each do |svc|
         expect(chef_run).to enable_service(svc)
       end
     end

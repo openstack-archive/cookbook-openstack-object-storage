@@ -27,11 +27,12 @@ module DriveUtils
   def locate_disks(enum_expression, filter_expressions)
     candidate_disks = eval(enum_expression)
     candidate_expression = 'candidate_disks.select{|candidate,info| (' +
-      filter_expressions.map { |x| "(#{x})" }.join(' and ') + ')}'
+                           filter_expressions.map { |x| "(#{x})" }.join(' and ') +
+                           ')}'
     # TODO(mancdaz): fix this properly so the above works in the first place
     candidate_expression.gsub!(/\[\'removable\'\] = 0/, "['removable'].to_i == 0")
     drives = Hash[eval(candidate_expression)]
-    Chef::Log.info("Using candidate drives: #{drives.keys.join(", ")}")
+    Chef::Log.info("Using candidate drives: #{drives.keys.join(', ')}")
     drives.keys
   end
 end
