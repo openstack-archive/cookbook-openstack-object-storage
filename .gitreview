@@ -1,4 +1,4 @@
 [gerrit]
 host=review.openstack.org
 port=29418
-project=stackforge/cookbook-openstack-object-storage.git
+project=openstack/cookbook-openstack-object-storage.git
