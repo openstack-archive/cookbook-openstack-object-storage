@@ -1,7 +1,7 @@
 Description
 ===========
 
-Installs the OpenStack Object Storage service **Swift** as part of the OpenStack reference deployment Chef for OpenStack. The http://github.com/stackforge/chef-openstack-repo contains documentation for using this cookbook in the context of a full OpenStack deployment. Swift is currently installed from packages.
+Installs the OpenStack Object Storage service **Swift** as part of the OpenStack reference deployment Chef for OpenStack. The http://github.com/openstack/chef-openstack-repo contains documentation for using this cookbook in the context of a full OpenStack deployment. Swift is currently installed from packages.
 
 https://wiki.openstack.org/wiki/Swift
 
