@@ -66,7 +66,7 @@ default['openstack']['object-storage']['wait_for'] = 1
 # once a cluster has been deployed.
 # Deprecated in juno, use swift_hash_path_prefix
 default['openstack']['object-storage']['swift_hash'] = nil
-# A value of nil will get the hash from the get_secret library method in common
+# A value of nil will get the hash from the get_password library method in common
 default['openstack']['object-storage']['swift_hash_path_prefix'] = node['openstack']['object-storage']['swift_hash']
 default['openstack']['object-storage']['swift_hash_path_suffix'] = nil
 
