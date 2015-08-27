@@ -68,7 +68,7 @@ def generate_script # rubocop:disable Metrics/AbcSize
     # figure out what's present in the cluster
     disk_data[which] = {}
     role = node['openstack']['object-storage']["#{which}_server_chef_role"]
-    disk_state, _, _ = Chef::Search::Query.new.search(:node, "chef_environment:#{node.chef_environment} AND roles:#{role}")
+    disk_state = Chef::Search::Query.new.search(:node, "chef_environment:#{node.chef_environment} AND roles:#{role}")
     Chef::Log.info("#{which} node count: #{disk_state.count} for role: #{role}")
 
     # for a running track of available disks
@@ -131,7 +131,7 @@ def generate_script # rubocop:disable Metrics/AbcSize
       s << "# #{ip}\n"
       disk_data[which][ip].keys.sort.each do |k|
         v = disk_data[which][ip][k]
-        s << '#  ' +  v.keys.sort.select { |x| ['ip', 'device', 'uuid'].include?(x) }.map { |x| v[x] }.join(', ')
+        s << '#  ' + v.keys.sort.select { |x| ['ip', 'device', 'uuid'].include?(x) }.map { |x| v[x] }.join(', ')
         if new_disks[which].key?(v['mountpoint'])
           s << ' (NEW!)'
           new_servers << ip unless new_servers.include?(ip)

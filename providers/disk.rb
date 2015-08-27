@@ -20,7 +20,7 @@
 require 'chef/mixin/shell_out'
 include Chef::Mixin::ShellOut
 
-# rubocop:disable CyclomaticComplexity, MethodLength
+# rubocop:disable MethodLength
 def load_current_resource
   dev_name = @new_resource.name
   @current = Chef::Resource::OpenstackObjectStorageDisk.new(dev_name)
@@ -173,7 +173,8 @@ action :ensure_exists do
 
       cur_size = cur[idx][:size]
 
-      cur_min, cur_max = (req_size * 0.9), (req_size * 1.1)
+      cur_min = req_size * 0.9
+      cur_max = req_size * 1.1
       recreate = true unless (cur_size > cur_min) && (cur_size < cur_max)
 
       current_block += cur[idx][:size]
