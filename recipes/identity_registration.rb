@@ -37,7 +37,7 @@ internal_api_endpoint = internal_endpoint 'object-storage-api'
 public_api_endpoint = public_endpoint 'object-storage-api'
 
 service_pass = get_password 'service', 'openstack-object-storage'
-service_tenant_name = node['openstack']['object-storage']['service_tenant_name']
+service_project_name = node['openstack']['object-storage']['service_project_name']
 service_user = node['openstack']['object-storage']['service_user']
 service_role = node['openstack']['object-storage']['service_role']
 region = node['openstack']['object-storage']['region']
@@ -66,21 +66,21 @@ openstack_identity_register 'Register Object Storage Endpoint' do
   action :create_endpoint
 end
 
-# Register Service Tenant
-openstack_identity_register 'Register Service Tenant' do
+# Register Service Project
+openstack_identity_register 'Register Service Project' do
   auth_uri auth_url
   bootstrap_token token
-  tenant_name service_tenant_name
-  tenant_description 'Service Tenant'
+  project_name service_project_name
+  project_description 'Service Project'
 
-  action :create_tenant
+  action :create_project
 end
 
 # Register Service User
 openstack_identity_register "Register #{service_user} User" do
   auth_uri auth_url
   bootstrap_token token
-  tenant_name service_tenant_name
+  project_name service_project_name
   user_name service_user
   user_pass service_pass
 
@@ -88,10 +88,10 @@ openstack_identity_register "Register #{service_user} User" do
 end
 
 ## Grant Service role to Service User for Service Tenant ##
-openstack_identity_register "Grant '#{service_role}' Role to #{service_user} User for #{service_tenant_name} Tenant" do
+openstack_identity_register "Grant '#{service_role}' Role to #{service_user} User for #{service_project_name} Tenant" do
   auth_uri auth_url
   bootstrap_token token
-  tenant_name service_tenant_name
+  project_name service_project_name
   user_name service_user
   role_name service_role
 

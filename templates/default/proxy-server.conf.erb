@@ -127,7 +127,7 @@ paste.filter_factory = keystoneclient.middleware.auth_token:filter_factory
 auth_uri = <%= @auth_uri %>
 identity_uri = <%= @identity_uri %>
 auth_version = <%= node['openstack']['object-storage']['api']['auth']['version'] %>
-admin_tenant_name = <%= node['openstack']['object-storage']['service_tenant_name'] %>
+admin_tenant_name = <%= node['openstack']['object-storage']['service_project_name'] %>
 admin_user = <%= node['openstack']['object-storage']['service_user'] %>
 admin_password = <%= @service_pass %>
 signing_dir = <%= node['openstack']['object-storage']['api']['auth']['cache_dir'] %>
