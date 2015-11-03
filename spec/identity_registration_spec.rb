@@ -152,7 +152,7 @@ describe 'openstack-object-storage::identity_registration' do
     ).with(
       auth_uri: 'http://127.0.0.1:35357/v2.0',
       bootstrap_token: 'bootstrap-token',
-      tenant_name: 'service',
+      project_name: 'service',
       tenant_description: 'Service Tenant',
       action: [:create_tenant]
     )
@@ -164,7 +164,7 @@ describe 'openstack-object-storage::identity_registration' do
     ).with(
       auth_uri: 'http://127.0.0.1:35357/v2.0',
       bootstrap_token: 'bootstrap-token',
-      tenant_name: 'service',
+      project_name: 'service',
       user_name: 'swift',
       user_pass: 'swift-pass',
       action: [:create_user]
@@ -177,7 +177,7 @@ describe 'openstack-object-storage::identity_registration' do
     ).with(
       auth_uri: 'http://127.0.0.1:35357/v2.0',
       bootstrap_token: 'bootstrap-token',
-      tenant_name: 'service',
+      project_name: 'service',
       role_name: 'service',
       user_name: 'swift',
       action: [:grant_role]
