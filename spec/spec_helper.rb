@@ -49,6 +49,8 @@ MOCK_NODE_NETWORK_DATA =
 
 shared_context 'swift-stubs' do
   before do
+    stub_command("dpkg -s memcached").and_return(true)
+    stub_command("getent passwd memcache").and_return(true)
     stub_command('/usr/bin/id swift').and_return(true)
     stub_command('[ -x /etc/swift/pull-rings.sh ]').and_return(true)
     stub_command('[ -f /etc/rsyncd.conf ]').and_return(true)
