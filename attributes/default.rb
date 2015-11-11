@@ -198,7 +198,7 @@ default['openstack']['object-storage']['statistics']['sample_rate'] = 1
 #
 # if no servers with the role below can be found then
 # 127.0.0.1 will be used
-default['openstack']['object-storage']['statistics']['graphing_ip']  = nil
+default['openstack']['object-storage']['statistics']['graphing_ip'] = nil
 default['openstack']['object-storage']['statistics']['graphing_role'] = 'graphite-role'
 default['openstack']['object-storage']['statistics']['graphing_interface'] = 'eth0'
 

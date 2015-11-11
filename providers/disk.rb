@@ -164,7 +164,7 @@ action :ensure_exists do
         next
       end
 
-      req_size = params[:size]   # size in Mb - convert to blocks
+      req_size = params[:size] # size in Mb - convert to blocks
       if req_size == :remaining
         req_size = disk_blocks - current_block
       else
