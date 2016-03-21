@@ -164,7 +164,7 @@ action :ensure_exists do
         next
       end
 
-      req_size = params[:size] # size in Mb - convert to blocks
+      req_size = params[:size]   # size in Mb - convert to blocks
       if req_size == :remaining
         req_size = disk_blocks - current_block
       else
@@ -242,7 +242,7 @@ action :ensure_exists do
         update = true
       end
     when 'ext4'
-      unless Mixlib::ShellOut.new("tune2fs -l #{device} | awk \'/Filesystem volume name:/{print $4}\' | grep -v \"<none>\"").run_command.exitstatus
+      unless Mixlib::ShellOut.new("tune2fs -l #{device} | awk \'/Filesystem volume name:/{print $4}\' | grep -v \"<none>\"").run_command.error?
         Chef::Log.info("Creating file system on #{device} for type #{params[:type]}")
         cmd = Mixlib::ShellOut.new("mkfs.ext4 -L swift #{device}").run_command
         Chef::Log.info("Created file system on #{device} for type #{params[:type]} out:#{cmd.stdout.strip} err:#{cmd.stderr.strip}")
