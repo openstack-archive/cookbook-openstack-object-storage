@@ -20,7 +20,7 @@
 require 'chef/mixin/shell_out'
 include Chef::Mixin::ShellOut
 
-# rubocop:disable CyclomaticComplexity, MethodLength
+# rubocop:disable MethodLength
 def load_current_resource
   dev_name = @new_resource.name
   @current = Chef::Resource::OpenstackObjectStorageDisk.new(dev_name)
@@ -173,7 +173,8 @@ action :ensure_exists do
 
       cur_size = cur[idx][:size]
 
-      cur_min, cur_max = (req_size * 0.9), (req_size * 1.1)
+      cur_min = req_size * 0.9
+      cur_max = req_size * 1.1
       recreate = true unless (cur_size > cur_min) && (cur_size < cur_max)
 
       current_block += cur[idx][:size]
@@ -241,7 +242,7 @@ action :ensure_exists do
         update = true
       end
     when 'ext4'
-      unless Mixlib::ShellOut.new("tune2fs -l #{device} | awk \'/Filesystem volume name:/{print $4}\' | grep -v \"<none>\"").run_command.exitstatus
+      unless Mixlib::ShellOut.new("tune2fs -l #{device} | awk \'/Filesystem volume name:/{print $4}\' | grep -v \"<none>\"").run_command.error?
         Chef::Log.info("Creating file system on #{device} for type #{params[:type]}")
         cmd = Mixlib::ShellOut.new("mkfs.ext4 -L swift #{device}").run_command
         Chef::Log.info("Created file system on #{device} for type #{params[:type]} out:#{cmd.stdout.strip} err:#{cmd.stderr.strip}")
