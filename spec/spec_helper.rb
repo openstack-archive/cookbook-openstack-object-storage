@@ -59,6 +59,8 @@ shared_context 'swift-stubs' do
     stub_command('[ -e /etc/init.d/swift-container-sync ]').and_return(false)
     stub_command('[ -e /etc/swift/object-server.conf ] && [ -e /etc/swift/object.ring.gz ]').and_return(true)
     stub_command('[ -e /etc/swift/proxy-server.conf ] && [ -e /etc/swift/object.ring.gz ]').and_return(true)
+    stub_command('dpkg -s memcached').and_return(true)
+    stub_command('getent passwd memcache').and_return(true)
 
     # create mock cluster
     n = Chef::Node.new
