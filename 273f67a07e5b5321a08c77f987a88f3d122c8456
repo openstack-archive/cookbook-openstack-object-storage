@@ -1,0 +1,9 @@
+Code-Review+1: Brian Cline <bcline@softlayer.com>
+Code-Review+2: Mark Vanderwiel <vanderwl@us.ibm.com>
+Workflow+1: Jan Klare <j.klare@cloudbau.de>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Mon, 11 Apr 2016 15:15:52 +0000
+Reviewed-on: https://review.openstack.org/295060
+Project: openstack/cookbook-openstack-object-storage
+Branch: refs/heads/stable/liberty
