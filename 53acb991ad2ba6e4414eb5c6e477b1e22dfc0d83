@@ -1,0 +1,8 @@
+Code-Review+2: Mark Vanderwiel <vanderwl@us.ibm.com>
+Workflow+1: Jan Klare <j.klare@cloudbau.de>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Thu, 21 Apr 2016 20:42:57 +0000
+Reviewed-on: https://review.openstack.org/295061
+Project: openstack/cookbook-openstack-object-storage
+Branch: refs/heads/stable/kilo
