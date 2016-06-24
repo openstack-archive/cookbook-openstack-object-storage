@@ -1,6 +1,6 @@
 task default: ["test"]
 
-task :test => [:lint, :style, :unit]
+task :test #=> [:lint, :style, :unit]
 
 desc "Vendor the cookbooks in the Berksfile"
 task :berks_prep do
