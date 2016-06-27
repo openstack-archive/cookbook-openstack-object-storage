@@ -1,0 +1,8 @@
+Code-Review+2: Samuel Cassiba <s@cassiba.com>
+Workflow+1: Mark Vanderwiel <vanderwl@us.ibm.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Mon, 27 Jun 2016 17:13:35 +0000
+Reviewed-on: https://review.openstack.org/333798
+Project: openstack/cookbook-openstack-object-storage
+Branch: refs/heads/master
