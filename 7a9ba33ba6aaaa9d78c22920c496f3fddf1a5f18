@@ -1,0 +1,9 @@
+Code-Review+2: Christoph Albers <c.albers@x-ion.de>
+Code-Review+2: Samuel Cassiba <s@cassiba.com>
+Workflow+1: Samuel Cassiba <s@cassiba.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Mon, 05 Dec 2016 15:25:28 +0000
+Reviewed-on: https://review.openstack.org/403343
+Project: openstack/cookbook-openstack-object-storage
+Branch: refs/heads/master
