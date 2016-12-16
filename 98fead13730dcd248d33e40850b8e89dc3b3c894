@@ -1,0 +1,10 @@
+Code-Review+1: Andreas Jaeger <jaegerandi@gmail.com>
+Code-Review+2: Samuel Cassiba <s@cassiba.com>
+Code-Review+2: Christoph Albers <c.albers@x-ion.de>
+Workflow+1: Christoph Albers <c.albers@x-ion.de>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Fri, 16 Dec 2016 09:30:14 +0000
+Reviewed-on: https://review.openstack.org/410805
+Project: openstack/cookbook-openstack-object-storage
+Branch: refs/heads/master
